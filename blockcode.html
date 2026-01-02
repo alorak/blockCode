@@ -132,13 +132,33 @@
             margin-left: auto;
         }
 
+        .tool-btn-small {
+            width: 48px;
+            height: 48px;
+            border: none;
+            background: #E9ECEF;
+            border-radius: 8px;
+            color: #495057;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .tool-btn-small:hover {
+            background: #DEE2E6;
+            transform: translateY(-2px);
+        }
+
         .sidebar {
             width: 70px;
             background: rgba(255, 255, 255, 0.95);
             display: flex;
             flex-direction: column;
             padding: 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
+            border-right: 1px solid #e0e0e0;
             position: fixed;
             left: 0;
             top: 60px;
@@ -184,6 +204,34 @@
             align-items: center;
             gap: 15px;
             z-index: 100;
+        }
+
+        .rgb-panel-separator {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, #ccc, transparent);
+            margin: 0 5px;
+        }
+
+        .rgb-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rgb-group-items {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rgb-group-label {
+            font-size: 11px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
         }
 
         .rgb-led {
@@ -255,6 +303,102 @@
             border-color: #4dabf7;
             color: #1971c2;
         }
+
+        .rgb-triangle-btn {
+            width: 44px;
+            height: 44px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0 4px;
+            overflow: visible;
+            outline: none;
+            /* Kare oluşmasını engelle */
+            -webkit-tap-highlight-color: transparent;
+            /* Mobil seçimi engelle */
+        }
+
+        .rgb-triangle-btn polygon {
+            transition: all 0.2s;
+            stroke-width: 4px;
+            stroke-linejoin: round;
+        }
+
+        .rgb-triangle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .rgb-triangle-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Red Button */
+        .rgb-triangle-btn.red polygon {
+            fill: #ffb3b3;
+            stroke: #ff6b6b;
+        }
+
+        .rgb-triangle-btn.red:hover polygon {
+            fill: #ff9999;
+        }
+
+        .rgb-triangle-btn.red.active polygon {
+            fill: #ff6b6b;
+            /* Active: Fill matches stroke (Solid Vivid) */
+        }
+
+        /* Green Button */
+        .rgb-triangle-btn.green polygon {
+            fill: #b3e0b3;
+            stroke: #51cf66;
+        }
+
+        .rgb-triangle-btn.green:hover polygon {
+            fill: #99d999;
+        }
+
+        .rgb-triangle-btn.green.active polygon {
+            fill: #51cf66;
+        }
+
+        /* Blue Button */
+        .rgb-triangle-btn.blue polygon {
+            fill: #b3d9ff;
+            stroke: #4dabf7;
+        }
+
+        .rgb-triangle-btn.blue:hover polygon {
+            fill: #99cfff;
+        }
+
+        .rgb-triangle-btn.blue.active polygon {
+            fill: #4dabf7;
+        }
+
+        /* Flash Animation */
+        @keyframes flash-glow {
+            0% {
+                filter: brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+                transform: scale(1);
+            }
+
+            50% {
+                filter: brightness(1.5) drop-shadow(0 0 10px currentColor);
+                transform: scale(1.2);
+            }
+
+            100% {
+                filter: brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+                transform: scale(1);
+            }
+        }
+
+        .rgb-triangle-btn.flash {
+            animation: flash-glow 0.5s ease-out;
+        }
+
+
 
         .sidebar-bottom-tools {
             margin-top: auto;
@@ -356,6 +500,12 @@
             transform: scale(1.1);
         }
 
+        .device-icon.controller.active,
+        .device-icon.selected {
+            background-color: #e0e0e0 !important;
+            color: black !important;
+        }
+
         .device-icon svg {
             width: 16px;
             height: 16px;
@@ -424,25 +574,61 @@
         .delete-block-overlay {
             display: none;
             position: fixed;
-            top: 70px;
-            right: 10px;
+            bottom: 20px;
+            right: 20px;
             z-index: 1000;
+            flex-direction: row;
+            gap: 10px;
         }
 
         .delete-block-overlay.show {
-            display: block;
+            display: flex;
+        }
+
+        .block-action-btn {
+            background: #4C97FF;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(76, 151, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            width: 50px;
+            height: 50px;
+        }
+
+        .block-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 151, 255, 0.5);
+        }
+
+        .block-action-btn.delete {
+            background: #FF4466;
+            box-shadow: 0 4px 15px rgba(255, 68, 102, 0.4);
+        }
+
+        .block-action-btn.delete:hover {
+            box-shadow: 0 6px 20px rgba(255, 68, 102, 0.5);
         }
 
         .delete-block-btn {
-            padding: 12px 20px;
-            background: #FF6680;
+            background: #FF4466;
             color: white;
             border: none;
-            border-radius: 25px;
+            padding: 12px 24px;
+            border-radius: 30px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 102, 128, 0.4);
+            box-shadow: 0 4px 15px rgba(255, 68, 102, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             transition: all 0.2s;
         }
 
@@ -452,20 +638,43 @@
             box-shadow: 0 6px 20px rgba(255, 102, 128, 0.5);
         }
 
-        /* Controller Display Panel - Kompakt dikey tasarım */
-        .controller-display {
-            display: none;
+        /* Displays Container */
+        .displays-container {
             position: fixed;
             top: 70px;
             right: 20px;
-            background: white;
-            border-radius: 10px;
-            padding: 8px 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            display: flex;
+            gap: 15px;
             z-index: 1000;
+            align-items: flex-start;
+            pointer-events: none;
+            /* Container clicks pass through */
         }
 
-        .controller-display.active {
+        /* Controller Display Panel ve Motor Display */
+        .controller-display,
+        .motor-display {
+            display: none;
+            /* width/height controlled by content */
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+            min-width: 140px;
+            pointer-events: auto;
+            /* Enable clicks on panels */
+        }
+
+        .controller-header {
+            padding: 10px 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .controller-display.active,
+        .motor-display.active {
             display: block;
         }
 
@@ -473,6 +682,8 @@
             display: flex;
             gap: 15px;
             align-items: center;
+            padding: 12px 15px;
+            justify-content: center;
         }
 
         .lever-container {
@@ -525,12 +736,17 @@
             margin-left: 70px;
             position: relative;
             background: white;
-            transition: margin-left 0.3s ease;
+            /* Sidebar panel artık workspace'in üstüne overlay oluyor, itmiyor */
+            /* transition: margin-left 0.3s ease; */
         }
 
+        /* Sidebar açıldığında workspace'i itme - KALDIRILDI
+           Bunun yerine sidebar panel overlay olarak çalışıyor */
+        /*
         .sidebar.expanded~.workspace-container {
             margin-left: 280px;
         }
+        */
 
         /* Blockly toolbox'ı sola taşımak için ek margin */
         #blocklyDiv {
@@ -540,13 +756,33 @@
         }
 
         /* Blockly toolbox stilini özelleştir */
+        /* Flyout'un workspace'i itmemesi için absolute positioning */
         .blocklyToolboxDiv {
             background-color: rgba(255, 255, 255, 0.95) !important;
             border-right: 2px solid #E8E8E8 !important;
+            position: absolute !important;
+            z-index: 40 !important;
         }
 
         .blocklyFlyout {
-            fill: #f9f9f9 !important;
+            fill: #EFEFEF !important;
+        }
+
+        /* Workspace her zaman flyout genişliği kadar sola doğru offset'lensin
+           Bu sayede flyout açılıp kapanınca bloklar kaymaz */
+        .blocklyWorkspace {
+            /* Flyout genişliği + biraz boşluk için sabit margin */
+            margin-left: 210px !important;
+        }
+
+        /* Flyout background'ı da overlay yap */
+        .blocklyFlyoutBackground {
+            fill: rgba(239, 239, 239, 0.98) !important;
+        }
+
+        /* Blockly flyout SVG'sini workspace'in üstüne overlay yap */
+        .blocklySvg>g.blocklyFlyout {
+            z-index: 35;
         }
 
         /* Number Panel Popup */
@@ -685,6 +921,20 @@
             color: white;
             min-width: 80px;
             text-align: center;
+        }
+
+        /* Fix Number Field Alignment - Targeted via JS Class */
+        .number-field-styled>rect {
+            fill: white !important;
+            stroke: none !important;
+            rx: 12px;
+            ry: 12px;
+        }
+
+        .number-field-styled>text {
+            fill: #4C97FF !important;
+            font-weight: bold !important;
+            dominant-baseline: central !important;
         }
 
         .angle-markers {
@@ -834,10 +1084,121 @@
             background: #3A7FDF;
         }
 
-        /* Blockly styling */
+        .copy-btn:hover {
+            background: #3A7FDF;
+        }
+
+        /* Reset Modal Styling */
+        .reset-modal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reset-modal.active {
+            display: flex;
+        }
+
+        .reset-modal-content {
+            background-color: #ffffff;
+            margin: auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 420px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            color: #333333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            border: 1px solid #e0e0e0;
+        }
+
+        .reset-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .reset-modal-header svg {
+            stroke: #4C97FF;
+        }
+
+        .reset-modal-body ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 30px;
+            color: #555555;
+            font-size: 15px;
+            line-height: 2;
+        }
+
+        .reset-modal-body ul li {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .reset-modal-body ul li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #4C97FF;
+            font-weight: bold;
+        }
+
+        .reset-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .reset-modal-btn {
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .reset-modal-btn.cancel {
+            background-color: #f5f5f5;
+            color: #666666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .reset-modal-btn.cancel:hover {
+            background-color: #eeeeee;
+            border-color: #cccccc;
+        }
+
+        .reset-modal-btn.confirm {
+            background-color: #4C97FF;
+            color: #ffffff;
+        }
+
+        .reset-modal-btn.confirm:hover {
+            background-color: #3A7FDF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 151, 255, 0.3);
+        }
+
         .blocklyMainBackground {
             stroke: none !important;
-            fill: #FFFFFF !important;
+            fill: #FAFAFA !important;
         }
 
         .blocklyToolboxDiv {
@@ -846,8 +1207,11 @@
         }
 
         .blocklyFlyoutBackground {
-            fill: #F9F9F9 !important;
-            fill-opacity: 0.95 !important;
+            fill: #EFEFEF !important;
+            fill-opacity: 0.98 !important;
+            stroke: #e0e0e0 !important;
+            stroke-width: 1 !important;
+            filter: drop-shadow(4px 0 8px rgba(0, 0, 0, 0.08)) !important;
         }
 
         .blocklyPath {
@@ -888,6 +1252,27 @@
         <div class="top-bar">
             <div class="logo">BlockCode</div>
             <div style="display: flex; gap: 10px;">
+                <button class="tool-btn-small" onclick="toggleLanguage()" id="langBtn" title="Dil / Language"
+                    style="font-weight: bold; font-size: 14px;">TR</button>
+                <div style="width: 1px; background: #e0e0e0; margin: 0 5px;"></div>
+                <input type="file" id="importInput" style="display: none;" onchange="importWorkspace(this)"
+                    accept=".xml">
+                <button class="tool-btn-small" onclick="document.getElementById('importInput').click()"
+                    title="İçe Aktar (Import)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                </button>
+                <button class="tool-btn-small" onclick="exportWorkspace()" title="Dışa Aktar (Export)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </button>
+                <div style="width: 1px; background: #e0e0e0; margin: 0 5px;"></div>
                 <button class="reset-btn" onclick="resetEverything()" title="Sıfırla">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
@@ -897,8 +1282,9 @@
                     </svg>
                 </button>
                 <button class="play-btn" onclick="runCode()" title="Kodu Çalıştır">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M8 5v14l11-7z" />
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z" fill="#4CC970" stroke="#FFFFFF"
+                            stroke-width="1.5" />
                     </svg>
                 </button>
             </div>
@@ -938,6 +1324,14 @@
                         <line x1="15" y1="9" x2="9" y2="15"></line>
                     </svg>
                 </button>
+                <button class="tool-btn" id="actionButtonToggle" onclick="toggleActionButtonBlocks()"
+                    title="Tuş Kontrol">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Üçgen ikonu -->
+                        <path d="M12 3L20 20H4L12 3Z"></path>
+                    </svg>
+                </button>
                 <button class="tool-btn" id="operatorToggle" onclick="toggleOperatorBlocks()" title="Operatörler">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -964,12 +1358,51 @@
 
             <!-- RGB Control Panel -->
             <div class="rgb-control-panel">
-                <div class="rgb-led red" id="rgbRedLed" title="Kırmızı LED"></div>
-                <div class="rgb-led green" id="rgbGreenLed" title="Yeşil LED"></div>
-                <div class="rgb-led blue" id="rgbBlueLed" title="Mavi LED"></div>
-                <div class="rgb-number-box red" id="rgbRedNum">0</div>
-                <div class="rgb-number-box green" id="rgbGreenNum">0</div>
-                <div class="rgb-number-box blue" id="rgbBlueNum">0</div>
+                <div class="rgb-group">
+                    <div class="rgb-group-items">
+                        <div class="rgb-led red" id="rgbRedLed" title="Kırmızı LED"></div>
+                        <div class="rgb-led green" id="rgbGreenLed" title="Yeşil LED"></div>
+                        <div class="rgb-led blue" id="rgbBlueLed" title="Mavi LED"></div>
+                    </div>
+                    <span class="rgb-group-label" id="panelLedsLabel">LEDs</span>
+                </div>
+
+                <div class="rgb-panel-separator"></div>
+
+                <div class="rgb-group">
+                    <div class="rgb-group-items">
+                        <div class="rgb-number-box red" id="rgbRedNum">0</div>
+                        <div class="rgb-number-box green" id="rgbGreenNum">0</div>
+                        <div class="rgb-number-box blue" id="rgbBlueNum">0</div>
+                    </div>
+                    <span class="rgb-group-label" id="panelNumbersLabel">Numbers</span>
+                </div>
+
+                <div class="rgb-panel-separator"></div>
+
+                <div class="rgb-group">
+                    <div class="rgb-group-items">
+                        <svg id="rgbRedBtn" class="rgb-triangle-btn red" viewBox="0 0 44 44"
+                            onmousedown="handleBtnDown('red')" onmouseup="handleBtnUp('red')"
+                            onmouseleave="handleBtnUp('red')" ontouchstart="handleBtnDown('red')"
+                            ontouchend="handleBtnUp('red')">
+                            <polygon points="22,4 4,40 40,40"></polygon>
+                        </svg>
+                        <svg id="rgbGreenBtn" class="rgb-triangle-btn green" viewBox="0 0 44 44"
+                            onmousedown="handleBtnDown('green')" onmouseup="handleBtnUp('green')"
+                            onmouseleave="handleBtnUp('green')" ontouchstart="handleBtnDown('green')"
+                            ontouchend="handleBtnUp('green')">
+                            <polygon points="22,4 4,40 40,40"></polygon>
+                        </svg>
+                        <svg id="rgbBlueBtn" class="rgb-triangle-btn blue" viewBox="0 0 44 44"
+                            onmousedown="handleBtnDown('blue')" onmouseup="handleBtnUp('blue')"
+                            onmouseleave="handleBtnUp('blue')" ontouchstart="handleBtnDown('blue')"
+                            ontouchend="handleBtnUp('blue')">
+                            <polygon points="22,4 4,40 40,40"></polygon>
+                        </svg>
+                    </div>
+                    <span class="rgb-group-label" id="panelButtonsLabel">Buttons</span>
+                </div>
             </div>
         </div>
 
@@ -980,31 +1413,129 @@
             </button>
         </div>
 
-        <!-- Blok silme butonu -->
+        <!-- Blok işlem butonları (sağ alt) -->
         <div class="delete-block-overlay" id="deleteBlockOverlay">
-            <button class="delete-block-btn" onclick="deleteSelectedBlock()">
-                🗑️ Bloğu Sil
+            <button class="block-action-btn" id="duplicateBlockBtn" onclick="duplicateSelectedBlock()" title="Kopyala">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="#FFFFFF">
+                    <path
+                        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                </svg>
+            </button>
+            <button class="block-action-btn delete" id="deleteBlockBtn" onclick="deleteSelectedBlock()" title="Sil">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="#FFFFFF">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                </svg>
             </button>
         </div>
 
         <!-- Controller Display Panel - Kompakt -->
-        <div class="controller-display" id="controllerDisplay">
-            <div class="controller-levers">
-                <!-- Sol Kol -->
-                <div class="lever-container">
-                    <div class="lever-label-mini">L</div>
-                    <div class="lever-bar">
-                        <div class="lever-bar-fill left" id="leftLeverFill"></div>
-                    </div>
-                    <div class="lever-value-mini" id="leftLeverValue">50%</div>
+        <div class="displays-container">
+            <div class="controller-display" id="controllerDisplay">
+                <div class="controller-header" id="controllerHeader">Controller</div>
+                <!-- Pil göstergesi -->
+                <div id="controllerBatteryInfo"
+                    style="position: absolute; top: 38px; right: 10px; font-size: 11px; color: #37b24d; font-family: monospace; display: flex; align-items: center; gap: 3px;">
+                    <svg width="18" height="12" viewBox="0 0 24 14" fill="none" stroke="currentColor"
+                        stroke-width="1.5">
+                        <rect x="1" y="1" width="18" height="12" rx="2" ry="2"></rect>
+                        <rect x="19" y="4" width="3" height="6" rx="1" ry="1" fill="currentColor"></rect>
+                        <rect id="controllerBatteryFill" x="3" y="3" width="14" height="8" rx="1" ry="1"
+                            fill="currentColor" opacity="0.7"></rect>
+                    </svg>
+                    <span id="controllerBatteryPercent">--%</span>
                 </div>
-                <!-- Sağ Kol -->
-                <div class="lever-container">
-                    <div class="lever-label-mini">R</div>
-                    <div class="lever-bar">
-                        <div class="lever-bar-fill right" id="rightLeverFill"></div>
+                <div class="controller-levers">
+                    <!-- Sol Kol -->
+                    <div class="lever-container">
+                        <div class="lever-label-mini">L</div>
+                        <div class="lever-bar">
+                            <div class="lever-bar-fill left" id="leftLeverFill"></div>
+                        </div>
+                        <div class="lever-value-mini" id="leftLeverValue">50%</div>
                     </div>
-                    <div class="lever-value-mini" id="rightLeverValue">50%</div>
+                    <!-- Sağ Kol -->
+                    <div class="lever-container">
+                        <div class="lever-label-mini">R</div>
+                        <div class="lever-bar">
+                            <div class="lever-bar-fill right" id="rightLeverFill"></div>
+                        </div>
+                        <div class="lever-value-mini" id="rightLeverValue">50%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="motor-display" id="motorDisplay">
+                <div class="controller-header" id="motorHeader">Single Motor</div>
+                <!-- Pil göstergesi -->
+                <div id="motorBatteryInfo"
+                    style="position: absolute; top: 38px; right: 10px; font-size: 11px; color: #37b24d; font-family: monospace; display: flex; align-items: center; gap: 3px;">
+                    <svg width="18" height="12" viewBox="0 0 24 14" fill="none" stroke="currentColor"
+                        stroke-width="1.5">
+                        <!-- Pil gövdesi -->
+                        <rect x="1" y="1" width="18" height="12" rx="2" ry="2"></rect>
+                        <!-- Pil başı -->
+                        <rect x="19" y="4" width="3" height="6" rx="1" ry="1" fill="currentColor"></rect>
+                        <!-- Doluluk göstergesi (JavaScript ile genişliği ayarlanacak) -->
+                        <rect id="motorBatteryFill" x="3" y="3" width="14" height="8" rx="1" ry="1" fill="currentColor"
+                            opacity="0.7"></rect>
+                    </svg>
+                    <span id="motorBatteryPercent">--%</span>
+                </div>
+                <div style="position: relative; width: 100px; height: 104px; margin: 15px auto;">
+                    <img src="single-motor-body.png" style="width: 100%; height: 100%; object-fit: contain;">
+                    <img id="motorShaft" src="single-motor-shaft.png"
+                        style="position: absolute; top: 12px; left: 0; width: 100%; height: 80%; object-fit: contain; transition: transform 0.1s linear;">
+                </div>
+                <div id="motorAngleInfo"
+                    style="text-align: center; color: #666; font-size: 12px; margin-bottom: 10px; font-weight: bold; font-family: monospace;">
+                    0°</div>
+            </div>
+        </div>
+
+        <!-- Custom Reset Modal -->
+        <div id="resetModal" class="reset-modal">
+            <div class="reset-modal-content">
+                <div class="reset-modal-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                        <path d="M21 3v5h-5" />
+                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                        <path d="M3 21v-5h5" />
+                    </svg>
+                    <span id="resetModalTitle">Her şeyi sıfırlamak istediğinize emin misiniz?</span>
+                </div>
+                <div class="reset-modal-body">
+                    <ul id="resetModalList">
+                        <!-- List items will be populated by JS -->
+                    </ul>
+                </div>
+                <div class="reset-modal-footer">
+                    <button class="reset-modal-btn cancel" id="resetModalCancelBtn"
+                        onclick="closeResetModal()">İptal</button>
+                    <button class="reset-modal-btn confirm" id="resetModalConfirmBtn"
+                        onclick="performReset()">Sıfırla</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Device Remove Confirmation Modal -->
+        <div id="removeDeviceModal" class="reset-modal">
+            <div class="reset-modal-content" style="width: 380px;">
+                <div class="reset-modal-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18" />
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                    <span id="removeDeviceModalTitle">Bu cihazı kaldırmak istediğinize emin misiniz?</span>
+                </div>
+                <div class="reset-modal-footer">
+                    <button class="reset-modal-btn cancel" id="removeDeviceCancelBtn"
+                        onclick="closeRemoveDeviceModal()">İptal</button>
+                    <button class="reset-modal-btn confirm" id="removeDeviceConfirmBtn"
+                        style="background-color: #FF4466;" onclick="confirmRemoveDevice()">Kaldır</button>
                 </div>
             </div>
         </div>
@@ -1069,13 +1600,17 @@
     <div class="code-modal" id="deviceModal">
         <div class="code-content" style="max-width: 800px;">
             <div class="code-header">
-                <h2>📱 Bluetooth Cihaz Yönetimi</h2>
+                <h2 id="deviceModalTitle">📱 Bluetooth Cihaz Yönetimi</h2>
                 <button class="close-btn" onclick="closeDeviceModal()">×</button>
             </div>
 
             <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <button class="copy-btn" onclick="scanAndConnect()" style="flex: 1; margin: 0;">
+                <button class="copy-btn" id="scanDeviceBtn" onclick="scanAndConnect()" style="flex: 1.3; margin: 0;">
                     🔍 Yeni Cihaz Ara & Bağlan
+                </button>
+                <button class="copy-btn" id="addSpecificBtn" onclick="openSpecificDeviceModal()"
+                    style="flex: 1; margin: 0; background-color: #6C5CE7; color: white;">
+                    ➕ Özel Cihaz Ekle
                 </button>
             </div>
 
@@ -1084,15 +1619,18 @@
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: #4C97FF; color: white;">
-                            <th style="padding: 12px; text-align: left; font-size: 14px;">Cihaz Adı</th>
-                            <th style="padding: 12px; text-align: left; font-size: 14px;">Cihaz ID</th>
-                            <th style="padding: 12px; text-align: center; font-size: 14px;">Durum</th>
-                            <th style="padding: 12px; text-align: center; font-size: 14px;">İşlem</th>
+                            <th id="thDeviceName" style="padding: 12px; text-align: left; font-size: 14px;">Cihaz Adı
+                            </th>
+                            <th id="thDeviceId" style="padding: 12px; text-align: left; font-size: 14px;">Cihaz ID</th>
+                            <th id="thDeviceStatus" style="padding: 12px; text-align: center; font-size: 14px;">Durum
+                            </th>
+                            <th id="thDeviceAction" style="padding: 12px; text-align: center; font-size: 14px;">İşlem
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="devicesTableBody">
                         <tr>
-                            <td colspan="4" style="padding: 30px; text-align: center; color: #999;">
+                            <td id="noDeviceMsg" colspan="4" style="padding: 30px; text-align: center; color: #999;">
                                 Henüz bağlı cihaz yok. "Yeni Cihaz Ara & Bağlan" butonuna tıklayın.
                             </td>
                         </tr>
@@ -1104,13 +1642,33 @@
                 style="display: none; background: #f0f0f0; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px;">
                 🔍 Tarama yapılıyor...
             </div>
+        </div>
+    </div>
 
-            <div style="padding: 15px; background: #FFF3CD; border-radius: 8px; border: 2px solid #FFC107;">
-                <p style="margin: 0; font-size: 13px;">
-                    <strong>ℹ️ Not:</strong> Bu özellik sadece <strong>Chrome, Edge, Opera</strong> tarayıcılarında
-                    çalışır.
-                    HTTPS bağlantısı veya localhost gereklidir.
-                </p>
+    <!-- Specific Device Selection Modal -->
+    <div class="code-modal" id="specificDeviceModal" style="z-index: 10000;">
+        <div class="code-content" style="max-width: 500px; z-index: 10001;">
+            <div class="code-header">
+                <h2 id="specificModalTitle">Cihaz Tipi Seçin</h2>
+                <button class="close-btn" onclick="closeSpecificDeviceModal()">×</button>
+            </div>
+            <div style="display: flex; gap: 20px; padding: 20px; justify-content: center;">
+                <div onclick="scanSpecificDevice('controller')"
+                    style="cursor: pointer; padding: 20px; border: 2px solid #ddd; border-radius: 12px; text-align: center; flex: 1; transition: all 0.2s; background: white;"
+                    onmouseover="this.style.background='#f5f5f5'; this.style.borderColor='#4C97FF'"
+                    onmouseout="this.style.background='white'; this.style.borderColor='#ddd'">
+                    <img src="controller.png" alt="Controller"
+                        style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
+                    <div id="specificLabelController" style="font-weight: bold; font-size: 16px;">Controller</div>
+                </div>
+                <div onclick="scanSpecificDevice('single_motor')"
+                    style="cursor: pointer; padding: 20px; border: 2px solid #ddd; border-radius: 12px; text-align: center; flex: 1; transition: all 0.2s; background: white;"
+                    onmouseover="this.style.background='#f5f5f5'; this.style.borderColor='#4C97FF'"
+                    onmouseout="this.style.background='white'; this.style.borderColor='#ddd'">
+                    <img src="single-motor.png" alt="Single Motor"
+                        style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
+                    <div id="specificLabelSingleMotor" style="font-weight: bold; font-size: 16px;">Single Motor</div>
+                </div>
             </div>
         </div>
     </div>
@@ -1147,8 +1705,71 @@
             left: 'RELEASED',  // UP, DOWN, RELEASED
             right: 'RELEASED',
             leftValue: 0,
-            rightValue: 0
+            rightValue: 0,
+            leftPercent: 50,   // 0-100 arası yüzdelik değer
+            rightPercent: 50   // 0-100 arası yüzdelik değer
         };
+
+        // Motor state tracking (PCAP analizinden: Index 8-9 = anlık açı, Index 13-14 = hedef açı)
+        let motorState = {
+            currentAngle: 0,      // Anlık motor açısı (derece)
+            targetAngle: 0,       // Hedef açı
+            mode: 0,              // Mode byte (0x00=idle, 0x01=moving, 0x07=holding)
+            isMoving: false,      // Motor hareket halinde mi
+            deviceId: null        // Hangi cihaza ait
+        };
+
+        // Motor monitoring değişkenleri
+        let motorMonitoringActive = false;
+        let activeMotorDevice = null;
+        let activeMotorCharacteristic = null;
+        let motorLastVisualUpdate = 0;
+        const MOTOR_VISUAL_UPDATE_INTERVAL = 50; // 50ms'de bir güncelle (daha akıcı animasyon)
+
+        // --- ICONS (Simple White SVGs) ---
+        const ICON_START = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMTQuNCA2TDE0IDRINXYxN2gydi03aDUuNmwuNCAyaDdWNnoiIGZpbGw9IiM0Q0M5NzAiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48L3N2Zz4='; // Green Flag with white outline
+        const ICON_BOLT = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNNyAydjExaDN2OWw3LTEyaC00bDQtOHoiLz48L3N2Zz4=';
+        const ICON_MSG_IN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMjAgNEg0Yy0xLjEgMC0xLjk5LjktMS45OSAyTDIgMThjMCAxLjEuOSAyIDIgMmgxNmMxLjEgMCAyLS45IDItMlY2YzAtMS4xLS45LTItMi0yem0wIDRsLTggNS04LTVWNmw4IDUgOC01djJ6Ii8+PC9zdmc+';
+        const ICON_MSG_OUT = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNOSAxNmg2di02aDRsLTctNy03IDdoNHptLTQgMmgxNHYySDV6Ii8+PC9zdmc+';
+        const ICON_CLOCK = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptMCAxOGMtNC40MSAwLTgtMy41OS04LThzMy41OS04IDgtOHw4IDMuNTkgOCA4LTMuNTkgOC04IDh6bS41LTExSDExdjZsNS4yIDMuMi44LTEuMy00LjUtMi41ek03IDEyYzAgMi43NiAyLjI0IDUgNSA1czUtMi4yNCA1LTVIN3oiLz48L3N2Zz4='; // Hand/Stop-like icon (using a simplified pause/stop metaphor or just keeping clock but trying to make it look like "duration" or "stop"). Actually user asked for "durma veya stop", so let's use a Hand (Pause/Stop) icon.
+        // Better "Stop"/"Hand" icon for Wait:
+        const ICON_STOP_HAND = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptLTEgMTRoLTJ2LTZoMnY2em00IDBoLTJ2LTZoMnY2eiIvPjwvc3ZnPg=='; // Pause/Stop circle
+
+        const ICON_LOOP = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNNy41IDE4QTMuNSAzLjUgMCAwIDEgNCAxNC41VjUuNWw0LjIgMi44YTMuNSAzLjUgMCAwIDEgNC4yIDIuOGw2LTUuNkEzLjUgMy41IDAgMCAwIDIwIDUuNUgxNlYyaC0ydjZIMjJ2LTJtLTIgMTMuMkEzLjUgMy41IDAgMCAwIDE2IDE4LjVIMjJWMjJoLTJ2LTZIMTZ2MiIvPjwvc3ZnPg=='; // Trying to find a visually simpler "refresh" or "repeat" icon. Let's use standard Material refresh.
+        const ICON_REFRESH = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMTcuNjUgNi4zNUMxNi4yIDQuOSAxNC4yMSA0IDEyIDRjLTQuNDIgMC03Ljk5IDMuNTgtNy45OSA4czMuNTcgOCA3Ljk5IDhjMy43MyAwIDYuODQtMi41NSA3LjczLTYtMmgtMi4wOGMtLjgyIDIuMzMtMy4wNCA0LTUuNjUgNC0zLjMxIDAtNi0yLjY5LTYtNnMvbS42OS02IDYtNmMgMS42NiAwIDMuMTQuNjkgNC4yMiAxLjc4TDEzIDExaDdWNWwtMi4zNSAyLjM1eiIvPjwvc3ZnPg==';
+
+        const ICON_INFINITY = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMTguNiA2LjYyYy0xLjQ0IDAtMi44LjU2LTMuNzcgMS41M0wxMiAxMC42NiA5LjE3IDguMTVjLS45Ny0uOTctMi4zMy0xLjUzLTMuNzctMS41My0yLjk0IDAtNS4zMyAyLjM4LTUuMzMyIDUuMzE1UzIuNCAxNy4yNSA1LjQgMTcuMjVjMS40NCAwIDIuOC0uNTYgMy43Ny0xLjUzTDEyIDEzLjM0bDguMDMgOC4wM2MuOTcuOTcgMi41MyAxLjUzIDMuNzcgMS41MyAyLjk0IDAgNS4zMy0yLjM5IDUuMzMtNS4zMyAwLTIuOTMtMi4zOS01LjMzLTUuMzMtNS4zM3ptMCA4LjU1Yy0uNTEgMC0xLjAxLS4yLTEuMzktLjU5TDEyIDEwLjAybDguNDEgOC40MWMtLjM4LjM5LS44OC41OS0xLjQxLjU5em0tOS45Ni05LjgyYy41MSAwIDEuMDEuMiAxLjM5LjU5TDEyIDEwLjM0bC0yLjI5IDIuMjlMOC42NCA5LjY1Yy0uMzgtLjM5LS44OS0uNTktMS40MS0uNTktMS45NiAwLTMuNTUgMS41OS0zLjU1IDMuNTUgMCAxLjk2IDEuNTkgMy41NSAzLjU1IDMuNTUuNTEgMCAxLjAxLS4yIDEuMzktLjU5bDMuMTItMy4xMi01LjEzLTUuMTNjLjM4LS40Mi44OS0uNjMgMS40MS0uNjN6Ii8+PC9zdmc+';
+        const ICON_DIAMOND = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNOS4xNyA2bDItMmMyIC44MiAyLjgyIDEuNjQgNC44MyAzLjY0bDMuNjQgNC44M2MtLjgyIDItMS42NCAyLjgyLTMuNjQgNC44M2wtMiAyLTIgLTIgLTMuNjMtNC44M2MuODItMiAxLjY0LTIuODIgMy42My00Ljgzek0xMiAyTDQgMTJsOCAxMCA4LTEwTDExIDJ6Ii8+PHBhdGggZD0iTTE5IDNsLTUgNWgydi00bDQtNGg2eSgiIHRyYW5zZm9ybT0icm90YXRlKDQ1IDEyIDEyKSIvPjwvc3ZnPg=='; // Generic Diamond for Logic, replaced with a filled rhombus or similar if needed. Using a simple rhombus here:
+        const ICON_COND_TRUE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMTkgM0g1Yy0xLjEgMC0yIC45LTIgMnYxNGMwIDEuMS45IDIgMiAyaDE0YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6bTAgMTZINVY1aDE0djE0em0tNy0yaC0ydi01aDVsLTEgMWg0bC02LTZ6Ii8+PC9zdmc+'; // Placeholder if needed, but let's use a simple diamond shape for logic conditions.
+        const ICON_RHOMBUS = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMTIgMkwyIDEybDEwIDEwIDEwLTEwTDExIDJ6Ii8+PC9zdmc+';
+        const ICON_HOURGLASS = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNNiAydjZoLjAxTCA2IDguMDFWMTBsNiA2IDYgNnYybC4wMSAySDZ2NmgxMnYtNmgtLjAxTDE4IDE2di0ybC02LTYgNi02VjZMNT44di02aC0uMDFMNiAyeiIvPjwvc3ZnPg==';
+
+        // Colored Square Icons for RGB blocks (Red, Green, Blue) - No gradients, solid colors.
+        // Using slight shadow/bevel effect for "button" look if desired, or flat. User said "kare şeklinde ikonlar".
+        const ICON_SQUARE_RED = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IjBmaWxsPSIjRkYwMDAwIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSIyIiByeT0iMiIgLz48L3N2Zz4='; // #FF0000 Rounded Rect
+        const ICON_SQUARE_GREEN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IjBmaWxsPSIjMDBGRjAwIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSIyIiByeT0iMiIgLz48L3N2Zz4='; // #00FF00
+        const ICON_SQUARE_BLUE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IjBmaWxsPSIjMDAwMEZGIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSIyIiByeT0iMiIgLz48L3N2Zz4='; // #0000FF
+
+        // Updating with specific colors requested normally found in blocks (e.g. Red #FF3333, etc) or just pure RGB.
+        // Let's use darker shades to stand out on pastel blocks if necessary, or vivid standard colors.
+        // Red: #D32F2F, Green: #388E3C, Blue: #1976D2
+        const ICON_SQ_RED = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRDMyRjJGIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSI0IiByeT0iNCIgLz48L3N2Zz4=';
+        const ICON_SQ_GREEN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjMzg4RTNDIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSI0IiByeT0iNCIgLz48L3N2Zz4=';
+        const ICON_SQ_BLUE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjMTk3NkQyIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSI0IiByeT0iNCIgLz48L3N2Zz4=';
+
+        // Solid Colored Circle Icons (Red, Green, Blue) - No gradient
+        const ICON_CIRCLE_RED = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkYwMDAwIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI4IiAvPjwvc3ZnPg==';
+        const ICON_CIRCLE_GREEN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjMDBGRjAwIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI4IiAvPjwvc3ZnPg==';
+        const ICON_CIRCLE_BLUE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjMDAwMEZGIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI4IiAvPjwvc3ZnPg==';
+
+        // Using specific darker shades if preferred for better contrast on blocks
+        const ICON_CIRC_RED = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRDMyRjJGIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI3IiAvPjwvc3ZnPg==';
+        const ICON_CIRC_GREEN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjMzg4RTNDIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI3IiAvPjwvc3ZnPg==';
+        const ICON_CIRC_BLUE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjMTk3NkQyIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI3IiAvPjwvc3ZnPg==';
+        // White circle for "Off" state (same size as On state)
+        const ICON_CIRC_WHITE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI3IiAvPjwvc3ZnPg==';
+
+
         let controllerMonitoring = null;  // Interval ID for monitoring
         let activeControllerDevice = null; // Aktif controller cihazı
         let activeControllerCharacteristic = null; // DEBUG için
@@ -1162,28 +1783,473 @@
                 console.log('❌ activeControllerCharacteristic yok!');
                 return;
             }
+        };
 
-            console.log('✓ Characteristic var:', activeControllerCharacteristic.uuid);
-
-            // Read dene
-            if (activeControllerCharacteristic.properties.read) {
-                try {
-                    const value = await activeControllerCharacteristic.readValue();
-                    const bytes = [];
-                    for (let i = 0; i < value.byteLength; i++) {
-                        bytes.push(value.getUint8(i));
-                    }
-                    console.log('✓ Read başarılı:', bytes.join(', '));
-                } catch (e) {
-                    console.log('❌ Read hatası:', e.message);
+        // --- VISUAL FIXES ---
+        // Safely style Number Fields without breaking Dropdowns
+        if (typeof Blockly !== 'undefined') {
+            // 1. Add a specific class to Number Fields during initialization
+            const originalInitView = Blockly.FieldNumber.prototype.initView;
+            Blockly.FieldNumber.prototype.initView = function () {
+                originalInitView.call(this);
+                if (this.fieldGroup_) {
+                    Blockly.utils.dom.addClass(this.fieldGroup_, 'number-field-styled');
                 }
-            } else {
-                console.log('⚠️ Read desteklenmiyor');
+            };
+
+            // 2. Add padding to single digits to make them look like circles/pills
+            const originalGetText = Blockly.FieldNumber.prototype.getText;
+            Blockly.FieldNumber.prototype.getText = function () {
+                const text = originalGetText.call(this);
+                if (text && text.length === 1) {
+                    return ' ' + text + ' '; // Add spaces for visual centering
+                }
+                return text;
+            };
+        }
+
+        // --- LANGUAGE SUPPORT ---
+        let currentLanguage = 'tr';
+
+        const TRANSLATIONS = {
+            tr: {
+                lang: "TR",
+                import: "İçe Aktar (Import)",
+                export: "Dışa Aktar (Export)",
+                reset: "Sıfırla",
+                run: "Kodu Çalıştır",
+                add_device: "Cihaz Ekle",
+
+                start_tooltip: "Başlangıç",
+                control_tooltip: "Kontrol",
+                led_tooltip: "LED Kontrol",
+                num_tooltip: "Sayı Kontrol",
+                btn_tooltip: "Tuş Kontrol",
+                op_tooltip: "Operatörler",
+                zoom_in: "Yakınlaştır",
+                zoom_out: "Uzaklaştır",
+                reset_view: "Görünümü Ortala",
+
+                block_random_pre: " rastgele sayı  ",
+                block_random_mid: " ile ",
+                delete_block: "Bloğu Sil",
+
+                modal_reset_title: "Her şeyi sıfırlamak istediğinize emin misiniz?",
+                modal_reset_list: "RGB paneli sıfırlanacak|Tüm LED'ler sönecek|Sayı değerleri 0 olacak|Cihazlar bağlı kalacak",
+                btn_cancel: "İptal",
+                btn_reset: "Sıfırla",
+
+                block_wait_pre: "⏱️ ",
+                block_wait_post: " saniye bekle  ",
+                block_repeat_pre: "🔄 ",
+                block_repeat_post: " kez tekrarla  ",
+                block_forever: "♾️ sürekli tekrarla  ",
+                block_if: "🔶 eğer",
+                block_then: "ise  ",
+                block_then: "ise  ",
+                block_else: "değilse  ",
+                block_wait_until_pre: "⏳ ",
+                block_start: "play tıklandığında  ",
+
+                block_wait_pre: " ",
+                block_wait_post: " saniye bekle  ",
+                block_repeat_pre: " ",
+                block_repeat_post: " kez tekrarla  ",
+                block_forever: " sürekli tekrarla  ",
+                block_if: " eğer",
+                block_then: "ise  ",
+                block_then: "ise  ",
+                block_else: "değilse  ",
+                block_wait_until_pre: " ",
+                block_wait_until_post: " olana kadar bekle  ",
+                block_repeat_until_pre: " ",
+                block_repeat_until_post: " olana kadar tekrarla  ",
+
+                block_when_pre: "olduğunda  ",
+                block_when_post: "  ",
+                block_message_pre: "alındığında  ",
+                block_message_post: "  ",
+                block_send_mobile_pre: "gönder  ",
+                block_send_mobile_post: "  ",
+
+                block_light_get_pre: " ",
+                block_light_get_post: " ışık getir  ",
+
+                block_red_light_on: "  kırmızı ışık yak    ",
+                block_red_light_off: "  kırmızı ışık söndür    ",
+                block_green_light_on: "  yeşil ışık yak    ",
+                block_green_light_off: "  yeşil ışık söndür    ",
+                block_blue_light_on: "  mavi ışık yak    ",
+                block_blue_light_off: "  mavi ışık söndür    ",
+
+                block_red_num: "  kırmızı sayı yap  ",
+                block_green_num: "  yeşil sayı yap  ",
+                block_blue_num: "  mavi sayı yap  ",
+                block_red_get: "  kırmızı sayı öğren  ",
+                block_green_get: "  yeşil sayı öğren  ",
+                block_blue_get: "  mavi sayı öğren  ",
+
+                block_rgb_red_btn_get: " tuş getir  ",
+                block_rgb_green_btn_get: " tuş getir  ",
+                block_rgb_blue_btn_get: " tuş getir  ",
+
+                block_logic_and: " ve ",
+                block_logic_or: " veya ",
+                block_logic_not: "değil ",
+
+                panel_leds: "LEDler",
+                panel_numbers: "Sayılar",
+                panel_buttons: "Butonlar",
+
+                confirm_reset: "Her şeyi sıfırlamak istediğinize emin misiniz?", // Deprecated but kept for safety
+                alert_no_play: "❌ Play bloğu bulunamadı!\n\n\"🚩 play tıklandığında\" bloğunu ekleyin.",
+                alert_stopped: "⏹️ Durduruldu!",
+                alert_import_error: "Dosya yüklenirken bir hata oluştu! Geçerli bir XML dosyası seçtiğinizden emin olun.",
+                alert_export_error: "Dışa aktarma sırasında bir hata oluştu!",
+                confirm_import: "Mevcut çalışma alanı temizlenip, dosya yüklensin mi?\n(İptal derseniz mevcut blokların üzerine eklenir)",
+
+                scan_btn: "🔍 Yeni Cihaz Ara & Bağlan",
+                tbl_name: "Cihaz Adı",
+                tbl_id: "Cihaz ID",
+                tbl_status: "Durum",
+                tbl_action: "İşlem",
+                no_device: "Henüz bağlı cihaz yok. \"Yeni Cihaz Ara & Bağlan\" butonuna tıklayın.",
+                scan_status: "🔍 Tarama yapılıyor...",
+                status_connected: "Bağlı",
+                status_disconnected: "Kesildi",
+                btn_remove: "Kaldır",
+                confirm_remove_device: "Bu cihazı kaldırmak istediğinize emin misiniz?",
+                connecting_to: "📱 Bağlanıyor:",
+                connected_to: "✅ Bağlandı:",
+                device_added: "✅ Cihaz eklendi!",
+                unknown_device: "Bilinmeyen",
+                device_list_opening: "🔍 Cihaz listesi açılıyor...",
+                modal_title: "📱 Bluetooth Cihaz Yönetimi",
+                add_specific_btn: "➕ Özel Cihaz Ekle",
+                specific_modal_title: "Cihaz Tipi Seçin",
+                specific_type_controller: "Controller",
+                specific_type_single_motor: "Single Motor"
+            },
+            en: {
+                lang: "EN",
+                import: "Import",
+                export: "Export",
+                reset: "Reset",
+                run: "Run Code",
+                add_device: "Add Device",
+
+                start_tooltip: "Start",
+                control_tooltip: "Control",
+                led_tooltip: "LED Control",
+                num_tooltip: "Number Control",
+                btn_tooltip: "Button Control",
+                op_tooltip: "Operators",
+                zoom_in: "Zoom In",
+                zoom_out: "Zoom Out",
+                reset_view: "Reset View",
+
+                block_random_pre: " pick random  ",
+                block_random_mid: " to ",
+                delete_block: "Delete Block",
+
+                modal_reset_title: "Are you sure you want to reset everything?",
+                modal_reset_list: "RGB panel will be reset|All LEDs will turn off|Number values will be 0|Devices will stay connected",
+                btn_cancel: "Cancel",
+                btn_reset: "Reset",
+
+                block_start: "when play clicked  ",
+
+                block_wait_pre: " wait ",
+                block_wait_post: " seconds  ",
+                block_repeat_pre: " repeat ",
+                block_repeat_post: " times  ",
+                block_forever: " repeat forever  ",
+                block_if: " if",
+                block_then: "then  ",
+                block_then: "then  ",
+                block_else: "else  ",
+                block_wait_until_pre: " wait until ",
+                block_wait_until_post: "  ",
+                block_repeat_until_pre: " repeat until ",
+                block_repeat_until_post: "  ",
+
+                block_when_pre: "when ",
+                block_when_post: "  ",
+                block_message_pre: "when ",
+                block_message_post: " received  ",
+                block_send_mobile_pre: "send ",
+                block_send_mobile_post: "  ",
+
+                block_light_get_pre: " ",
+                block_light_get_post: " get light  ",
+
+                block_red_light_on: "  turn red light on    ",
+                block_red_light_off: "  turn red light off    ",
+                block_green_light_on: "  turn green light on    ",
+                block_green_light_off: "  turn green light off    ",
+                block_blue_light_on: "  turn blue light on    ",
+                block_blue_light_off: "  turn blue light off    ",
+
+                block_red_num: "  set red number to  ",
+                block_green_num: "  set green number to  ",
+                block_blue_num: "  set blue number to  ",
+                block_red_get: "  get red number  ",
+                block_green_get: "  get green number  ",
+                block_blue_get: "  get blue number  ",
+
+                block_rgb_red_btn_get: " get button  ",
+                block_rgb_green_btn_get: " get button  ",
+                block_rgb_blue_btn_get: " get button  ",
+
+                block_logic_and: " and ",
+                block_logic_or: " or ",
+                block_logic_not: "not ",
+
+                panel_leds: "LEDs",
+                panel_numbers: "Numbers",
+                panel_buttons: "Buttons",
+
+                confirm_reset: "🔄 Are you sure you want to reset everything?\n\n• RGB panel will be reset\n• All LEDs will turn off\n• Number values will be 0\n• Devices will stay connected",
+                alert_no_play: "❌ Play block not found!\n\nAdd \"🚩 when play clicked\" block.",
+                alert_stopped: "⏹️ Stopped!",
+                alert_import_error: "Error loading file! Make sure you selected a valid XML file.",
+                alert_export_error: "Error exporting workspace!",
+                confirm_import: "Clear current workspace before loading?\n(Cancel to append to existing blocks)",
+
+                scan_btn: "🔍 Scan & Connect New Device",
+                tbl_name: "Device Name",
+                tbl_id: "Device ID",
+                tbl_status: "Status",
+                tbl_action: "Action",
+                no_device: "No connected devices. Click \"Scan & Connect New Device\".",
+                scan_status: "🔍 Scanning...",
+                status_connected: "Online",
+                status_disconnected: "Offline",
+                btn_remove: "Remove",
+                confirm_remove_device: "Are you sure you want to remove this device?",
+                connecting_to: "📱 Connecting:",
+                connected_to: "✅ Connected:",
+                device_added: "✅ Device added!",
+                unknown_device: "Unknown",
+                device_list_opening: "🔍 Opening device list...",
+                modal_title: "📱 Bluetooth Device Management",
+                add_specific_btn: "➕ Add Specific Device",
+                specific_modal_title: "Select Device Type",
+                specific_type_controller: "Controller",
+                specific_type_single_motor: "Single Motor"
+            }
+        };
+
+        function toggleLanguage() {
+            setLanguage(currentLanguage === 'tr' ? 'en' : 'tr');
+        }
+
+        function setLanguage(lang) {
+            if (!TRANSLATIONS[lang]) return;
+            currentLanguage = lang;
+            const t = TRANSLATIONS[lang];
+
+            const langBtn = document.getElementById('langBtn');
+            if (langBtn) langBtn.textContent = t.lang;
+
+            const addDeviceBtn = document.getElementById('addDeviceBtn');
+            if (addDeviceBtn) addDeviceBtn.title = t.add_device;
+
+            const startToggle = document.getElementById('startToggle');
+            if (startToggle) startToggle.title = t.start_tooltip;
+
+            const controlToggle = document.getElementById('controlToggle');
+            if (controlToggle) controlToggle.title = t.control_tooltip;
+
+            const actionLedToggle = document.getElementById('actionLedToggle');
+            if (actionLedToggle) actionLedToggle.title = t.led_tooltip;
+
+            const actionNumToggle = document.getElementById('actionNumToggle');
+            if (actionNumToggle) actionNumToggle.title = t.num_tooltip;
+
+            const actionButtonToggle = document.getElementById('actionButtonToggle');
+            if (actionButtonToggle) actionButtonToggle.title = t.btn_tooltip;
+
+            const operatorToggle = document.getElementById('operatorToggle');
+            if (operatorToggle) operatorToggle.title = t.op_tooltip;
+
+            const resetBtn = document.querySelector('.reset-btn');
+            if (resetBtn) resetBtn.title = t.reset;
+
+            const playBtn = document.querySelector('.play-btn');
+            if (playBtn) playBtn.title = t.run;
+
+            const importBtn = document.querySelector('button[onclick*="importInput"]');
+            if (importBtn) importBtn.title = t.import;
+
+            const exportBtn = document.querySelector('button[onclick="exportWorkspace()"]');
+            if (exportBtn) exportBtn.title = t.export;
+
+            const zoomInBtn = document.querySelector('button[onclick="zoomIn()"]');
+            if (zoomInBtn) zoomInBtn.title = t.zoom_in;
+
+            const zoomOutBtn = document.querySelector('button[onclick="zoomOut()"]');
+            if (zoomOutBtn) zoomOutBtn.title = t.zoom_out;
+
+            const resetViewBtn = document.querySelector('button[onclick="resetView()"]');
+            if (resetViewBtn) resetViewBtn.title = t.reset_view;
+
+            // Update Device Modal Texts
+            const modalTitle = document.getElementById('deviceModalTitle');
+            if (modalTitle) modalTitle.textContent = t.modal_title;
+
+            const scanBtn = document.getElementById('scanDeviceBtn');
+            if (scanBtn) scanBtn.textContent = t.scan_btn;
+
+            const thName = document.getElementById('thDeviceName');
+            if (thName) thName.textContent = t.tbl_name;
+
+            const thId = document.getElementById('thDeviceId');
+            if (thId) thId.textContent = t.tbl_id;
+
+            const thStatus = document.getElementById('thDeviceStatus');
+            if (thStatus) thStatus.textContent = t.tbl_status;
+
+            const thAction = document.getElementById('thDeviceAction');
+            if (thAction) thAction.textContent = t.tbl_action;
+
+            const noDeviceMsg = document.getElementById('noDeviceMsg');
+            if (noDeviceMsg) noDeviceMsg.textContent = t.no_device;
+
+            const scanStatus = document.getElementById('scanStatus');
+            if (scanStatus) scanStatus.textContent = t.scan_status;
+
+            // Update Remove Device Modal Translations
+            const removeDeviceTitle = document.getElementById('removeDeviceModalTitle');
+            if (removeDeviceTitle) removeDeviceTitle.textContent = t.confirm_remove_device;
+
+            const removeDeviceCancelBtn = document.getElementById('removeDeviceCancelBtn');
+            if (removeDeviceCancelBtn) removeDeviceCancelBtn.textContent = t.btn_cancel;
+
+            const removeDeviceConfirmBtn = document.getElementById('removeDeviceConfirmBtn');
+            if (removeDeviceConfirmBtn) removeDeviceConfirmBtn.textContent = t.btn_remove;
+
+            // Refresh devices table if open to update translations
+            updateDevicesTable();
+
+            // Update Reset Modal Translations
+            const resetTitle = document.getElementById('resetModalTitle');
+            if (resetTitle) resetTitle.textContent = t.modal_reset_title;
+
+            // Populate list from split string
+            const resetList = document.getElementById('resetModalList');
+            if (resetList && t.modal_reset_list) {
+                resetList.innerHTML = t.modal_reset_list.split('|').map(item => `<li>${item}</li>`).join('');
             }
 
-            // Notification durumunu kontrol et
-            console.log('Notification durumu:', activeControllerCharacteristic.properties.notify);
-        };
+            const resetCancel = document.getElementById('resetModalCancelBtn');
+            if (resetCancel) resetCancel.textContent = t.btn_cancel;
+
+            const resetConfirm = document.getElementById('resetModalConfirmBtn');
+            if (resetConfirm) resetConfirm.textContent = t.btn_reset;
+
+            const deleteBlockBtn = document.getElementById('deleteBlockBtn');
+            if (deleteBlockBtn) {
+                deleteBlockBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="#FFFFFF"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`;
+            }
+
+            // Update RGB panel labels
+            const panelLedsLabel = document.getElementById('panelLedsLabel');
+            if (panelLedsLabel) panelLedsLabel.textContent = t.panel_leds;
+
+            const panelNumbersLabel = document.getElementById('panelNumbersLabel');
+            if (panelNumbersLabel) panelNumbersLabel.textContent = t.panel_numbers;
+
+            const panelButtonsLabel = document.getElementById('panelButtonsLabel');
+            if (panelButtonsLabel) panelButtonsLabel.textContent = t.panel_buttons;
+
+            // Specific Device Modal Translations
+            const addSpecificBtn = document.getElementById('addSpecificBtn');
+            if (addSpecificBtn) addSpecificBtn.textContent = t.add_specific_btn;
+
+            const specificModalTitle = document.getElementById('specificModalTitle');
+            if (specificModalTitle) specificModalTitle.textContent = t.specific_modal_title;
+
+            const specificLabelController = document.getElementById('specificLabelController');
+            if (specificLabelController) specificLabelController.textContent = t.specific_type_controller;
+
+            const specificLabelSingleMotor = document.getElementById('specificLabelSingleMotor');
+            if (specificLabelSingleMotor) specificLabelSingleMotor.textContent = t.specific_type_single_motor;
+
+            // Update Blockly Messages
+            if (typeof Blockly !== 'undefined') {
+                Blockly.Msg.BLOCK_START = t.block_start;
+
+                Blockly.Msg.BLOCK_WAIT_PRE = t.block_wait_pre;
+                Blockly.Msg.BLOCK_WAIT_POST = t.block_wait_post;
+
+                Blockly.Msg.BLOCK_REPEAT_PRE = t.block_repeat_pre;
+                Blockly.Msg.BLOCK_REPEAT_PRE = t.block_repeat_pre;
+                Blockly.Msg.BLOCK_REPEAT_POST = t.block_repeat_post;
+
+                Blockly.Msg.BLOCK_RANDOM_PRE = t.block_random_pre;
+                Blockly.Msg.BLOCK_RANDOM_MID = t.block_random_mid;
+
+                Blockly.Msg.BLOCK_FOREVER = t.block_forever;
+                Blockly.Msg.BLOCK_IF = t.block_if;
+                Blockly.Msg.BLOCK_THEN = t.block_then;
+                Blockly.Msg.BLOCK_ELSE = t.block_else;
+
+                Blockly.Msg.BLOCK_WAIT_UNTIL_PRE = t.block_wait_until_pre;
+                Blockly.Msg.BLOCK_WAIT_UNTIL_POST = t.block_wait_until_post;
+
+                Blockly.Msg.BLOCK_REPEAT_UNTIL_PRE = t.block_repeat_until_pre;
+                Blockly.Msg.BLOCK_REPEAT_UNTIL_POST = t.block_repeat_until_post;
+
+                Blockly.Msg.BLOCK_WHEN_PRE = t.block_when_pre;
+                Blockly.Msg.BLOCK_WHEN_POST = t.block_when_post;
+                Blockly.Msg.BLOCK_MESSAGE_PRE = t.block_message_pre;
+                Blockly.Msg.BLOCK_MESSAGE_POST = t.block_message_post;
+                Blockly.Msg.BLOCK_SEND_MOBILE_PRE = t.block_send_mobile_pre;
+                Blockly.Msg.BLOCK_SEND_MOBILE_POST = t.block_send_mobile_post;
+
+                Blockly.Msg.BLOCK_LIGHT_GET_PRE = t.block_light_get_pre;
+                Blockly.Msg.BLOCK_LIGHT_GET_POST = t.block_light_get_post;
+
+                Blockly.Msg.BLOCK_RED_ON = t.block_red_light_on;
+                Blockly.Msg.BLOCK_RED_OFF = t.block_red_light_off;
+                Blockly.Msg.BLOCK_GREEN_ON = t.block_green_light_on;
+                Blockly.Msg.BLOCK_GREEN_OFF = t.block_green_light_off;
+                Blockly.Msg.BLOCK_BLUE_ON = t.block_blue_light_on;
+                Blockly.Msg.BLOCK_BLUE_OFF = t.block_blue_light_off;
+
+                Blockly.Msg.BLOCK_RED_NUM = t.block_red_num;
+                Blockly.Msg.BLOCK_GREEN_NUM = t.block_green_num;
+                Blockly.Msg.BLOCK_BLUE_NUM = t.block_blue_num;
+                Blockly.Msg.BLOCK_RED_GET = t.block_red_get;
+                Blockly.Msg.BLOCK_GREEN_GET = t.block_green_get;
+                Blockly.Msg.BLOCK_BLUE_GET = t.block_blue_get;
+
+                Blockly.Msg.BLOCK_RED_BTN_GET = t.block_rgb_red_btn_get;
+                Blockly.Msg.BLOCK_GREEN_BTN_GET = t.block_rgb_green_btn_get;
+                Blockly.Msg.BLOCK_BLUE_BTN_GET = t.block_rgb_blue_btn_get;
+
+                Blockly.Msg.BLOCK_LOGIC_AND = t.block_logic_and;
+                Blockly.Msg.BLOCK_LOGIC_OR = t.block_logic_or;
+                Blockly.Msg.BLOCK_LOGIC_NOT = t.block_logic_not;
+            }
+
+            // Refresh Toolboxes if active
+            if (typeof showStartToolbox !== 'undefined') {
+                if (currentToolboxMode === 'start') showStartToolbox();
+                else if (currentToolboxMode === 'control') showControlToolbox();
+                else if (currentToolboxMode === 'action_led') showActionLedToolbox();
+                else if (currentToolboxMode === 'action_num') showActionNumToolbox();
+                else if (currentToolboxMode === 'action_button') showActionButtonToolbox();
+                else if (currentToolboxMode === 'operator') showOperatorToolbox();
+
+                if (workspace) {
+                    const xml = Blockly.Xml.workspaceToDom(workspace);
+                    workspace.clear();
+                    Blockly.Xml.domToWorkspace(xml, workspace);
+                }
+            }
+        }
 
         function updateControllerVisual() {
             const leftValue = controllerState.leftValue;
@@ -1191,6 +2257,10 @@
 
             const leftPercent = calculateLeverPercent(leftValue);
             const rightPercent = calculateLeverPercent(rightValue);
+
+            // controllerState'e yüzdelikleri kaydet
+            controllerState.leftPercent = Math.round(leftPercent);
+            controllerState.rightPercent = Math.round(rightPercent);
 
             // Sol kol
             const leftFill = document.getElementById('leftLeverFill');
@@ -1209,10 +2279,18 @@
             }
         }
 
-        function showControllerDisplay() {
+        function showControllerDisplay(deviceName, deviceColor) {
+            // hideMotorDisplay(); // ARTIK GİZLEMİYORUZ - Side by side
             const display = document.getElementById('controllerDisplay');
+            const header = document.getElementById('controllerHeader');
+
             if (display) {
                 display.classList.add('active');
+            }
+
+            if (header) {
+                header.textContent = deviceName || 'Controller';
+                header.style.background = deviceColor || '#4C97FF';
             }
         }
 
@@ -1222,6 +2300,222 @@
                 display.classList.remove('active');
             }
         }
+
+        function showMotorDisplay(device, color) {
+            // hideControllerDisplay(); // ARTIK GİZLEMİYORUZ - Side by side
+            const display = document.getElementById('motorDisplay');
+            const header = document.getElementById('motorHeader');
+            const info = document.getElementById('motorAngleInfo');
+            const shaft = document.getElementById('motorShaft');
+
+            if (display && header) {
+                header.style.background = color || '#4ecca3';
+                header.textContent = device.name || 'Single Motor';
+                display.classList.add('active');
+
+                // Reset visual
+                if (shaft) shaft.style.transform = `rotate(0deg)`;
+                if (info) info.innerText = "0°";
+            }
+        }
+
+        function hideMotorDisplay() {
+            const display = document.getElementById('motorDisplay');
+            if (display) display.classList.remove('active');
+        }
+
+        // ===== MOTOR ANGLE MONITORING (PCAP Analizi Tabanlı) =====
+        // Motor notification verisi formatı:
+        // Payload[7] = mode byte (0x00=idle, 0x01=moving, 0x07=holding)
+        // Payload[8-9] = Anlık açı (little-endian signed 16-bit)
+        // Payload[13-14] = Hedef açı (little-endian signed 16-bit)
+
+        async function startMotorAngleMonitoring(device, notifyChar, deviceId, deviceColor) {
+            console.log('⚙️ Motor açı monitoring başlatılıyor...');
+
+            activeMotorDevice = device;
+            activeMotorCharacteristic = notifyChar;
+            motorState.deviceId = deviceId;
+            motorMonitoringActive = true;
+
+            try {
+                // Notification'ları başlat
+                await notifyChar.startNotifications();
+                console.log('✅ Motor notifications başlatıldı');
+
+                // Event listener ekle
+                notifyChar.addEventListener('characteristicvaluechanged', handleMotorNotification);
+
+                console.log('✅ Motor angle monitoring aktif!');
+
+            } catch (err) {
+                console.error('❌ Motor notification başlatma hatası:', err);
+                motorMonitoringActive = false;
+            }
+        }
+
+        function handleMotorNotification(event) {
+            const value = event.target.value;
+
+            // Minimum byte gereksinimi
+            if (value.byteLength < 4) {
+                return;
+            }
+
+            // RAW HEX DUMP (Debugging için)
+            const bytes = new Uint8Array(value.buffer);
+            const hexDump = [...bytes].map(b => b.toString(16).padStart(2, '0')).join(' ');
+
+            // İlk birkaç paketi logla
+            if (!handleMotorNotification.logCount) handleMotorNotification.logCount = 0;
+            if (handleMotorNotification.logCount < 20) {
+                console.log(`📦 Motor RAW [${value.byteLength} bytes]: ${hexDump}`);
+                handleMotorNotification.logCount++;
+            }
+
+            let currentAngle = 0;
+            let targetAngle = 0;
+            let mode = 0;
+
+            // PCAP ANALİZİ sonucu (21 byte paket):
+            // 90°:  3c 12 00 00 5a 00 0a 01 07 [5a] 00 00 00 00 5a 00 00 00 11 01 ff
+            // 240°: 3c 12 00 00 5a 00 0a 01 07 [f0] 00 00 00 00 ef 00 00 00 11 01 ff
+            // Index 9 = Mevcut açı (0x5a=90, 0xf0=240)
+            // Index 14 = Hedef açı (yaklaşık)
+            // Index 8 = Mode byte (0x07 = holding)
+
+            if (value.byteLength >= 15) {
+                // Mode byte at index 8
+                mode = value.getUint8(8);
+
+                // Açı index 9-10'da (little-endian int16 olarak deneyelim önce)
+                // Eğer 360'tan büyük değerler varsa int16 kullan
+                const angleInt16 = value.getInt16(9, true);
+                const angleUint8 = value.getUint8(9);
+
+                // 360'tan küçükse uint8, büyükse int16 kullan
+                if (Math.abs(angleInt16) > 360 && angleUint8 <= 255) {
+                    // Muhtemelen tek byte
+                    currentAngle = angleUint8;
+                } else {
+                    // int16 olarak dene
+                    currentAngle = angleInt16;
+                }
+
+                // Hedef açı index 14-15
+                if (value.byteLength >= 16) {
+                    targetAngle = value.getInt16(14, true);
+                    // Aynı mantık
+                    if (Math.abs(targetAngle) > 360) {
+                        targetAngle = value.getUint8(14);
+                    }
+                }
+            }
+            // Daha kısa paketler için fallback
+            else if (value.byteLength >= 10) {
+                currentAngle = value.getUint8(9);
+            }
+
+            // State güncelle
+            const prevAngle = motorState.currentAngle;
+            motorState.currentAngle = currentAngle;
+            motorState.targetAngle = targetAngle;
+            motorState.mode = mode;
+            motorState.isMoving = (mode === 0x01);
+
+            // Pil yüzdesini al (index 4)
+            let batteryPercent = 0;
+            if (value.byteLength >= 5) {
+                batteryPercent = value.getUint8(4);
+                // 0-100 arasına normalize et (bazı cihazlar farklı aralık kullanabilir)
+                if (batteryPercent > 100) {
+                    // Belki 0-255 aralığında, yüzdeye çevir
+                    batteryPercent = Math.round((batteryPercent / 255) * 100);
+                }
+                motorState.battery = batteryPercent;
+            }
+
+            // Görsel güncelleme (throttled)
+            const now = Date.now();
+            if (now - motorLastVisualUpdate >= MOTOR_VISUAL_UPDATE_INTERVAL) {
+                motorLastVisualUpdate = now;
+                updateMotorAngleDisplay(currentAngle);
+
+                // Pil göstergesini güncelle
+                const batteryEl = document.getElementById('motorBatteryPercent');
+                const batteryFill = document.getElementById('motorBatteryFill');
+                if (batteryEl) {
+                    batteryEl.textContent = `${batteryPercent}%`;
+
+                    // Pil doluluk göstergesini güncelle (max genişlik: 14px)
+                    if (batteryFill) {
+                        const fillWidth = Math.round((batteryPercent / 100) * 14);
+                        batteryFill.setAttribute('width', fillWidth);
+                    }
+
+                    // Pil düşükse rengi değiştir
+                    if (batteryPercent < 20) {
+                        batteryEl.parentElement.style.color = '#e03131';
+                    } else if (batteryPercent < 50) {
+                        batteryEl.parentElement.style.color = '#fab005';
+                    } else {
+                        batteryEl.parentElement.style.color = '#37b24d';
+                    }
+                }
+            }
+
+            // Debug log (sadece değişiklik varsa)
+            if (Math.abs(prevAngle - currentAngle) > 1) {
+                console.log(`⚙️ Motor: ${currentAngle}° (hedef: ${targetAngle}°, mode: 0x${mode.toString(16)})`);
+            }
+        }
+
+        function updateMotorAngleDisplay(angle) {
+            const shaft = document.getElementById('motorShaft');
+            const info = document.getElementById('motorAngleInfo');
+
+            if (shaft) {
+                // Görsel dönüş için tam açıyı kullanabiliriz (animasyon varsa düzgün döner)
+                shaft.style.transform = `rotate(${angle}deg)`;
+            }
+
+            if (info) {
+                // Metin gösterimi için 0-359 arasına normalize et
+                // ((angle % 360) + 360) % 360 formülü negatif sayıları da doğru işler
+                const normalizedAngle = Math.round(((angle % 360) + 360) % 360);
+                info.textContent = `${normalizedAngle}°`;
+            }
+        }
+
+        function stopMotorAngleMonitoring() {
+            if (activeMotorCharacteristic) {
+                try {
+                    activeMotorCharacteristic.removeEventListener('characteristicvaluechanged', handleMotorNotification);
+                    activeMotorCharacteristic.stopNotifications();
+                } catch (e) {
+                    console.log('Motor notification durdurma hatası:', e);
+                }
+            }
+
+            motorMonitoringActive = false;
+            activeMotorDevice = null;
+            activeMotorCharacteristic = null;
+            motorState.deviceId = null;
+
+            console.log('⚙️ Motor angle monitoring durduruldu');
+        }
+
+        // Motor açısını al (bloklar için)
+        function getMotorAngle(deviceId) {
+            if (motorState.deviceId === deviceId) {
+                return motorState.currentAngle;
+            }
+            return 0;
+        }
+
+        // Global'e ekle
+        window.getMotorAngle = getMotorAngle;
+        window.motorState = motorState;
 
         // RGB Display güncelleme fonksiyonları
         function updateRGBDisplay() {
@@ -1250,9 +2544,17 @@
             if (blueNum) blueNum.textContent = rgbNumberState.blue;
         }
 
+        // Tüm açık pop-up panelleri kapatır
+        function closeAllPopups() {
+            closeNumberPanel();
+            closeAnglePanel();
+            closeMessagePanel();
+        }
+
         // Custom Angle Field (Açı seçici)
         class CustomAngleField extends Blockly.FieldNumber {
             showEditor_() {
+                closeAllPopups(); // Önce diğerlerini kapat
                 const fieldRect = this.getScaledBBox();
                 const panel = document.getElementById('anglePanel');
 
@@ -1277,8 +2579,9 @@
         // Custom Message Field with Dropdown
         class CustomMessageField extends Blockly.FieldDropdown {
             constructor(value) {
-                const options = messages.map(m => [m, m]);
-                options.push(['📝 Yeni mesaj...', 'NEW']);
+                // Etiketin sonuna boşluk ekle ki ok işareti üstüne binmesin
+                const options = messages.map(m => [m + '   ', m]);
+                options.push(['➕ Yeni mesaj...', 'NEW']);
                 super(options);
                 this.setValue(value || messages[0]);
             }
@@ -1297,8 +2600,9 @@
 
             updateOptions() {
                 const currentValue = this.getValue();
-                const options = messages.map(m => [m, m]);
-                options.push(['📝 Yeni mesaj...', 'NEW']);
+                // Etiketin sonuna boşluk ekle ki ok işareti üstüne binmesin
+                const options = messages.map(m => [m + '   ', m]);
+                options.push(['➕ Yeni mesaj...', 'NEW']);
                 this.menuGenerator_ = options;
 
                 // Eğer mevcut değer listede yoksa, ilk mesajı seç
@@ -1309,6 +2613,7 @@
         }
 
         function showMessagePanel(field) {
+            closeAllPopups(); // Önce diğerlerini kapat
             currentMessageField = field;
             const panel = document.getElementById('messagePanel');
             const input = document.getElementById('messageInput');
@@ -1389,6 +2694,7 @@
         // Custom Number Field with Popup
         class CustomNumberField extends Blockly.FieldNumber {
             showEditor_() {
+                closeAllPopups(); // Önce diğerlerini kapat
                 const fieldRect = this.getScaledBBox();
                 const panel = document.getElementById('numberPanel');
                 const display = document.getElementById('numberDisplay');
@@ -1717,7 +3023,8 @@
         Blockly.Blocks['start'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🚩  play tıklandığında  ");
+                    .appendField(new Blockly.FieldImage(ICON_START, 20, 20, "*"))
+                    .appendField(Blockly.Msg.BLOCK_START);
                 this.setNextStatement(true, null);
                 this.setColour("#FFBF00");
                 this.setOnChange(function (e) {
@@ -1732,9 +3039,10 @@
             init: function () {
                 this.appendValueInput("CONDITION")
                     .setCheck("Boolean")
-                    .appendField("⚡  ");
+                    .appendField(new Blockly.FieldImage(ICON_BOLT, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_WHEN_PRE);
                 this.appendDummyInput()
-                    .appendField("  olduğunda  ");
+                    .appendField(Blockly.Msg.BLOCK_WHEN_POST);
                 this.setInputsInline(true);
                 this.setNextStatement(true, null);
                 this.setColour("#FFBF00");
@@ -1749,9 +3057,10 @@
         Blockly.Blocks['when_message_received'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("📨  ")
+                    .appendField(new Blockly.FieldImage(ICON_MSG_IN, 20, 20, "*"))
+                    .appendField(Blockly.Msg.BLOCK_MESSAGE_PRE)
                     .appendField(new CustomMessageField('message1'), "MESSAGE")
-                    .appendField("  alındığında  ");
+                    .appendField(Blockly.Msg.BLOCK_MESSAGE_POST);
                 this.setNextStatement(true, null);
                 this.setColour("#FFBF00");
                 this.setOnChange(function (e) {
@@ -1765,9 +3074,10 @@
         Blockly.Blocks['send_message'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("📤  ")
+                    .appendField(new Blockly.FieldImage(ICON_MSG_OUT, 20, 20, "*"))
+                    .appendField(Blockly.Msg.BLOCK_SEND_MOBILE_PRE)
                     .appendField(new CustomMessageField('message1'), "MESSAGE")
-                    .appendField("  gönder  ");
+                    .appendField(Blockly.Msg.BLOCK_SEND_MOBILE_POST);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour("#FFAB19");
@@ -1834,7 +3144,10 @@
             init: function () {
                 this.appendValueInput('TIMES')
                     .setCheck('Number')
-                    .appendField("🔄");
+                    .appendField(new Blockly.FieldImage(ICON_REFRESH, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_REPEAT_PRE);
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BLOCK_REPEAT_POST);
                 this.appendStatementInput('DO');
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
@@ -1852,9 +3165,10 @@
             init: function () {
                 this.appendValueInput('SECONDS')
                     .setCheck('Number')
-                    .appendField("⏱️");
+                    .appendField(new Blockly.FieldImage(ICON_STOP_HAND, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_WAIT_PRE);
                 this.appendDummyInput()
-                    .appendField("saniye");
+                    .appendField(Blockly.Msg.BLOCK_WAIT_POST);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour("#FFAB19");
@@ -1870,7 +3184,8 @@
         Blockly.Blocks['forever'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("♾️ sürekli");
+                    .appendField(new Blockly.FieldImage(ICON_INFINITY, 20, 20, "*"))
+                    .appendField(Blockly.Msg.BLOCK_FOREVER);
                 this.appendStatementInput('DO');
                 this.setPreviousStatement(true, null);
                 this.setColour("#FFAB19");
@@ -1886,9 +3201,10 @@
             init: function () {
                 this.appendValueInput('CONDITION')
                     .setCheck('Boolean')
-                    .appendField("🔶 if");
+                    .appendField(new Blockly.FieldImage(ICON_RHOMBUS, 16, 16, "*"))
+                    .appendField(Blockly.Msg.BLOCK_IF);
                 this.appendDummyInput()
-                    .appendField("then");
+                    .appendField(Blockly.Msg.BLOCK_THEN);
                 this.appendStatementInput('DO');
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
@@ -1905,12 +3221,13 @@
             init: function () {
                 this.appendValueInput('CONDITION')
                     .setCheck('Boolean')
-                    .appendField("🔶 if");
+                    .appendField(new Blockly.FieldImage(ICON_RHOMBUS, 16, 16, "*"))
+                    .appendField(Blockly.Msg.BLOCK_IF);
                 this.appendDummyInput()
-                    .appendField("then");
+                    .appendField(Blockly.Msg.BLOCK_THEN);
                 this.appendStatementInput('DO');
                 this.appendDummyInput()
-                    .appendField("else");
+                    .appendField(Blockly.Msg.BLOCK_ELSE);
                 this.appendStatementInput('ELSE');
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
@@ -1927,7 +3244,10 @@
             init: function () {
                 this.appendValueInput('CONDITION')
                     .setCheck('Boolean')
-                    .appendField("⏳  wait until  ");
+                    .appendField(new Blockly.FieldImage(ICON_HOURGLASS, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_WAIT_UNTIL_PRE);
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BLOCK_WAIT_UNTIL_POST);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour("#FFAB19");
@@ -1943,7 +3263,10 @@
             init: function () {
                 this.appendValueInput('CONDITION')
                     .setCheck('Boolean')
-                    .appendField("🔁  repeat until  ");
+                    .appendField(new Blockly.FieldImage(ICON_REFRESH, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_REPEAT_UNTIL_PRE);
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BLOCK_REPEAT_UNTIL_POST);
                 this.appendStatementInput('DO');
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
@@ -2050,7 +3373,8 @@
         Blockly.Blocks['rgb_red_on'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🔴  kırmızı ışık yak  ");
+                    .appendField(new Blockly.FieldImage(ICON_CIRC_RED, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_RED_ON);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour("#ff6b6b");
@@ -2065,7 +3389,8 @@
         Blockly.Blocks['rgb_green_on'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🟢  yeşil ışık yak  ");
+                    .appendField(new Blockly.FieldImage(ICON_CIRC_GREEN, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_GREEN_ON);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour("#51cf66");
@@ -2080,7 +3405,8 @@
         Blockly.Blocks['rgb_blue_on'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🔵  mavi ışık yak  ");
+                    .appendField(new Blockly.FieldImage(ICON_CIRC_BLUE, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_BLUE_ON);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour("#4dabf7");
@@ -2096,10 +3422,11 @@
         Blockly.Blocks['rgb_red_off'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("◯  kırmızı ışık söndür  ");
+                    .appendField(new Blockly.FieldImage(ICON_CIRC_WHITE, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_RED_OFF);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
-                this.setColour("#ff6b6b");
+                this.setColour("#ffb3b3");
                 this.setOnChange(function (e) {
                     if (e.type === Blockly.Events.BLOCK_CREATE && selectedDeviceId) {
                         this.data = selectedDeviceId;
@@ -2111,10 +3438,11 @@
         Blockly.Blocks['rgb_green_off'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("◯  yeşil ışık söndür  ");
+                    .appendField(new Blockly.FieldImage(ICON_CIRC_WHITE, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_GREEN_OFF);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
-                this.setColour("#51cf66");
+                this.setColour("#b3e0b3");
                 this.setOnChange(function (e) {
                     if (e.type === Blockly.Events.BLOCK_CREATE && selectedDeviceId) {
                         this.data = selectedDeviceId;
@@ -2126,10 +3454,11 @@
         Blockly.Blocks['rgb_blue_off'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("◯  mavi ışık söndür  ");
+                    .appendField(new Blockly.FieldImage(ICON_CIRC_WHITE, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_BLUE_OFF);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
-                this.setColour("#4dabf7");
+                this.setColour("#b3d9ff");
                 this.setOnChange(function (e) {
                     if (e.type === Blockly.Events.BLOCK_CREATE && selectedDeviceId) {
                         this.data = selectedDeviceId;
@@ -2142,13 +3471,12 @@
             init: function () {
                 this.appendValueInput('NUM')
                     .setCheck('Number')
-                    .appendField("🟥  ");
-                this.appendDummyInput()
-                    .appendField("  gönder  ");
+                    .appendField(new Blockly.FieldImage(ICON_SQ_RED, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_RED_NUM);
                 this.setInputsInline(true);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
-                this.setColour("#ffb3b3");
+                this.setColour("#ff6b6b");
                 this.setOnChange(function (e) {
                     if (e.type === Blockly.Events.BLOCK_CREATE && selectedDeviceId) {
                         this.data = selectedDeviceId;
@@ -2161,13 +3489,12 @@
             init: function () {
                 this.appendValueInput('NUM')
                     .setCheck('Number')
-                    .appendField("🟩  ");
-                this.appendDummyInput()
-                    .appendField("  gönder  ");
+                    .appendField(new Blockly.FieldImage(ICON_SQ_GREEN, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_GREEN_NUM);
                 this.setInputsInline(true);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
-                this.setColour("#b3e0b3");
+                this.setColour("#51cf66");
                 this.setOnChange(function (e) {
                     if (e.type === Blockly.Events.BLOCK_CREATE && selectedDeviceId) {
                         this.data = selectedDeviceId;
@@ -2180,13 +3507,12 @@
             init: function () {
                 this.appendValueInput('NUM')
                     .setCheck('Number')
-                    .appendField("🟦  ");
-                this.appendDummyInput()
-                    .appendField("  gönder  ");
+                    .appendField(new Blockly.FieldImage(ICON_SQ_BLUE, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_BLUE_NUM);
                 this.setInputsInline(true);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
-                this.setColour("#b3d9ff");
+                this.setColour("#4dabf7");
                 this.setOnChange(function (e) {
                     if (e.type === Blockly.Events.BLOCK_CREATE && selectedDeviceId) {
                         this.data = selectedDeviceId;
@@ -2199,7 +3525,8 @@
         Blockly.Blocks['rgb_red_get'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🟥  sayı getir  ");
+                    .appendField(new Blockly.FieldImage(ICON_SQ_RED, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_RED_GET);
                 this.setOutput(true, "Number");
                 this.setColour("#ff6b6b");
                 this.setOnChange(function (e) {
@@ -2213,7 +3540,8 @@
         Blockly.Blocks['rgb_green_get'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🟩  sayı getir  ");
+                    .appendField(new Blockly.FieldImage(ICON_SQ_GREEN, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_GREEN_GET);
                 this.setOutput(true, "Number");
                 this.setColour("#51cf66");
                 this.setOnChange(function (e) {
@@ -2227,7 +3555,8 @@
         Blockly.Blocks['rgb_blue_get'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🟦  sayı getir  ");
+                    .appendField(new Blockly.FieldImage(ICON_SQ_BLUE, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_BLUE_GET);
                 this.setOutput(true, "Number");
                 this.setColour("#4dabf7");
                 this.setOnChange(function (e) {
@@ -2242,7 +3571,8 @@
         Blockly.Blocks['rgb_red_light_get'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🔴  ışık getir  ");
+                    .appendField(new Blockly.FieldImage(ICON_CIRC_RED, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_LIGHT_GET_POST);
                 this.setOutput(true, "Boolean");
                 this.setColour("#ff6b6b");
                 this.setOnChange(function (e) {
@@ -2256,7 +3586,8 @@
         Blockly.Blocks['rgb_green_light_get'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🟢  ışık getir  ");
+                    .appendField(new Blockly.FieldImage(ICON_CIRC_GREEN, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_LIGHT_GET_POST);
                 this.setOutput(true, "Boolean");
                 this.setColour("#51cf66");
                 this.setOnChange(function (e) {
@@ -2270,7 +3601,54 @@
         Blockly.Blocks['rgb_blue_light_get'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🔵  ışık getir  ");
+                    .appendField(new Blockly.FieldImage(ICON_CIRC_BLUE, 18, 18, "*"))
+                    .appendField(Blockly.Msg.BLOCK_LIGHT_GET_POST);
+                this.setOutput(true, "Boolean");
+                this.setColour("#4dabf7");
+                this.setOnChange(function (e) {
+                    if (e.type === Blockly.Events.BLOCK_CREATE && selectedDeviceId) {
+                        this.data = selectedDeviceId;
+                    }
+                });
+            }
+        };
+
+        // RGB Tuş Getir Blokları (Altıgen şekilli - Boolean output - Üçgen ikonlu)
+        Blockly.Blocks['rgb_red_button_get'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldImage("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiAyMmgyMEwxMiAyeiIgZmlsbD0iI2NmMTMyMiIvPjwvc3ZnPg==", 24, 24, "*"))
+                    .appendField(Blockly.Msg.BLOCK_RED_BTN_GET);
+                this.setOutput(true, "Boolean");
+                this.setColour("#ff6b6b");
+                this.setOnChange(function (e) {
+                    if (e.type === Blockly.Events.BLOCK_CREATE && selectedDeviceId) {
+                        this.data = selectedDeviceId;
+                    }
+                });
+            }
+        };
+
+        Blockly.Blocks['rgb_green_button_get'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldImage("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiAyMmgyMEwxMiAyeiIgZmlsbD0iIzFhOTAzZSIvPjwvc3ZnPg==", 24, 24, "*"))
+                    .appendField(Blockly.Msg.BLOCK_GREEN_BTN_GET);
+                this.setOutput(true, "Boolean");
+                this.setColour("#51cf66");
+                this.setOnChange(function (e) {
+                    if (e.type === Blockly.Events.BLOCK_CREATE && selectedDeviceId) {
+                        this.data = selectedDeviceId;
+                    }
+                });
+            }
+        };
+
+        Blockly.Blocks['rgb_blue_button_get'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldImage("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiAyMmgyMEwxMiAyeiIgZmlsbD0iIzE5NzFjMiIvPjwvc3ZnPg==", 24, 24, "*"))
+                    .appendField(Blockly.Msg.BLOCK_BLUE_BTN_GET);
                 this.setOutput(true, "Boolean");
                 this.setColour("#4dabf7");
                 this.setOnChange(function (e) {
@@ -2282,10 +3660,21 @@
         };
 
         // Motor Blokları
+        // SVG Ikonlar (Base64 encoded)
+        const DEVICE_ICONS = {
+            'rotate': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiA0VjFMNCA1bDQgNFY2YzMuMzEgMCA2IDIuNjkgNiA2IDAgMS4wMS0uMjUgMS45Ny0uNyAyLjhsMS40NiAxLjQ2QzE5LjU0IDE1LjAzIDIwIDEzLjU3IDIwIDEyYzAtNC40Mi0zLjU4LTgtOC04em0wIDE0Yy0zLjMxIDAtNi0yLjY5LTYtNiAwLTEuMDEuMjUtMS45Ny43LTIuOEw1LjI0IDcuNzRDNC40NiA4Ljk3IDQgMTAuNDMgNCAxMmMwIDQuNDIgMy41OCA4IDggOHYzbDQtNC00LTR2M3oiLz48L3N2Zz4=',
+            'timer': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMS45OSAyQzYuNDcgMiAyIDYuNDggMiAxMnM0LjQ3IDEwIDkuOTkgMTBDMTcuNTIgMjIgMjIgMTcuNTIgMjIgMTJTMTcuNTIgMiAxMS45OSAyem0uMDEgMThjLTQuNDIgMC04LTMuNTgtOC04czMuNTgtOCA4LTggOCAzLjU4IDggOC0zLjU4IDgtOCA4em0uNS0xM0gxMXY2bDUuMjUgMy4xNS43NS0xLjIzLTQuNS0yLjY3eiIvPjwvc3ZnPg==',
+            'speed': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik03IDJ2MTFoM3Y5bDctMTJoLTRsNC04eiIvPjwvc3ZnPg==',
+            'stop': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik02IDZoMTJ2MTJINnoiLz48L3N2Zz4=',
+            'target': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQxIDAtOC0zLjU5LTgtOHMzLjU5LTggOC04IDggMy41OSA4IDgtMy41OSA4LTggOHptLTUtOGMwIDIuNzYgMi4yNCA1IDUgNXM1LTIuMjQgNS01LTIuMjQtNS01LTUgMi4yNC01IDUgNXoiLz48L3N2Zz4=',
+            'play': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik04IDV2MTRsMTEtN3oiLz48L3N2Zz4=',
+            'pin': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzguMSAyIDUgNS4xIDUgOWMwIDUuMiA3IDEzIDcgMTNzNy03LjggNy0xM2MwLTMuOS0zLjEtNy03LTd6bTAgOS41Yy0xLjQgMC0yLjUtMS4xLTIuNS0yLjVzMS4xLTIuNSAyLjUtMi41IDIuNSAxLjEgMi41IDIuNS0xLjEgMi41LTIuNSAyLjV6Ii8+PC9zdmc+'
+        };
         Blockly.Blocks['motor_run_rotation'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🔄 run")
+                    .appendField(new Blockly.FieldImage(DEVICE_ICONS['rotate'], 16, 16, "*"))
+                    .appendField("run")
                     .appendField(new Blockly.FieldDropdown([["↻", "CW"], ["↺", "CCW"]]), "DIRECTION")
                     .appendField("for")
                     .appendField(new CustomNumberField(1, 1, 100), 'ROTATIONS')
@@ -2304,7 +3693,8 @@
         Blockly.Blocks['motor_run_to_angle'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🎯 run")
+                    .appendField(new Blockly.FieldImage(DEVICE_ICONS['target'], 16, 16, "*"))
+                    .appendField("run")
                     .appendField(new Blockly.FieldDropdown([["↻", "CW"], ["↺", "CCW"]]), "DIRECTION")
                     .appendField("to")
                     .appendField(new CustomAngleField(0, 0, 360), 'ANGLE')
@@ -2324,7 +3714,8 @@
         Blockly.Blocks['motor_go_to_position'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("📍 go to position")
+                    .appendField(new Blockly.FieldImage(DEVICE_ICONS['pin'], 16, 16, "*"))
+                    .appendField("go to position ")
                     .appendField(new CustomAngleField(0, 0, 360), 'POSITION')
                     .appendField("°");
                 this.setPreviousStatement(true, null);
@@ -2341,7 +3732,8 @@
         Blockly.Blocks['motor_start'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("▶️ start motor")
+                    .appendField(new Blockly.FieldImage(DEVICE_ICONS['play'], 16, 16, "*"))
+                    .appendField("start motor ")
                     .appendField(new Blockly.FieldDropdown([["↻", "CW"], ["↺", "CCW"]]), "DIRECTION");
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
@@ -2357,7 +3749,8 @@
         Blockly.Blocks['motor_stop'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("⏹️ stop motor");
+                    .appendField(new Blockly.FieldImage(DEVICE_ICONS['stop'], 16, 16, "*"))
+                    .appendField("stop motor");
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour("#4ECDC4");
@@ -2467,11 +3860,11 @@
         Blockly.Blocks['math_random'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("pick random");
+                    .appendField(Blockly.Msg.BLOCK_RANDOM_PRE);
                 this.appendValueInput('FROM')
                     .setCheck('Number');
                 this.appendDummyInput()
-                    .appendField("to");
+                    .appendField(Blockly.Msg.BLOCK_RANDOM_MID);
                 this.appendValueInput('TO')
                     .setCheck('Number');
                 this.setOutput(true, 'Number');
@@ -2500,15 +3893,26 @@
             }
         };
 
-        Blockly.Blocks['logic_operation'] = {
+        Blockly.Blocks['logic_and'] = {
             init: function () {
                 this.appendValueInput('A')
                     .setCheck('Boolean');
                 this.appendDummyInput()
-                    .appendField(new Blockly.FieldDropdown([
-                        ["and", "AND"],
-                        ["or", "OR"]
-                    ]), "OP");
+                    .appendField(Blockly.Msg.BLOCK_LOGIC_AND);
+                this.appendValueInput('B')
+                    .setCheck('Boolean');
+                this.setOutput(true, 'Boolean');
+                this.setInputsInline(true);
+                this.setColour("#5CB15C");
+            }
+        };
+
+        Blockly.Blocks['logic_or'] = {
+            init: function () {
+                this.appendValueInput('A')
+                    .setCheck('Boolean');
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BLOCK_LOGIC_OR);
                 this.appendValueInput('B')
                     .setCheck('Boolean');
                 this.setOutput(true, 'Boolean');
@@ -2521,7 +3925,7 @@
             init: function () {
                 this.appendValueInput('BOOL')
                     .setCheck('Boolean')
-                    .appendField("not");
+                    .appendField(Blockly.Msg.BLOCK_LOGIC_NOT);
                 this.setOutput(true, 'Boolean');
                 this.setColour("#5CB15C");
             }
@@ -2616,6 +4020,9 @@
         Blockly.Python['rgb_red_light_get'] = () => ['rgb_red_light_get()', Blockly.Python.ORDER_ATOMIC];
         Blockly.Python['rgb_green_light_get'] = () => ['rgb_green_light_get()', Blockly.Python.ORDER_ATOMIC];
         Blockly.Python['rgb_blue_light_get'] = () => ['rgb_blue_light_get()', Blockly.Python.ORDER_ATOMIC];
+        Blockly.Python['rgb_red_button_get'] = () => ['rgb_red_button_get()', Blockly.Python.ORDER_ATOMIC];
+        Blockly.Python['rgb_green_button_get'] = () => ['rgb_green_button_get()', Blockly.Python.ORDER_ATOMIC];
+        Blockly.Python['rgb_blue_button_get'] = () => ['rgb_blue_button_get()', Blockly.Python.ORDER_ATOMIC];
         Blockly.Python['motor_run_rotation'] = (b) => {
             const dir = b.getFieldValue('DIRECTION');
             const rot = b.getFieldValue('ROTATIONS');
@@ -2671,11 +4078,15 @@
             const bVal = Blockly.Python.valueToCode(b, 'B', Blockly.Python.ORDER_ATOMIC) || '0';
             return [`(${a} ${op} ${bVal})`, Blockly.Python.ORDER_ATOMIC];
         };
-        Blockly.Python['logic_operation'] = (b) => {
-            const op = b.getFieldValue('OP') === 'AND' ? 'and' : 'or';
+        Blockly.Python['logic_and'] = (b) => {
             const a = Blockly.Python.valueToCode(b, 'A', Blockly.Python.ORDER_ATOMIC) || 'False';
             const bVal = Blockly.Python.valueToCode(b, 'B', Blockly.Python.ORDER_ATOMIC) || 'False';
-            return [`(${a} ${op} ${bVal})`, Blockly.Python.ORDER_ATOMIC];
+            return [`(${a} and ${bVal})`, Blockly.Python.ORDER_ATOMIC];
+        };
+        Blockly.Python['logic_or'] = (b) => {
+            const a = Blockly.Python.valueToCode(b, 'A', Blockly.Python.ORDER_ATOMIC) || 'False';
+            const bVal = Blockly.Python.valueToCode(b, 'B', Blockly.Python.ORDER_ATOMIC) || 'False';
+            return [`(${a} or ${bVal})`, Blockly.Python.ORDER_ATOMIC];
         };
         Blockly.Python['logic_negate'] = (b) => {
             const bool = Blockly.Python.valueToCode(b, 'BOOL', Blockly.Python.ORDER_ATOMIC) || 'False';
@@ -2731,6 +4142,9 @@
                         <block type="light"></block>
                         <block type="led_on"><field name="VAL">90</field></block>
                         <block type="led_off"><field name="VAL">90</field></block>
+                        <block type="rgb_red_button_get"></block>
+                        <block type="rgb_green_button_get"></block>
+                        <block type="rgb_blue_button_get"></block>
                         <block type="smile"></block>
                     </xml>
                 `,
@@ -2806,6 +4220,11 @@
             setTimeout(() => {
                 hideAllToolboxes();
                 console.log('Toolbox başlangıçta gizlendi');
+
+                // Varsayılan dili İngilizce yap
+                setTimeout(() => {
+                    setLanguage('en');
+                }, 200);
             }, 100);
         }
 
@@ -2828,72 +4247,134 @@
             navigator.clipboard.writeText(code).then(() => alert('✅ Kopyalandı!'));
         }
 
+        // Global execution control flags
+        var isExecutionCancelled = false;
+        var isExecutionRunning = false;
+        var eventCheckInterval = null;
+
         async function runCode() {
-            // Workspace'teki tüm blokları al
-            const allBlocks = workspace.getAllBlocks();
+            const playBtn = document.querySelector('.play-btn');
 
-            // "start" bloklarını bul
-            const startBlocks = allBlocks.filter(block => block.type === 'start');
-
-            if (startBlocks.length === 0) {
-                alert('❌ Play bloğu bulunamadı!\n\n"🚩 play tıklandığında" bloğunu ekleyin.');
+            // Eğer zaten çalışıyorsa, durdur
+            if (isExecutionRunning) {
+                stopExecution();
                 return;
             }
 
-            // Play butonunu devre dışı bırak
-            const playBtn = document.querySelector('.play-btn');
-            playBtn.disabled = true;
-            playBtn.style.opacity = '0.5';
-            playBtn.style.cursor = 'not-allowed';
+            // Yeni çalıştırma başlat
+            isExecutionCancelled = false;
+            isExecutionRunning = true;
 
-            // Her start bloğu için kodu çalıştır
-            let fullCode = '# Play tıklandı!\n\n';
+            // Play butonunu "çalışıyor" görünümüne getir
+            playBtn.style.background = '#51cf66';
+            playBtn.style.boxShadow = 'inset 0 2px 8px rgba(0,0,0,0.3)';
+            playBtn.title = 'Durdur / Stop';
 
-            for (const [index, startBlock] of startBlocks.entries()) {
-                fullCode += `# Start Block ${index + 1}\n`;
+            // Workspace'teki tüm blokları al
+            const allBlocks = workspace.getAllBlocks();
 
-                // Start bloğundan sonraki blokları al ve sırayla çalıştır
-                let nextBlock = startBlock.getNextBlock();
-                while (nextBlock) {
-                    // Python kodu üretmeyi dene (hata olursa devam et)
-                    try {
-                        const blockCode = Blockly.Python.blockToCode(nextBlock);
-                        if (blockCode && typeof blockCode === 'string') {
-                            fullCode += blockCode;
-                        }
-                    } catch (e) {
-                        // Kod üretme hatası - devam et
-                        console.log(`⚠️ Kod üretme atlandı: ${nextBlock.type}`);
-                    }
+            // "start" bloklarını bul ve çalıştır
+            const startBlocks = allBlocks.filter(block => block.type === 'start');
 
-                    // Bloğu gerçekten çalıştır - AWAIT ile bekle
-                    await executeBlockPlay(nextBlock);
-
-                    nextBlock = nextBlock.getNextBlock();
-                }
-                fullCode += '\n';
+            if (startBlocks.length === 0) {
+                alert(TRANSLATIONS[currentLanguage].alert_no_play);
+                stopExecution();
+                return;
             }
 
-            console.log('Running code:');
-            console.log(fullCode);
+            console.log('▶️ Kod çalıştırılıyor...');
 
-            // Görsel feedback
-            playBtn.style.background = '#51cf66';
-            setTimeout(() => {
-                playBtn.style.background = '#FFBF00';
-                playBtn.disabled = false;
-                playBtn.style.opacity = '1';
-                playBtn.style.cursor = 'pointer';
-            }, 300);
+            // Start bloklarını çalıştır
+            for (const startBlock of startBlocks) {
+                if (isExecutionCancelled) break;
 
-            console.log('✅ Tüm bloklar çalıştırıldı!');
+                let nextBlock = startBlock.getNextBlock();
+                while (nextBlock) {
+                    if (isExecutionCancelled) {
+                        console.log('🛑 Kod yürütme iptal edildi.');
+                        break;
+                    }
+
+                    await executeBlockPlay(nextBlock);
+                    nextBlock = nextBlock.getNextBlock();
+                }
+            }
+
+            // Start blokları bitti, event dinlemeye başla
+            if (!isExecutionCancelled) {
+                startEventListening();
+            }
+        }
+
+        function stopExecution() {
+            console.log('⏹️ Çalışma durduruluyor...');
+            isExecutionCancelled = true;
+            isExecutionRunning = false;
+
+            // Event dinlemeyi durdur
+            if (eventCheckInterval) {
+                clearInterval(eventCheckInterval);
+                eventCheckInterval = null;
+            }
+
+            // Play butonunu normal haline getir
+            const playBtn = document.querySelector('.play-btn');
+            playBtn.style.background = '#FFBF00';
+            playBtn.style.boxShadow = '0 3px 8px rgba(0, 0, 0, 0.2)';
+            playBtn.title = 'Kodu Çalıştır / Run Code';
+        }
+
+        function startEventListening() {
+            console.log('👂 Event dinleme başladı...');
+
+            // Play butonunu "dinliyor" (daha koyu yeşil) görünümüne getir
+            const playBtn = document.querySelector('.play-btn');
+            if (playBtn) {
+                // Çalışıyor state'inden (#51cf66) daha koyu bir yeşil yap
+                playBtn.style.background = '#2b8a3e';
+                playBtn.title = 'Dinleniyor... (Durdurmak için tıkla)';
+            }
+
+            // Her 100ms'de event bloklarını kontrol et
+            eventCheckInterval = setInterval(async () => {
+                if (isExecutionCancelled || !isExecutionRunning) {
+                    clearInterval(eventCheckInterval);
+                    eventCheckInterval = null;
+                    return;
+                }
+
+                const allBlocks = workspace.getAllBlocks();
+
+                // when_condition blokları (when [condition] true olduğunda)
+                const conditionBlocks = allBlocks.filter(b => b.type === 'when_condition');
+                for (const block of conditionBlocks) {
+                    if (isExecutionCancelled) break;
+                    const conditionBlock = block.getInputTargetBlock('CONDITION');
+                    if (conditionBlock) {
+                        const result = await executeBlockPlay(conditionBlock);
+                        if (result === true) {
+                            // Koşul sağlandı, altındaki blokları çalıştır
+                            let nextBlock = block.getNextBlock();
+                            while (nextBlock && !isExecutionCancelled) {
+                                await executeBlockPlay(nextBlock);
+                                nextBlock = nextBlock.getNextBlock();
+                            }
+                        }
+                    }
+                }
+
+                // when_message_received blokları
+                // (Bu bloklar message gönderildiğinde tetiklenir, ayrıca yönetilir)
+
+            }, 100);
         }
 
         // Global scope'a ekle
         window.runCode = runCode;
+        window.stopExecution = stopExecution;
 
         async function executeBlockPlay(block) {
-            if (!block) return;
+            if (!block || isExecutionCancelled) return;
 
             const blockType = block.type;
             console.log('🎯 executeBlockPlay çalıştırılıyor:', blockType);
@@ -2913,7 +4394,12 @@
                     }
                 }
                 console.log(`⏱️ ${seconds} saniye bekleniyor...`);
-                await sleep(seconds * 1000);
+                // Wait sırasında da iptal kontrolü için döngülü bekleme
+                const steps = seconds * 10;
+                for (let i = 0; i < steps; i++) {
+                    if (isExecutionCancelled) return;
+                    await sleep(100);
+                }
                 console.log(`⏱️ ${seconds} saniye bekleme tamamlandı`);
                 return;
             }
@@ -2929,8 +4415,10 @@
 
                 console.log(`🔄 ${times} kez tekrarlanıyor...`);
                 for (let i = 0; i < times; i++) {
+                    if (isExecutionCancelled) break;
                     let innerBlock = doBlock;
                     while (innerBlock) {
+                        if (isExecutionCancelled) break;
                         await executeBlockPlay(innerBlock);
                         innerBlock = innerBlock.getNextBlock();
                     }
@@ -2955,6 +4443,7 @@
                     console.log('✅ Koşul doğru, then bloğu çalıştırılıyor');
                     let innerBlock = doBlock;
                     while (innerBlock) {
+                        if (isExecutionCancelled) break;
                         await executeBlockPlay(innerBlock);
                         innerBlock = innerBlock.getNextBlock();
                     }
@@ -2982,6 +4471,7 @@
                     console.log('✅ Koşul doğru, then bloğu çalıştırılıyor');
                     let innerBlock = doBlock;
                     while (innerBlock) {
+                        if (isExecutionCancelled) break;
                         await executeBlockPlay(innerBlock);
                         innerBlock = innerBlock.getNextBlock();
                     }
@@ -2989,6 +4479,7 @@
                     console.log('❌ Koşul yanlış, else bloğu çalıştırılıyor');
                     let innerBlock = elseBlock;
                     while (innerBlock) {
+                        if (isExecutionCancelled) break;
                         await executeBlockPlay(innerBlock);
                         innerBlock = innerBlock.getNextBlock();
                     }
@@ -3029,12 +4520,14 @@
                     // İç blokları çalıştır
                     let innerBlock = doBlock;
                     while (innerBlock) {
+                        if (isExecutionCancelled) break;
                         await executeBlockPlay(innerBlock);
                         innerBlock = innerBlock.getNextBlock();
                     }
 
                     // Her iterasyonda küçük bir bekleme
                     await sleep(50);
+                    if (isExecutionCancelled) break;
                 }
                 console.log('🔁 Repeat until tamamlandı');
                 return;
@@ -3046,8 +4539,10 @@
                 console.log('♾️ Sürekli döngü başladı (100 iterasyon)...');
 
                 for (let i = 0; i < 100; i++) {
+                    if (isExecutionCancelled) break;
                     let innerBlock = doBlock;
                     while (innerBlock) {
+                        if (isExecutionCancelled) break;
                         await executeBlockPlay(innerBlock);
                         innerBlock = innerBlock.getNextBlock();
                     }
@@ -3130,6 +4625,18 @@
                 return rgbLedState.blue;
             }
 
+            // RGB tuş getir kontrolleri
+            else if (blockType === 'rgb_red_button_get') {
+                console.log('🔺 Kırmızı tuş getir:', btnStates.red);
+                return btnStates.red;
+            } else if (blockType === 'rgb_green_button_get') {
+                console.log('🔺 Yeşil tuş getir:', btnStates.green);
+                return btnStates.green;
+            } else if (blockType === 'rgb_blue_button_get') {
+                console.log('🔺 Mavi tuş getir:', btnStates.blue);
+                return btnStates.blue;
+            }
+
             // Motor kontrolleri
             else if (blockType === 'motor_run_rotation') {
                 const dir = block.getFieldValue('DIRECTION');
@@ -3149,6 +4656,7 @@
                     console.log('❌ deviceId yok! Motor Bluetooth komutu gönderilemedi.');
                     console.log('   Motor cihazını önce bağlayın ve bloğu motor ikonundan sürükleyin.');
                 }
+                return; // Motor run_rotation işlemi tamamlandı
             } else if (blockType === 'motor_run_to_angle') {
                 const dir = block.getFieldValue('DIRECTION');
                 const angle = block.getFieldValue('ANGLE');
@@ -3164,6 +4672,7 @@
                 } else {
                     console.log('❌ deviceId yok! Motor Bluetooth komutu gönderilemedi.');
                 }
+                return; // Motor run_to_angle işlemi tamamlandı
             } else if (blockType === 'motor_go_to_position') {
                 const position = block.getFieldValue('POSITION');
                 console.log(`📍 Motor ${position}° pozisyonuna git (mutlak)`);
@@ -3175,6 +4684,7 @@
                 } else {
                     console.log('❌ deviceId yok!');
                 }
+                return; // Motor go_to_position işlemi tamamlandı
             } else if (blockType === 'motor_start') {
                 const dir = block.getFieldValue('DIRECTION');
                 console.log(`▶️ Motor ${dir === 'CW' ? '↻' : '↺'} başlatıldı`);
@@ -3186,6 +4696,7 @@
                 } else {
                     console.log('❌ deviceId yok!');
                 }
+                return; // Motor start işlemi tamamlandı
             } else if (blockType === 'motor_stop') {
                 console.log('⏹️ Motor durduruldu');
 
@@ -3196,6 +4707,7 @@
                 } else {
                     console.log('❌ deviceId yok!');
                 }
+                return; // Motor stop işlemi tamamlandı
             }
 
             // Matematik blokları
@@ -3228,6 +4740,19 @@
             }
 
             // Controller kontrolleri
+            else if (blockType === 'lever_angle') {
+                const lever = block.getFieldValue('LEVER');
+                let angle = 50; // Varsayılan değer (orta pozisyon)
+
+                if (lever === 'LEFT') {
+                    angle = Math.round(controllerState.leftPercent || 50);
+                } else if (lever === 'RIGHT') {
+                    angle = Math.round(controllerState.rightPercent || 50);
+                }
+
+                console.log(`🕹️ Lever angle ${lever}: ${angle}%`);
+                return angle;
+            }
             else if (blockType === 'when_lever_position') {
                 const lever = block.getFieldValue('LEVER');
                 const position = block.getFieldValue('POSITION');
@@ -3257,13 +4782,9 @@
                 return result;
             }
 
-            // Diğer bloklar için log
-            else {
-                console.log(`Çalıştırıldı: ${blockType}`);
-            }
-
-            // Her blok arasında küçük bir gecikme (animasyon için)
-            await sleep(100);
+            // Diğer boolean blokları için
+            console.log(`⚠️ Bilinmeyen koşul bloğu: ${blockType}`);
+            return false;
         }
 
         function sleep(ms) {
@@ -3309,45 +4830,119 @@
         }
 
         function stopCode() {
-            alert('⏹️ Durduruldu!');
+            alert(TRANSLATIONS[currentLanguage].alert_stopped);
         }
 
-        function resetEverything() {
-            if (confirm('🔄 Her şeyi sıfırlamak istediğinize emin misiniz?\n\n• RGB paneli sıfırlanacak\n• Tüm LED\'ler sönecek\n• Sayı değerleri 0 olacak\n• Cihazlar bağlı kalacak')) {
-                // RGB LED'leri söndür
-                rgbLedState = { red: false, green: false, blue: false };
-                document.getElementById('rgbRedLed').classList.remove('active');
-                document.getElementById('rgbGreenLed').classList.remove('active');
-                document.getElementById('rgbBlueLed').classList.remove('active');
+        // --- EXPORT & IMPORT FUNCTIONS --- //
+        function exportWorkspace() {
+            try {
+                const xml = Blockly.Xml.workspaceToDom(workspace);
+                const xmlText = Blockly.Xml.domToText(xml);
 
-                // RGB sayıları sıfırla
-                rgbNumberState = { red: 0, green: 0, blue: 0 };
-                document.getElementById('rgbRedNum').textContent = '0';
-                document.getElementById('rgbGreenNum').textContent = '0';
-                document.getElementById('rgbBlueNum').textContent = '0';
+                const blob = new Blob([xmlText], { type: 'text/xml' });
+                const url = URL.createObjectURL(blob);
 
-                // Motor işlem kilidini sıfırla
-                motorOperationInProgress = false;
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'blockcode_project.xml'; // Varsayılan dosya adı
+                document.body.appendChild(a);
+                a.click();
 
-                // Play butonunu aktif et
-                const playBtn = document.querySelector('.play-btn');
-                if (playBtn) {
-                    playBtn.disabled = false;
-                    playBtn.style.opacity = '1';
-                    playBtn.style.cursor = 'pointer';
-                    playBtn.style.background = '#FFBF00';
-                }
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
 
-                console.log('🔄 Her şey sıfırlandı (cihazlar hariç)');
-
-                // Görsel feedback
-                const resetBtn = document.querySelector('.reset-btn');
-                resetBtn.style.background = '#51cf66';
-                setTimeout(() => {
-                    resetBtn.style.background = '#FF6680';
-                }, 300);
+                console.log('✅ Workspace exported successfully');
+            } catch (e) {
+                console.error('❌ Export error:', e);
+                alert(TRANSLATIONS[currentLanguage].alert_export_error);
             }
         }
+
+        function importWorkspace(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const xmlText = e.target.result;
+                    const xml = Blockly.Xml.textToDom(xmlText);
+
+                    // Mevcut blokları temizle (isteğe bağlı, kullanıcıya sorulabilir)
+                    if (confirm(TRANSLATIONS[currentLanguage].confirm_import)) {
+                        workspace.clear();
+                    }
+
+                    Blockly.Xml.domToWorkspace(xml, workspace);
+                    console.log('✅ Workspace imported successfully');
+
+                    // Input'u temizle ki aynı dosyayı tekrar seçebilsin
+                    input.value = '';
+                } catch (e) {
+                    console.error('❌ Import error:', e);
+                    alert(TRANSLATIONS[currentLanguage].alert_import_error);
+                }
+            };
+            reader.readAsText(file);
+        }
+        // -------------------------------- //
+
+        function resetEverything() {
+            openResetModal();
+        }
+
+        function openResetModal() {
+            document.getElementById('resetModal').classList.add('active');
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.remove('active');
+        }
+
+        function performReset() {
+            closeResetModal();
+
+            // Çalışan kod varsa durdur
+            isExecutionCancelled = true;
+
+            // RGB LED'leri söndür
+            rgbLedState = { red: false, green: false, blue: false };
+            document.getElementById('rgbRedLed').classList.remove('active');
+            document.getElementById('rgbGreenLed').classList.remove('active');
+            document.getElementById('rgbBlueLed').classList.remove('active');
+
+            // RGB sayıları sıfırla
+            rgbNumberState = { red: 0, green: 0, blue: 0 };
+            document.getElementById('rgbRedNum').textContent = '0';
+            document.getElementById('rgbGreenNum').textContent = '0';
+            document.getElementById('rgbBlueNum').textContent = '0';
+
+            // Motor işlem kilidini sıfırla
+            motorOperationInProgress = false;
+
+            // Üçgen butonların basılı tutma durumunu sıfırla
+            stopHold();
+
+            // Play butonunu aktif et ve görünümünü düzelt
+            const playBtn = document.querySelector('.play-btn');
+            if (playBtn) {
+                playBtn.disabled = false;
+                playBtn.style.opacity = '1';
+                playBtn.style.cursor = 'pointer';
+                playBtn.style.pointerEvents = 'auto'; // Kilitlenmeyi önler
+                playBtn.style.background = '#FFBF00'; // Orijinal sarı renk
+            }
+
+            console.log('🔄 Her şey sıfırlandı (cihazlar hariç)');
+
+            // Görsel feedback
+            const resetBtn = document.querySelector('.reset-btn');
+            resetBtn.style.background = '#51cf66';
+            setTimeout(() => {
+                resetBtn.style.background = '#FF6680';
+            }, 300);
+        }
+
 
         // Global scope'a ekle
         window.resetEverything = resetEverything;
@@ -3384,6 +4979,76 @@
         let connectedDevices = [];
         let selectedDeviceId = null;
         let deviceMenuOpen = null; // Açık cihaz menüsü
+
+        // Button States
+        let btnStates = { red: false, green: false, blue: false };
+        let btnLock = { red: false, green: false, blue: false };
+        let pressTimer = { red: null, green: null, blue: null };
+
+        function handleBtnDown(color) {
+            const btn = document.getElementById(`rgb${color.charAt(0).toUpperCase() + color.slice(1)}Btn`);
+            if (!btn) return;
+
+            // Eğer kilitliyse (basılı tutularak açılma kontrolü için timer başlat)
+            if (btnLock[color]) {
+                // Tıklama anında kilitli olduğunu göster (opsiyonel)
+                // 3 saniye basılı tutulursa kilidi kaldır
+                if (pressTimer[color]) clearTimeout(pressTimer[color]);
+                pressTimer[color] = setTimeout(() => {
+                    // UNLOCK
+                    btnLock[color] = false;
+                    btnStates[color] = false; // Bırakınca sönecek, ama timer bitince direkt sönsün mü? 
+                    // Kullanıcı parmağını kaldırınca handleBtnUp çalışacak ve btnLock false olduğu için sönecek.
+                    // Burada görsel feedback verelim:
+                    btn.classList.remove('active');
+                    btn.classList.add('flash');
+                    setTimeout(() => btn.classList.remove('flash'), 500);
+                    console.log(`${color} button UNLOCKED (3s hold)`);
+                }, 3000);
+                return;
+            }
+
+            // Kilitli değilse: Normal basma işlemi
+            btnStates[color] = true;
+            btn.classList.add('active');
+
+            // 3 saniye basılı tutulursa KİLİTLE
+            if (pressTimer[color]) clearTimeout(pressTimer[color]);
+            pressTimer[color] = setTimeout(() => {
+                // LOCK
+                btnLock[color] = true;
+                btn.classList.add('flash'); // Parlama efekti
+                setTimeout(() => btn.classList.remove('flash'), 500);
+                console.log(`${color} button LOCKED (3s hold)`);
+            }, 3000);
+        }
+
+        function handleBtnUp(color) {
+            const btn = document.getElementById(`rgb${color.charAt(0).toUpperCase() + color.slice(1)}Btn`);
+
+            if (pressTimer[color]) {
+                clearTimeout(pressTimer[color]);
+                pressTimer[color] = null;
+            }
+
+            // Eğer kilitliyse, bırakınca SÖNMEZ (active kalır)
+            // Sadece tıklayıp bırakınca (kısa basış) kilitli state değişmez, ama timer iptal olduğu için (yukarıda) bir şey olmaz.
+
+            // Eğer kilitli DEĞİLSE, bırakınca söner
+            if (!btnLock[color]) {
+                if (btnStates[color]) {
+                    btnStates[color] = false;
+                    if (btn) btn.classList.remove('active');
+                }
+            }
+        }
+
+
+
+
+        // Global'e ekle
+        window.handleBtnDown = handleBtnDown;
+        window.handleBtnUp = handleBtnUp;
 
         const DEVICE_SHAPES = ['triangle', 'square', 'rectangle', 'pentagon', 'hexagon', 'octagon', 'circle'];
         const DEVICE_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739'];
@@ -3610,54 +5275,193 @@
             return true;
         }
 
+        // Helper function for unified motor control
+        async function sendMotorPositionCommand(deviceId, angle) {
+
+            // Device'ı bul
+            const deviceData = connectedDevices.find(d => d.id === deviceId);
+            if (!deviceData || !deviceData.server) {
+                console.error('❌ Device bulunamadı veya bağlı değil');
+                return false;
+            }
+
+            console.log(`📍 Motor ${angle}° pozisyonuna gönderiliyor...`);
+
+            // Command characteristic - HER ZAMAN TAZEâ AL (cache kullanma, stale olabilir)
+            let cmdChar = null;
+            const charUUID = '0000fd02-0001-1000-8000-00805f9b34fb';
+            const serviceUUID = '0000fd02-0000-1000-8000-00805f9b34fb';
+
+            try {
+                console.log('   🔄 Servis ve Characteristic taze alınıyor...');
+                const service = await deviceData.server.getPrimaryService(serviceUUID);
+                cmdChar = await service.getCharacteristic(charUUID);
+                console.log('   ✅ Taze characteristic alındı:', cmdChar.uuid);
+            } catch (e) {
+                console.error('   ❌ Characteristic alınamadı:', e);
+                return false;
+            }
+
+            console.log('   🔗 Kullanılan Characteristic:', cmdChar.uuid);
+
+            // Pozisyon değerini little-endian formatında hazırla
+            // Açı negatif olabilir veya 360'tan büyük olabilir
+            const posBytes = angle & 0xFFFF;
+            const lowByte = posBytes & 0xFF;
+            const highByte = (posBytes >> 8) & 0xFF;
+
+            // 0. Notify Characteristic'i bul ve Subscribe ol
+            try {
+                const notifyUUID = '0000fd02-0002-1000-8000-00805f9b34fb';
+                let notifyChar = null;
+
+                if (deviceData.characteristics) {
+                    notifyChar = deviceData.characteristics[notifyUUID];
+                }
+
+                // Cache'te yoksa servisten al (writeChar'ın servisini kullanabiliriz if available in obj or refetch)
+                if (!notifyChar && cmdChar.service) {
+                    try {
+                        notifyChar = await cmdChar.service.getCharacteristic(notifyUUID);
+                    } catch (e) { console.log('   ⚠️ Notify char servisten alınamadı'); }
+                }
+
+                if (notifyChar) {
+                    // Start notifications safely
+                    console.log('   🔔 Notifications başlatılıyor (Handshake için)...');
+                    await notifyChar.startNotifications();
+                }
+            } catch (err) {
+                console.log('   ⚠️ Notification başlatma hatası (kritik olmayabilir):', err);
+            }
+
+            try {
+                // Verify connection is still active
+                console.log('   🔍 GATT Bağlantı durumu:', deviceData.server.connected ? '✅ Bağlı' : '❌ Bağlı DEĞİL');
+
+                if (!deviceData.server.connected) {
+                    console.error('   ❌ GATT bağlantısı kopmuş! Yeniden bağlanmayı deneyin.');
+                    return false;
+                }
+
+                // Log characteristic properties
+                console.log('   📋 Characteristic özellikleri:', {
+                    uuid: cmdChar.uuid,
+                    write: cmdChar.properties.write,
+                    writeWithoutResponse: cmdChar.properties.writeWithoutResponse
+                });
+
+                // 1. Başlatma komutu: 20 00
+                const startCmd = new Uint8Array([0x20, 0x00]);
+                console.log('   📤 CMD1 (Start) gönderiliyor:', [...startCmd].map(b => b.toString(16).padStart(2, '0')).join(' '));
+
+                try {
+                    await cmdChar.writeValueWithoutResponse(startCmd);
+                    console.log('   ✅ CMD1 yazıldı başarılı');
+                } catch (writeErr) {
+                    console.error('   ❌ CMD1 yazma hatası:', writeErr);
+                    return false;
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 50));
+
+                // 2. Pozisyon komutu: 80 [PORT] [LOW] [HIGH] 02
+                // Port ID belirsiz olabilir (0, 1, 2 vb.), hepsini deneyelim (Shotgun approach)
+                const ports = [0x00, 0x01, 0x02];
+                let anySuccess = false;
+
+                for (const port of ports) {
+                    const positionCmd = new Uint8Array([0x80, port, lowByte, highByte, 0x02]);
+                    console.log(`   📤 CMD2 (Pos) gönderiliyor (Port ${port}):`, [...positionCmd].map(b => b.toString(16).padStart(2, '0')).join(' '));
+
+                    try {
+                        await cmdChar.writeValueWithoutResponse(positionCmd);
+                        console.log(`   ✅ CMD2 (Port ${port}) yazıldı başarılı`);
+                        anySuccess = true;
+                        // Komutlar arasında kısa bekleme
+                        await new Promise(resolve => setTimeout(resolve, 30));
+                    } catch (writeErr) {
+                        console.error(`   ❌ CMD2 (Port ${port}) yazma hatası:`, writeErr);
+                    }
+                }
+
+                if (!anySuccess) return false;
+
+                // Update State
+                motorState.currentAngle = angle;
+                motorState.targetAngle = angle;
+                updateMotorAngleDisplay(angle);
+
+                return true;
+            } catch (err) {
+                console.error('❌ Motor komut hatası:', err);
+                return false;
+            }
+        }
+
         // Motor rotasyon çalıştır
+        /*
+         * NOT: sendMotorPositionCommand fonksiyonu, belirli bir marka/model (örn. Robot Invader) 
+         * BLE motorlar için bir "Shotgun" yaklaşımla port taraması yapar.
+         * Standart port (0x01) bazen çalışmayabilir, bu yüzden 0x00, 0x01, 0x02 denenir.
+         * Bu sayede "Go to Position" gibi komutların kararlı çalışması sağlanmıştır.
+         */
+
+        // Motor rotasyon çalıştır (Karmaşık 43-Komut Protokolü - Restore Edildi)
+        // Kullanıcı geri bildirimi: "Eskiden 0/43, 10/43 logları vardı ve tam tur atıyordu."
         async function runMotorRotations(deviceId, rotations, direction = 'CW') {
-            // Motor işlemi devam ediyorsa bekle
             if (motorOperationInProgress) {
-                console.log('⏳ Başka bir motor işlemi devam ediyor, bekleniyor...');
+                console.log('⏳ Başka bir motor işlemi devam ediyor...');
                 return;
             }
-
             motorOperationInProgress = true;
 
             try {
-                const chars = await getMotorCharacteristics(deviceId);
+                // 1. Önce eski protokolün ihtiyaç duyduğu başlatma sekansını gönder
+                await initializeMotor(deviceId);
 
+                const chars = await getMotorCharacteristics(deviceId);
                 if (!chars) {
                     console.error('❌ Karakteristikler alınamadı!');
                     return;
                 }
 
-                console.log(`🔄 ${rotations} rotasyon başlatılıyor...`);
-
+                // Genellikle ilk karakteristik (fd02-0001) yazma için uygundur
                 const writeChar = Object.values(chars)[0];
-
                 if (!writeChar) {
                     console.error('❌ Yazılabilir karakteristik bulunamadı');
                     return;
                 }
 
-                // Sabit hız komutları (her zaman 43 - rotasyon CMD_EXECUTE ile belirlenir)
-                const totalCommands = 43;
+                // Number'a çevir ve default 1 yap
+                const r = Number(rotations);
+                const validRotations = isNaN(r) ? 1 : r;
 
+                console.log(`🔄 ${validRotations} rotasyon başlatılıyor (${direction}) - 43 Komut Protokolü...`);
+
+                // 2. 43 adet MOTOR_BASE komutu gönder (Hızlanma/Hazırlık?)
+                // "GATT operation already in progress" hatasını önlemek için delay ekliyoruz
+                const totalCommands = 43;
                 for (let i = 0; i < totalCommands; i++) {
-                    await writeMotorCommand(writeChar, MOTOR_COMMANDS.MOTOR_BASE, 30);
+                    // writeMotorCommand içinde 50ms delay var, burada ekstra güvenli yapalım (100ms total)
+                    await writeMotorCommand(writeChar, MOTOR_COMMANDS.MOTOR_BASE, 50);
+                    if (i % 10 === 0) console.log(`   📤 ${i}/${totalCommands} komut gönderildi`);
                 }
 
-                // Kontrol noktası
+                // 3. Kontrol ve tekrar Base
                 await writeMotorCommand(writeChar, MOTOR_COMMANDS.CMD_CONTROL);
                 await writeMotorCommand(writeChar, MOTOR_COMMANDS.MOTOR_BASE);
 
-                // Rotasyon sayısına göre execute komutu oluştur
-                const executeCmd = createExecuteCommand(rotations, true, direction);
+                // 4. Execute Komutu (Rotasyon sayısı ve yön burada)
+                const executeCmd = createExecuteCommand(validRotations, true, direction);
                 await writeMotorCommand(writeChar, executeCmd);
 
-                // Hız değişimi
+                // 5. Hız değişimleri
                 for (const cmd of MOTOR_SPEED_CHANGES) {
                     await writeMotorCommand(writeChar, cmd);
                 }
 
-                // Rotasyon devam komutları
+                // 6. Devam komutları (Magic bytes from PCAP)
                 const rotationCommands = [
                     hexToBytes("3c:12:00:00:64:00:0a:01:01:21:00:97:22:11:22:00:00:00:11:01:ff"),
                     hexToBytes("3c:12:00:00:64:00:0a:01:01:50:00:60:22:18:51:00:00:00:11:01:ff"),
@@ -3668,155 +5472,85 @@
                     await writeMotorCommand(writeChar, cmd);
                 }
 
-                // Durma başlangıcı
+                // 7. Durma sekansı
                 await writeMotorCommand(writeChar, MOTOR_COMMANDS.MOTOR_STOP_INIT);
 
-                // Yavaşlama
                 for (const cmd of MOTOR_SLOWDOWN) {
                     await writeMotorCommand(writeChar, cmd);
                 }
 
-                // Final durma
-                for (let i = 0; i < 20; i++) {
+                // Final temizlik
+                for (let i = 0; i < 5; i++) {
                     await writeMotorCommand(writeChar, MOTOR_COMMANDS.MOTOR_BASE, 30);
                 }
 
-                console.log('✅ Rotasyon tamamlandı!');
+                console.log('✅ Rotasyon komutları tamamlandı!');
+
+                // State güncelle (Tahmini)
+                let current = motorState.currentAngle || 0;
+                let delta = validRotations * 360 * (direction === 'CCW' ? -1 : 1);
+                motorState.currentAngle = current + delta;
+                updateMotorAngleDisplay(motorState.currentAngle);
+
+            } catch (err) {
+                console.error('❌ Rotasyon hatası:', err);
             } finally {
                 motorOperationInProgress = false;
             }
         }
 
-        // Motor açıya git
+
+        // Motor açıya git (Göreceli hareket: Mevcut + Açı)
+        // Kullanıcı "Run to Angle" bloğunu "Turn By Angle" (Göreceli Dönüş) olarak bekliyor.
         async function runMotorToAngle(deviceId, angle, direction = 'CW') {
-            // Motor işlemi devam ediyorsa bekle
             if (motorOperationInProgress) {
-                console.log('⏳ Başka bir motor işlemi devam ediyor, bekleniyor...');
+                console.log('⏳ Başka bir motor işlemi devam ediyor...');
                 return;
             }
-
             motorOperationInProgress = true;
 
             try {
-                const chars = await getMotorCharacteristics(deviceId);
+                console.log(`🎯 ${angle}° açıya göreceli gidiliyor (${direction})...`);
 
-                if (!chars) {
-                    console.error('❌ Karakteristikler alınamadı!');
-                    return;
+                let current = motorState.currentAngle || 0;
+                let targetDelta = angle;
+
+                if (direction === 'CCW') {
+                    targetDelta = -targetDelta;
                 }
 
-                console.log(`🎯 ${angle}° açıya ${direction} yönünde gidiliyor...`);
+                const targetAngle = current + targetDelta;
+                console.log(`   📍 Açı Hedef: ${current}° + ${targetDelta}° = ${targetAngle}°`);
 
-                const writeChar = Object.values(chars)[0];
-
-                if (!writeChar) {
-                    console.error('❌ Yazılabilir karakteristik bulunamadı');
-                    return;
+                const success = await sendMotorPositionCommand(deviceId, targetAngle);
+                if (success) {
+                    const waitTime = Math.max(500, Math.abs(targetDelta) * 10);
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                    console.log(`✅ ${angle}° değişimi tamamlandı!`);
                 }
-
-                // Sabit hız komutları
-                const totalCommands = 43;
-
-                for (let i = 0; i < totalCommands; i++) {
-                    await writeMotorCommand(writeChar, MOTOR_COMMANDS.MOTOR_BASE, 30);
-                }
-
-                // Kontrol noktası
-                await writeMotorCommand(writeChar, MOTOR_COMMANDS.CMD_CONTROL);
-                await writeMotorCommand(writeChar, MOTOR_COMMANDS.MOTOR_BASE);
-
-                // Açıya göre execute komutu oluştur
-                const executeCmd = createExecuteCommand(angle, false, direction);
-                await writeMotorCommand(writeChar, executeCmd);
-
-                // Hız değişimi
-                for (const cmd of MOTOR_SPEED_CHANGES) {
-                    await writeMotorCommand(writeChar, cmd);
-                }
-
-                // Rotasyon devam komutları
-                const rotationCommands = [
-                    hexToBytes("3c:12:00:00:64:00:0a:01:01:21:00:97:22:11:22:00:00:00:11:01:ff"),
-                    hexToBytes("3c:12:00:00:64:00:0a:01:01:50:00:60:22:18:51:00:00:00:11:01:ff"),
-                    hexToBytes("3c:12:00:00:64:00:0a:01:01:7e:00:ee:21:1f:7f:00:00:00:11:01:ff"),
-                ];
-
-                for (const cmd of rotationCommands) {
-                    await writeMotorCommand(writeChar, cmd);
-                }
-
-                // Durma başlangıcı
-                await writeMotorCommand(writeChar, MOTOR_COMMANDS.MOTOR_STOP_INIT);
-
-                // Yavaşlama
-                for (const cmd of MOTOR_SLOWDOWN) {
-                    await writeMotorCommand(writeChar, cmd);
-                }
-
-                // Final durma
-                for (let i = 0; i < 20; i++) {
-                    await writeMotorCommand(writeChar, MOTOR_COMMANDS.MOTOR_BASE, 30);
-                }
-
-                console.log(`✅ ${angle}° açıya varıldı!`);
             } finally {
                 motorOperationInProgress = false;
             }
         }
 
-
-        // Motor mutlak pozisyona git (0° referansına göre)
+        // Motor mutlak pozisyona git (Eski fonksiyonu koru ama yeni helper'ı kullansın)
         // PCAP ANALİZİ (capturing_bluetooth_67angle.pcap):
         // Frame 23: 20 00            → Handle 0x000c (CMD char) - Başlatma komutu
         // Frame 25: 80 01 43 00 02   → Handle 0x000c (CMD char) - 67° pozisyon komutu (0x43 = 67)
         // Frame 86: 20 01            → Handle 0x000c (CMD char) - Tamamlama komutu (opsiyonel)
         async function goToPosition(deviceId, position) {
-            // Motor işlemi devam ediyorsa bekle
             if (motorOperationInProgress) {
-                console.log('⏳ Başka bir motor işlemi devam ediyor, bekleniyor...');
+                console.log('⏳ Başka bir motor işlemi devam ediyor...');
                 return;
             }
-
             motorOperationInProgress = true;
-
             try {
-                // Device'ı bul
-                const deviceData = connectedDevices.find(d => d.id === deviceId);
-                if (!deviceData || !deviceData.server) {
-                    console.error('❌ Device bulunamadı veya bağlı değil');
-                    return;
+                const success = await sendMotorPositionCommand(deviceId, position);
+                if (success) {
+                    const waitTime = Math.max(500, Math.abs(position - (motorState.currentAngle || 0)) * 10);
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                    console.log(`✅ ${position}° pozisyonuna gidildi!`);
                 }
-
-                console.log(`📍 ${position}° pozisyonuna gidiliyor...`);
-
-                // Servisi al
-                const service = await deviceData.server.getPrimaryService('0000fd02-0000-1000-8000-00805f9b34fb');
-
-                // CMD karakteristiğini al (Handle 0x000c = 0000fd02-0001)
-                const cmdChar = await service.getCharacteristic('0000fd02-0001-1000-8000-00805f9b34fb');
-
-                // Pozisyon değerini little-endian formatında hazırla
-                const posBytes = position & 0xFFFF;
-                const lowByte = posBytes & 0xFF;
-                const highByte = (posBytes >> 8) & 0xFF;
-
-                // 1. Başlatma komutu: 20 00
-                const startCmd = new Uint8Array([0x20, 0x00]);
-                await cmdChar.writeValueWithoutResponse(startCmd);
-                await new Promise(resolve => setTimeout(resolve, 50));
-
-                // 2. Pozisyon komutu: 80 01 [LOW] [HIGH] 02
-                const positionCmd = new Uint8Array([0x80, 0x01, lowByte, highByte, 0x02]);
-                await cmdChar.writeValueWithoutResponse(positionCmd);
-
-                // Motor hareket etmesi için bekle
-                const waitTime = Math.max(500, Math.abs(position) * 30);
-                await new Promise(resolve => setTimeout(resolve, waitTime));
-
-                console.log(`✅ ${position}° pozisyonuna gidildi!`);
-
-            } catch (error) {
-                console.error('❌ goToPosition hatası:', error);
             } finally {
                 motorOperationInProgress = false;
             }
@@ -3938,30 +5672,32 @@
             return 'generic';
         }
 
+
+
         // Cihaz tipine göre özel bloklar
         const DEVICE_BLOCKS = {
             'motor': [
                 {
                     type: 'motor_run_rotation',
-                    icon: '🔄',
+                    icon: 'rotate',
                     label: 'run for [1] rotations',
                     color: '#4ECDC4'
                 },
                 {
                     type: 'motor_run_seconds',
-                    icon: '⏱️',
+                    icon: 'timer',
                     label: 'run for [1] seconds',
                     color: '#4ECDC4'
                 },
                 {
                     type: 'motor_set_speed',
-                    icon: '⚡',
+                    icon: 'speed',
                     label: 'set speed to [100]%',
                     color: '#4ECDC4'
                 },
                 {
                     type: 'motor_stop',
-                    icon: '⏹️',
+                    icon: 'stop',
                     label: 'stop',
                     color: '#4ECDC4'
                 }
@@ -4007,7 +5743,7 @@
             return DEVICE_COLORS[Math.floor(Math.random() * DEVICE_COLORS.length)];
         }
 
-        function addDeviceToSidebar(device) {
+        function addDeviceToSidebar(device, overrideColor = null) {
             const deviceType = detectDeviceType(device.name || '');
 
             const deviceData = {
@@ -4015,7 +5751,7 @@
                 name: device.name || 'Motor',
                 type: deviceType,
                 shape: getRandomShape(),
-                color: getRandomColor(),
+                color: overrideColor || getRandomColor(),
                 device: device,
                 server: bluetoothServer,
                 characteristics: { ...connectedCharacteristics },
@@ -4028,17 +5764,41 @@
             const deviceList = document.getElementById('deviceList');
             const deviceIcon = document.createElement('div');
             deviceIcon.className = `device-icon ${deviceData.shape}`;
-            deviceIcon.style.borderColor = deviceData.color;
-            deviceIcon.style.color = deviceData.color;
             deviceIcon.dataset.deviceId = deviceData.id;
             deviceIcon.title = deviceData.name;
 
-            // Cihaz ID'nin son 4 karakteri
-            const shortId = deviceData.id.split('-').pop().substring(0, 4).toUpperCase();
-            deviceIcon.innerHTML = `${shortId}`;
+            // Controller için özel stil
+            if (deviceType === 'controller') {
+                deviceIcon.classList.add('controller');
+                deviceIcon.style.setProperty('--device-color', deviceData.color);
+
+                // Normal durumda beyaz arka plan, siyah yazı
+                deviceIcon.style.background = '#FFFFFF';
+                deviceIcon.style.borderColor = deviceData.color;
+                deviceIcon.style.color = 'black';
+
+                deviceIcon.innerHTML = '<img src="controller.png" style="width: 28px; height: 28px; object-fit: contain;">';
+                // deviceIcon.style.fontSize = '16px'; // No longer needed
+            } else {
+                deviceIcon.style.borderColor = deviceData.color;
+                deviceIcon.style.color = deviceData.color;
+
+                // Single Motor için özel kontrol
+                if (deviceData.name && deviceData.name.toLowerCase().includes('single motor')) {
+                    deviceIcon.innerHTML = '<img src="single-motor.png" style="width: 28px; height: 28px; object-fit: contain;">';
+                } else {
+                    // Diğer cihazlar için ID'nin son 4 karakteri
+                    const shortId = deviceData.id.split('-').pop().substring(0, 4).toUpperCase();
+                    deviceIcon.innerHTML = `${shortId}`;
+                }
+            }
 
             deviceIcon.onclick = (e) => {
                 e.stopPropagation();
+
+                // Tüm ikonlardan seçili durumunu kaldır
+                document.querySelectorAll('.device-icon').forEach(icon => icon.classList.remove('selected'));
+
                 // Eğer aynı cihaza tekrar tıklandıysa toolbox'ı kapat
                 if (currentToolboxDevice === deviceData.id && currentToolboxMode === 'device') {
                     hideAllToolboxes();
@@ -4047,6 +5807,7 @@
                     // Farklı cihaz - cihaz bloklarını toolbox'ta göster
                     currentToolboxDevice = deviceData.id;
                     showDeviceToolbox(deviceData);
+                    deviceIcon.classList.add('selected');
                 }
             };
 
@@ -4222,8 +5983,13 @@
         function createDeviceBlock(blockType, blockDef, deviceData) {
             Blockly.Blocks[blockType] = {
                 init: function () {
-                    const input = this.appendDummyInput()
-                        .appendField(blockDef.icon);
+                    const input = this.appendDummyInput();
+
+                    if (DEVICE_ICONS[blockDef.icon]) {
+                        input.appendField(new Blockly.FieldImage(DEVICE_ICONS[blockDef.icon], 16, 16, "*"));
+                    } else {
+                        input.appendField(blockDef.icon);
+                    }
 
                     // Label'ı parçala ve number field'ları ekle
                     const parts = blockDef.label.split(/\[|\]/);
@@ -4258,12 +6024,13 @@
 
         function updateDevicesTable() {
             const tbody = document.getElementById('devicesTableBody');
+            const t = TRANSLATIONS[currentLanguage];
 
             if (connectedDevices.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="4" style="padding: 30px; text-align: center; color: #999;">
-                            Henüz bağlı cihaz yok. "Yeni Cihaz Ara & Bağlan" butonuna tıklayın.
+                            ${t.no_device}
                         </td>
                     </tr>
                 `;
@@ -4278,7 +6045,7 @@
                 row.style.background = index % 2 === 0 ? 'white' : '#f9f9f9';
 
                 const statusIcon = device.connected ? '🟢' : '🔴';
-                const statusText = device.connected ? 'Bağlı' : 'Kesildi';
+                const statusText = device.connected ? t.status_connected : t.status_disconnected;
                 const statusColor = device.connected ? '#0FBD8C' : '#FF6680';
 
                 row.innerHTML = `
@@ -4297,8 +6064,9 @@
                         </span>
                     </td>
                     <td style="padding: 12px; text-align: center;">
-                        <button onclick="removeDeviceFromTable('${device.id}')" style="background: #FF6680; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">
-                            🗑️ Kaldır
+                        <button onclick="removeDeviceFromTable('${device.id}')" style="background: #FF6680; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                            ${t.btn_remove}
                         </button>
                     </td>
                 `;
@@ -4307,10 +6075,29 @@
             });
         }
 
+        let pendingRemoveDeviceId = null;
+
         function removeDeviceFromTable(deviceId) {
-            if (confirm('Bu cihazı kaldırmak istediğinize emin misiniz?')) {
-                removeDevice(deviceId);
+            pendingRemoveDeviceId = deviceId;
+            const modal = document.getElementById('removeDeviceModal');
+            if (modal) {
+                modal.classList.add('active');
             }
+        }
+
+        function closeRemoveDeviceModal() {
+            const modal = document.getElementById('removeDeviceModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+            pendingRemoveDeviceId = null;
+        }
+
+        function confirmRemoveDevice() {
+            if (pendingRemoveDeviceId) {
+                removeDevice(pendingRemoveDeviceId);
+            }
+            closeRemoveDeviceModal();
         }
 
         let selectedBlock = null;
@@ -4336,6 +6123,19 @@
                 selectedBlock.dispose(true);
                 selectedBlock = null;
                 document.getElementById('deleteBlockOverlay').classList.remove('show');
+            }
+        }
+
+        function duplicateSelectedBlock() {
+            if (selectedBlock && workspace) {
+                // Blok XML'ini al
+                const xml = Blockly.Xml.blockToDom(selectedBlock);
+                // Yeni blok oluştur
+                const newBlock = Blockly.Xml.domToBlock(xml, workspace);
+                // Yeni bloğu biraz kaydır
+                const oldPos = selectedBlock.getRelativeToSurfaceXY();
+                newBlock.moveBy(oldPos.x + 30, oldPos.y + 30);
+                console.log('📋 Blok kopyalandı');
             }
         }
 
@@ -4440,7 +6240,46 @@
             return shape;
         }
 
+        const OPTIONAL_SERVICES = [
+            'generic_access', 'generic_attribute', 'device_information', 'battery_service',
+            '00002a05-0000-1000-8000-00805f9b34fb', '00002b2a-0000-1000-8000-00805f9b34fb',
+            '0000fd02-0000-1000-8000-00805f9b34fb', '0000fd02-0001-1000-8000-00805f9b34fb', '0000fd02-0002-1000-8000-00805f9b34fb',
+            0x1800, 0x1801, 0x180a, 0x180f, 0x2a05, 0x2b2a, 0xfd02,
+            0xffe0, 0xffe1, 0xffe2, 0xffe3, 0xffe4, 0xffe5, 0xffe6, 0xffe7, 0xffe8, 0xffe9,
+            0x1623, 0x1624, 0x1625, 0x1626,
+            '00001623-1212-efde-1623-785feabcd123', '00001624-1212-efde-1623-785feabcd123', '00001625-1212-efde-1623-785feabcd123',
+            '0000ffe0-0000-1000-8000-00805f9b34fb', '0000ffe1-0000-1000-8000-00805f9b34fb'
+        ];
+
+        function openSpecificDeviceModal() {
+            document.getElementById('specificDeviceModal').classList.add('show');
+        }
+
+        function closeSpecificDeviceModal() {
+            document.getElementById('specificDeviceModal').classList.remove('show');
+        }
+
+        async function scanSpecificDevice(type) {
+            closeSpecificDeviceModal();
+            let options = { filters: [] };
+            if (type === 'controller') {
+                // "Controller" veya "Handset" ile başlayanlar
+                options.filters.push({ namePrefix: 'Controller' });
+                options.filters.push({ namePrefix: 'Handset' });
+                options.filters.push({ namePrefix: '⬜️' });
+            } else if (type === 'single_motor') {
+                // "Single Motor" veya emoji ile başlayanlar (API sadece startsWith destekler)
+                options.filters.push({ namePrefix: 'Single Motor' });
+                options.filters.push({ namePrefix: '⬜️' });
+            }
+            await scanDeviceInternal(options);
+        }
+
         async function scanAndConnect() {
+            await scanDeviceInternal({ acceptAllDevices: true });
+        }
+
+        async function scanDeviceInternal(customOptions) {
             // Bluetooth kontrolü
             if (!navigator.bluetooth) {
                 alert('❌ Tarayıcınız Web Bluetooth desteklemiyor!\n\nChrome, Edge veya Opera kullanın.');
@@ -4449,46 +6288,27 @@
 
             try {
                 const scanStatus = document.getElementById('scanStatus');
+                const t = TRANSLATIONS[currentLanguage];
                 scanStatus.style.display = 'block';
-                scanStatus.textContent = '🔍 Cihaz listesi açılıyor...';
+                scanStatus.textContent = t.device_list_opening;
 
                 // Motor/cihaz tarama
-                bluetoothDevice = await navigator.bluetooth.requestDevice({
-                    acceptAllDevices: true,
-                    optionalServices: [
-                        // Standart servisler
-                        'generic_access',
-                        'generic_attribute',
-                        'device_information',
-                        'battery_service',
-                        // Motor cihazı servis UUID'leri (gerçek cihazdan bulundu)
-                        '00002a05-0000-1000-8000-00805f9b34fb', // INIT handle
-                        '00002b2a-0000-1000-8000-00805f9b34fb', // CONFIG handle
-                        '0000fd02-0000-1000-8000-00805f9b34fb', // Ana servis (fd02)
-                        '0000fd02-0001-1000-8000-00805f9b34fb', // COMMAND handle
-                        '0000fd02-0002-1000-8000-00805f9b34fb', // MOTOR handle
-                        // Hex servisler
-                        0x1800, 0x1801, 0x180a, 0x180f,
-                        0x2a05, 0x2b2a, 0xfd02,
-                        0xffe0, 0xffe1, 0xffe2, 0xffe3, 0xffe4, 0xffe5, 0xffe6, 0xffe7, 0xffe8, 0xffe9,
-                        0x1623, 0x1624, 0x1625, 0x1626,
-                        // LEGO UUID'leri
-                        '00001623-1212-efde-1623-785feabcd123',
-                        '00001624-1212-efde-1623-785feabcd123',
-                        '00001625-1212-efde-1623-785feabcd123',
-                        // Genel motor UUID'leri
-                        '0000ffe0-0000-1000-8000-00805f9b34fb',
-                        '0000ffe1-0000-1000-8000-00805f9b34fb'
-                    ]
-                });
+                const requestOptions = {
+                    optionalServices: OPTIONAL_SERVICES,
+                    ...customOptions
+                };
+                bluetoothDevice = await navigator.bluetooth.requestDevice(requestOptions);
 
-                scanStatus.textContent = `📱 Bağlanıyor: ${bluetoothDevice.name || 'Bilinmeyen'}...`;
+                scanStatus.textContent = `${t.connecting_to} ${bluetoothDevice.name || t.unknown_device}...`;
                 console.log('Seçilen cihaz:', bluetoothDevice.name, bluetoothDevice.id);
 
                 // GATT sunucusuna bağlan
                 bluetoothServer = await bluetoothDevice.gatt.connect();
 
-                scanStatus.textContent = `✅ Bağlandı: ${bluetoothDevice.name || bluetoothDevice.id}`;
+                // Rengi önceden belirle, böylece hem sidebar hem panel aynı rengi kullanır
+                const assignedColor = getRandomColor();
+
+                scanStatus.textContent = `${t.connected_to} ${bluetoothDevice.name || bluetoothDevice.id}`;
 
                 console.log('GATT server connected');
                 console.log('Server:', bluetoothServer);
@@ -4518,14 +6338,17 @@
                                 }
 
                                 // Notify karakteristiği tespit et
-                                if (char.properties.notify && !controllerMonitoring) {
+                                // Her cihaz kendi notify char'ını kullanabilsin
+                                if (char.properties.notify) {
                                     notifyChar = char;
                                 }
                             }
 
                             // Eğer controller ise, önce write ile başlat, sonra notify dinle
                             // Eğer controller ise, sadece notify dinle (write YOK)
-                            if (notifyChar) {
+                            // Sadece "Controller" tipindeyse display'i aç (Single Motor vs açmasın)
+                            const deviceType = detectDeviceType(bluetoothDevice.name || '');
+                            if (notifyChar && deviceType === 'controller') {
                                 console.log('      🎮 Controller tespit edildi!');
                                 console.log('      DEBUG: writeChar var mı?', !!writeChar);
                                 console.log('      DEBUG: writeChar UUID:', writeChar ? writeChar.uuid : 'YOK');
@@ -4548,7 +6371,48 @@
 
                                 // Monitoring başlat (periyodik ping ile)
                                 console.log('      🎮 Monitoring başlatılıyor...');
-                                await startControllerMonitoring(bluetoothDevice, notifyChar, writeChar);
+                                await startControllerMonitoring(bluetoothDevice, notifyChar, writeChar, assignedColor);
+                            }
+
+                            // Motor için notification monitoring başlat
+                            // Motor açısını Bluetooth'tan gerçek zamanlı almak için
+                            if (notifyChar && deviceType === 'motor' && !motorMonitoringActive) {
+                                console.log('      ⚙️ Motor tespit edildi!');
+                                console.log('      DEBUG: notifyChar UUID:', notifyChar.uuid);
+
+                                // Characteristic'leri kaydet
+                                connectedCharacteristics[notifyChar.uuid] = notifyChar;
+                                if (writeChar) {
+                                    connectedCharacteristics[writeChar.uuid] = writeChar;
+                                }
+
+                                // Motor açı monitoring başlat
+                                console.log('      ⚙️ Motor açı monitoring başlatılıyor...');
+
+                                // Motor'a sensor stream başlatma komutu gönder (PCAP'tan: 0x28 0x32 0x00)
+                                if (writeChar) {
+                                    try {
+                                        console.log('      📤 Motor sensor stream başlatılıyor...');
+
+                                        // Adım 1: Reset/Init
+                                        await writeChar.writeValueWithoutResponse(new Uint8Array([0x00]));
+                                        await new Promise(resolve => setTimeout(resolve, 100));
+
+                                        // Adım 2: Handshake
+                                        await writeChar.writeValueWithoutResponse(new Uint8Array([0x1a]));
+                                        await new Promise(resolve => setTimeout(resolve, 100));
+
+                                        // Adım 3: Sensor data stream başlat
+                                        await writeChar.writeValueWithoutResponse(new Uint8Array([0x28, 0x32, 0x00]));
+                                        console.log('      ✓ Sensor stream başlatıldı!');
+
+                                    } catch (e) {
+                                        console.log('      ⚠️ Motor başlatma hatası:', e.message);
+                                    }
+                                }
+
+                                // Monitoring başlat
+                                await startMotorAngleMonitoring(bluetoothDevice, notifyChar, bluetoothDevice.id, assignedColor);
                             }
 
                         } catch (e) {
@@ -4566,10 +6430,16 @@
                 // Bağlantı kesilince
                 bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
 
-                // Cihazı sidebar'a ekle
-                addDeviceToSidebar(bluetoothDevice);
+                // Cihazı sidebar'a ekle (aynı rengi kullanarak)
+                addDeviceToSidebar(bluetoothDevice, assignedColor);
 
-                scanStatus.textContent = '✅ Cihaz eklendi!';
+                // Eğer Motor ise Display'i göster
+                const connectedType = detectDeviceType(bluetoothDevice.name || '');
+                if (connectedType === 'motor') {
+                    showMotorDisplay(bluetoothDevice, assignedColor);
+                }
+
+                scanStatus.textContent = t.device_added;
 
                 // Scan status'u gizle
                 setTimeout(() => {
@@ -4621,8 +6491,14 @@
             activeControllerDevice = null;
             activeControllerCharacteristic = null;
 
+            // Motor monitoring'i durdur
+            if (motorMonitoringActive) {
+                stopMotorAngleMonitoring();
+            }
+
             // Controller display'i gizle
             hideControllerDisplay();
+            hideMotorDisplay();
 
             // Bağlantısı kesilen cihazı bul ve durumunu güncelle
             const device = connectedDevices.find(d => d.device === bluetoothDevice);
@@ -4637,7 +6513,7 @@
         }
 
         // Controller'dan veri oku ve state güncelle
-        async function startControllerMonitoring(device, notifyChar, writeChar) {
+        async function startControllerMonitoring(device, notifyChar, writeChar, deviceColor = null) {
             console.log('🎮 Controller monitoring başlatılıyor...');
             activeControllerDevice = device;
             activeControllerCharacteristic = notifyChar; // Global'e kaydet
@@ -4645,8 +6521,22 @@
             console.log('   DEBUG: Notify characteristic:', notifyChar.uuid);
             console.log('   DEBUG: Write characteristic:', writeChar ? writeChar.uuid : 'YOK');
 
-            // Controller display'i göster
-            showControllerDisplay();
+            // Controller display'i göster - cihaz bilgilerini bul
+            // Eğer renk parametre olarak geldiyse kullan, yoksa listeden bulmaya çalış
+            let colorToUse = deviceColor;
+            let nameToUse = device.name || 'Controller';
+
+            if (!colorToUse) {
+                const deviceData = connectedDevices.find(d => d.device === device || d.id === device.id);
+                if (deviceData) {
+                    nameToUse = deviceData.name;
+                    colorToUse = deviceData.color;
+                } else {
+                    colorToUse = '#4C97FF';
+                }
+            }
+
+            showControllerDisplay(nameToUse, colorToUse);
 
             // Notification'ları dinle
             try {
@@ -4658,6 +6548,15 @@
                 // Event listener ekle - notification'dan SONRA
                 notifyChar.addEventListener('characteristicvaluechanged', (event) => {
                     const value = event.target.value;
+
+                    // RAW HEX DUMP (Debugging için - ilk 10 paket)
+                    if (!event.target._logCount) event.target._logCount = 0;
+                    if (event.target._logCount < 10) {
+                        const bytes = new Uint8Array(value.buffer);
+                        const hexDump = [...bytes].map(b => b.toString(16).padStart(2, '0')).join(' ');
+                        console.log(`🎮 Controller RAW [${value.byteLength} bytes]: ${hexDump}`);
+                        event.target._logCount++;
+                    }
 
                     // Format: 60, 10, 0, 0, 50, 0, 15, 1, 0, 50, 0, 248, 255
                     // Index:   0   1  2  3   4  5   6  7  8   9 10   11  12
@@ -4673,6 +6572,37 @@
                         if (leftByte !== controllerState.leftValue || rightByte !== controllerState.rightValue) {
                             updateControllerState(leftByte, rightByte);
                         }
+
+                        // Pil yüzdesini al (index 4 olabilir - motor ile aynı gibi deneyelim)
+                        if (value.byteLength >= 5) {
+                            let batteryPercent = value.getUint8(4);
+                            // 0-100 arasına normalize et
+                            if (batteryPercent > 100) {
+                                batteryPercent = Math.round((batteryPercent / 255) * 100);
+                            }
+
+                            // Pil göstergesini güncelle
+                            const batteryEl = document.getElementById('controllerBatteryPercent');
+                            const batteryFill = document.getElementById('controllerBatteryFill');
+                            if (batteryEl) {
+                                batteryEl.textContent = `${batteryPercent}%`;
+
+                                // Pil doluluk göstergesini güncelle
+                                if (batteryFill) {
+                                    const fillWidth = Math.round((batteryPercent / 100) * 14);
+                                    batteryFill.setAttribute('width', fillWidth);
+                                }
+
+                                // Renk ayarla
+                                if (batteryPercent < 20) {
+                                    batteryEl.parentElement.style.color = '#e03131';
+                                } else if (batteryPercent < 50) {
+                                    batteryEl.parentElement.style.color = '#fab005';
+                                } else {
+                                    batteryEl.parentElement.style.color = '#37b24d';
+                                }
+                            }
+                        }
                     }
                 });
 
@@ -4685,7 +6615,40 @@
                     try {
                         // PCAP analizinden: Başlatma sırası
                         // Paket 403: 0x00 (reset/init)
-                        // Paket 406: 0x1a (handshake)
+                        // 0. Notify Characteristic'i bul ve Subscribe ol (Gerekli olabilir)
+                        try {
+                            const notifyUUID = '0000fd02-0002-1000-8000-00805f9b34fb';
+                            let notifyChar = null;
+
+                            // deviceData'yı bul
+                            const deviceData = connectedDevices.find(d => d.device === device || d.id === device.id);
+
+                            if (deviceData && deviceData.characteristics) {
+                                notifyChar = deviceData.characteristics[notifyUUID];
+                            }
+
+                            // Cache'te yoksa servisten al (writeChar'ın servisini kullanabiliriz)
+                            if (!notifyChar && writeChar && writeChar.service) {
+                                try {
+                                    notifyChar = await writeChar.service.getCharacteristic(notifyUUID);
+                                } catch (e) { console.log('   ⚠️ Notify char servisten alınamadı:', e.message); }
+                            }
+
+                            if (notifyChar) {
+                                // Start notifications if we haven't tracked it yet or just to be safe
+                                // Web Bluetooth automatically handles duplicate startNotifications calls usually, or checks properties
+                                console.log('   🔔 Notifications başlatılıyor (Handshake için gerekli olabilir)...');
+                                await notifyChar.startNotifications();
+                                // Listener eklemeye gerek yok, sadece aktif olması yetebilir
+                            } else {
+                                console.log('   ⚠️ Notify char bulunamadı, bu adım atlanıyor.');
+                            }
+                        } catch (err) {
+                            console.log('   ⚠️ Notification başlatma uyarısı:', err);
+                            // Notification hatası motoru durdurmamalı, devam et
+                        }
+
+                        // 1. Wake UP / Init / Handshake)
                         // Paket 409: 0x28 0x32 0x00 (sensor data stream başlat)
 
                         // Adım 1: Reset/Init
@@ -5131,6 +7094,37 @@
 
         let currentToolboxMode = null;
 
+        // Toolbox değiştiğinde blokların kaymasını önlemek için blokları fiziksel olarak geri taşı
+        function updateToolboxPreservingScroll(toolboxXml) {
+            // Tüm üst seviye blokların pozisyonlarını kaydet
+            const allBlocks = workspace.getTopBlocks(false);
+            const originalPositions = [];
+
+            allBlocks.forEach(block => {
+                const pos = block.getRelativeToSurfaceXY();
+                originalPositions.push({
+                    block: block,
+                    x: pos.x,
+                    y: pos.y
+                });
+            });
+
+            // Toolbox'ı güncelle
+            workspace.updateToolbox(toolboxXml);
+
+            // Blokların yeni pozisyonlarını kontrol et ve delta varsa geri taşı
+            originalPositions.forEach(item => {
+                const newPos = item.block.getRelativeToSurfaceXY();
+                const deltaX = newPos.x - item.x;
+                const deltaY = newPos.y - item.y;
+
+                // Eğer blok kaydıysa, ters yönde geri taşı
+                if (deltaX !== 0 || deltaY !== 0) {
+                    item.block.moveBy(-deltaX, -deltaY);
+                }
+            });
+        }
+
         function showStartToolbox() {
             const startToolbox = `
                 <xml xmlns="https://developers.google.com/blockly/xml">
@@ -5142,10 +7136,18 @@
                     <block type="send_message">
                         <field name="MESSAGE">message1</field>
                     </block>
+                    <block type="wait">
+                        <value name="SECONDS">
+                            <shadow type="math_number">
+                                <field name="NUM">1</field>
+                            </shadow>
+                        </value>
+                    </block>
+                    <block type="wait_until"></block>
                 </xml>
             `;
 
-            workspace.updateToolbox(startToolbox);
+            updateToolboxPreservingScroll(startToolbox);
             isToolboxVisible = true;
             currentToolboxMode = 'start';
             currentToolboxDevice = null;
@@ -5159,13 +7161,6 @@
         function showControlToolbox() {
             const controlToolbox = `
                 <xml xmlns="https://developers.google.com/blockly/xml">
-                    <block type="wait">
-                        <value name="SECONDS">
-                            <shadow type="math_number">
-                                <field name="NUM">1</field>
-                            </shadow>
-                        </value>
-                    </block>
                     <block type="repeat">
                         <value name="TIMES">
                             <shadow type="math_number">
@@ -5176,12 +7171,11 @@
                     <block type="forever"></block>
                     <block type="if_then"></block>
                     <block type="if_then_else"></block>
-                    <block type="wait_until"></block>
                     <block type="repeat_until"></block>
                 </xml>
             `;
 
-            workspace.updateToolbox(controlToolbox);
+            updateToolboxPreservingScroll(controlToolbox);
             isToolboxVisible = true;
             currentToolboxMode = 'control';
             currentToolboxDevice = null;
@@ -5207,7 +7201,7 @@
                 </xml>
             `;
 
-            workspace.updateToolbox(actionLedToolbox);
+            updateToolboxPreservingScroll(actionLedToolbox);
             isToolboxVisible = true;
             currentToolboxMode = 'action_led';
             selectedDeviceId = null;
@@ -5248,7 +7242,7 @@
                 </xml>
             `;
 
-            workspace.updateToolbox(actionNumToolbox);
+            updateToolboxPreservingScroll(actionNumToolbox);
             isToolboxVisible = true;
             currentToolboxMode = 'action_num';
             selectedDeviceId = null;
@@ -5279,10 +7273,10 @@
                     </block>
                     <block type="motor_run_to_angle">
                         <field name="DIRECTION">CW</field>
-                        <field name="ANGLE">0</field>
+                        <field name="ANGLE">90</field>
                     </block>
                     <block type="motor_go_to_position">
-                        <field name="POSITION">67</field>
+                        <field name="POSITION">270</field>
                     </block>
                     <block type="motor_start">
                         <field name="DIRECTION">CW</field>
@@ -5313,7 +7307,7 @@
 
             deviceToolboxXml += '</xml>';
 
-            workspace.updateToolbox(deviceToolboxXml);
+            updateToolboxPreservingScroll(deviceToolboxXml);
             isToolboxVisible = true;
             currentToolboxMode = 'device';
             currentToolboxDevice = deviceData.id; // Bu da ekleyelim
@@ -5378,14 +7372,13 @@
                             </shadow>
                         </value>
                     </block>
-                    <block type="logic_operation">
-                        <field name="OP">AND</field>
-                    </block>
+                    <block type="logic_and"></block>
+                    <block type="logic_or"></block>
                     <block type="logic_negate"></block>
                 </xml>
             `;
 
-            workspace.updateToolbox(operatorToolbox);
+            updateToolboxPreservingScroll(operatorToolbox);
             isToolboxVisible = true;
             currentToolboxMode = 'operator';
             selectedDeviceId = null;
@@ -5403,7 +7396,7 @@
                 </xml>
             `;
 
-            workspace.updateToolbox(motorToolbox);
+            updateToolboxPreservingScroll(motorToolbox);
             isToolboxVisible = true;
             currentToolboxMode = 'motor';
             selectedDeviceId = null;
@@ -5420,8 +7413,43 @@
             });
         }
 
+        function toggleActionButtonBlocks() {
+            console.log('toggleActionButtonBlocks çağrıldı, currentMode:', currentToolboxMode);
+
+            if (!workspace) {
+                console.error('Workspace henüz yüklenmedi!');
+                return;
+            }
+
+            if (currentToolboxMode === 'action_button') {
+                hideAllToolboxes();
+            } else {
+                showActionButtonToolbox();
+            }
+        }
+
+        function showActionButtonToolbox() {
+            const actionButtonToolbox = `
+                <xml xmlns="https://developers.google.com/blockly/xml">
+                    <block type="rgb_red_button_get"></block>
+                    <block type="rgb_green_button_get"></block>
+                    <block type="rgb_blue_button_get"></block>
+                </xml>
+            `;
+
+            updateToolboxPreservingScroll(actionButtonToolbox);
+            isToolboxVisible = true;
+            currentToolboxMode = 'action_button';
+            selectedDeviceId = null;
+            currentToolboxDevice = null;
+
+            updateToolboxButtons('actionButtonToggle');
+            resetDeviceIcons();
+            console.log('Action Button toolbox gösterildi');
+        }
+
         function updateToolboxButtons(activeButtonId) {
-            const buttons = ['startToggle', 'controlToggle', 'actionLedToggle', 'actionNumToggle', 'operatorToggle'];
+            const buttons = ['startToggle', 'controlToggle', 'actionLedToggle', 'actionNumToggle', 'actionButtonToggle', 'operatorToggle'];
 
             buttons.forEach(buttonId => {
                 const btn = document.getElementById(buttonId);
@@ -5439,7 +7467,7 @@
 
         function hideAllToolboxes() {
             const emptyToolbox = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>';
-            workspace.updateToolbox(emptyToolbox);
+            updateToolboxPreservingScroll(emptyToolbox);
             isToolboxVisible = false;
             currentToolboxMode = null;
             currentToolboxDevice = null;
