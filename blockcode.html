@@ -164,6 +164,200 @@
             color: white;
         }
 
+        #soundToggle {
+            background: rgba(233, 30, 99, 0.15) !important;
+            border: 2px solid rgba(233, 30, 99, 0.5) !important;
+        }
+
+        #soundToggle:hover,
+        #soundToggle.active {
+            background: rgba(233, 30, 99, 0.35) !important;
+        }
+
+        /* Sound Recorder Modal */
+        .sound-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            width: 440px;
+            flex-direction: column;
+            gap: 15px;
+            user-select: none;
+        }
+
+        .sound-modal.show {
+            display: flex;
+        }
+
+        .sound-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sound-modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sound-modal-close {
+            background: #FF6680;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .sound-visualization {
+            width: 100%;
+            height: 120px;
+            background: #E3F2FD;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .trim-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 14px;
+            background: #00bcd4;
+            cursor: ew-resize;
+            display: none;
+            z-index: 10;
+        }
+
+        .trim-handle::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 1px;
+        }
+
+        .trim-handle.start {
+            left: 0;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .trim-handle.end {
+            right: 0;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .trim-overlay {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            pointer-events: none;
+            display: none;
+            z-index: 5;
+        }
+
+        .trim-overlay.left {
+            left: 0;
+        }
+
+        .trim-overlay.right {
+            right: 0;
+        }
+
+        .sound-wave-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sound-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .sound-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sound-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .sound-btn.record {
+            background: #FF4444;
+            color: white;
+        }
+
+        .sound-btn.record.recording {
+            animation: pulse-red 1.5s infinite;
+        }
+
+        .sound-btn.play {
+            background: #4C97FF;
+            color: white;
+        }
+
+        .sound-btn.stop {
+            background: #888;
+            color: white;
+        }
+
+        .sound-timer {
+            text-align: center;
+            font-family: monospace;
+            font-size: 16px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+            }
+        }
+
+
         .code-btn {
             background: white;
             color: #4C97FF;
@@ -2253,6 +2447,15 @@
                         <path d="M12 4v16"></path>
                     </svg>
                 </button>
+                <button class="tool-btn" id="soundToggle" onclick="toggleSoundBlocks()" title="Ses / Sound">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                </button>
                 <div class="sidebar-divider"></div>
 
             </div>
@@ -2320,6 +2523,54 @@
             <button class="disconnect-btn-overlay" onclick="disconnectSelectedDevice()">
                 🔌 Bağlantıyı Kes
             </button>
+        </div>
+
+        <!-- Sound Recorder Modal -->
+        <div class="sound-modal" id="soundModal">
+            <div class="sound-modal-header">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                    <span id="soundNameTitle">Ses Kaydı</span>
+                </h3>
+                <button class="sound-modal-close" onclick="hideSoundRecorder()">X</button>
+            </div>
+
+            <!-- Trim UI Elements inside Visualization -->
+            <div class="sound-visualization" id="soundVizContainer">
+                <canvas id="soundWaveCanvas" width="400" height="120" class="sound-wave-canvas"></canvas>
+
+                <div class="trim-overlay left" id="trimOverlayLeft"></div>
+                <div class="trim-overlay right" id="trimOverlayRight"></div>
+                <div class="trim-handle start" id="trimHandleStart" onmousedown="startDragTrim('start', event)"></div>
+                <div class="trim-handle end" id="trimHandleEnd" onmousedown="startDragTrim('end', event)"></div>
+            </div>
+
+            <div class="sound-timer" id="soundTimer">00:00:00</div>
+
+            <div class="sound-controls">
+                <button class="sound-btn record" id="recordBtn" onclick="toggleRecording()">
+                    <div style="width: 16px; height: 16px; background: white; border-radius: 50%;"></div>
+                </button>
+                <button class="sound-btn play" id="playPreviewBtn" onclick="playCurrentRecording()" disabled
+                    style="opacity: 0.5;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                </button>
+                <button class="sound-btn stop" id="stopPlaybackBtn" onclick="stopPlayback()" disabled
+                    style="opacity: 0.5;">
+                    <div style="width: 16px; height: 16px; background: white; border-radius: 2px;"></div>
+                </button>
+            </div>
+
+            <!-- Hidden audio element for playback -->
+            <audio id="audioPreview" style="display: none;"></audio>
         </div>
 
         <!-- Blok işlem butonları (sağ alt) -->
@@ -3172,7 +3423,13 @@
         <div class="code-content"
             style="max-width: 700px; height: 80vh; max-height: 700px; display: flex; flex-direction: column; overflow: hidden; padding: 15px;">
             <div class="code-header" style="margin-bottom: 8px; padding-bottom: 8px;">
-                <h2 id="infoModalTitle" style="margin: 0; font-size: 20px;">ℹ️ Sistem Bilgisi</h2>
+                <h2 id="infoModalTitle" style="margin: 0; font-size: 20px; display: flex; align-items: center;"><svg
+                        width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4C97FF" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg> Sistem Bilgisi</h2>
                 <button class="close-btn" onclick="closeInfoModal()">×</button>
             </div>
 
@@ -3208,7 +3465,13 @@
                 style="display: none; flex: 1; overflow-y: auto; margin: 0; padding: 10px;">
                 <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap;">
                     <button onclick="refreshLedGraph()" id="refreshGraphBtn"
-                        style="padding: 6px 12px; border: 1px solid #ddd; background: #4C97FF; color: white; border-radius: 16px; cursor: pointer; font-size: 12px;">🔄
+                        style="padding: 6px 12px; border: 1px solid #ddd; background: #4C97FF; color: white; border-radius: 16px; cursor: pointer; font-size: 12px; display: flex; align-items: center;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+                            <path d="M23 4v6h-6"></path>
+                            <path d="M1 20v-6h6"></path>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
                         Yenile</button>
                     <button onclick="cancelGraphZoom()" id="cancelZoomBtn"
                         style="padding: 6px 12px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 16px; cursor: pointer; font-size: 12px; display: none;">↩️
@@ -3275,13 +3538,13 @@
                         <div style="flex: 1;"></div>
                         <span style="display: flex; align-items: center; gap: 4px; font-size: 10px;"><span
                                 style="width: 8px; height: 8px; background: #E74C3C; border-radius: 2px;"></span>
-                            <span id="legend-btn-red">Red</span></span>
+                            <span id="legend-btn-red">Red Button</span></span>
                         <span style="display: flex; align-items: center; gap: 4px; font-size: 10px;"><span
                                 style="width: 8px; height: 8px; background: #2ECC71; border-radius: 2px;"></span>
-                            <span id="legend-btn-green">Green</span></span>
+                            <span id="legend-btn-green">Green Button</span></span>
                         <span style="display: flex; align-items: center; gap: 4px; font-size: 10px;"><span
                                 style="width: 8px; height: 8px; background: #3498DB; border-radius: 2px;"></span>
-                            <span id="legend-btn-blue">Blue</span></span>
+                            <span id="legend-btn-blue">Blue Button</span></span>
                     </div>
                     <div
                         style="background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 10px; position: relative;">
@@ -3762,6 +4025,9 @@
                 legend_red: "Kırmızı",
                 legend_green: "Yeşil",
                 legend_blue: "Mavi",
+                legend_red_btn: "Kırmızı Buton",
+                legend_green_btn: "Yeşil Buton",
+                legend_blue_btn: "Mavi Buton",
 
                 // Hub & Device Blocks
                 block_set_hub_led: "hub ışığını ayarla",
@@ -3942,6 +4208,9 @@
                 legend_red: "Red",
                 legend_green: "Green",
                 legend_blue: "Blue",
+                legend_red_btn: "Red Button",
+                legend_green_btn: "Green Button",
+                legend_blue_btn: "Blue Button",
 
                 confirm_reset: "🔄 Are you sure you want to reset everything?\n\n• RGB panel will be reset\n• All LEDs will turn off\n• Number values will be 0\n• Devices will stay connected",
                 alert_no_play: "❌ Play block not found!\n\nAdd \"🚩 when play clicked\" block.",
@@ -4130,7 +4399,7 @@
             if (graphTitleNumbers) graphTitleNumbers.textContent = t.panel_numbers;
 
             const legendIds = ['legend-num-red', 'legend-num-green', 'legend-num-blue', 'legend-btn-red', 'legend-btn-green', 'legend-btn-blue'];
-            const legendKeys = ['legend_red', 'legend_green', 'legend_blue', 'legend_red', 'legend_green', 'legend_blue'];
+            const legendKeys = ['legend_red', 'legend_green', 'legend_blue', 'legend_red_btn', 'legend_green_btn', 'legend_blue_btn'];
 
             legendIds.forEach((id, index) => {
                 const el = document.getElementById(id);
@@ -4501,6 +4770,7 @@
                             }
                             remoteControllerState.leftButton = newState;
                             remoteControllerState.leftValue = buttonValue;
+                            if (typeof logButtonValue === 'function') logButtonValue('A', buttonValue === 0 ? 0 : 1);
                             updateRemoteControllerVisual();
                         } else if (portId === 1) {
                             // Right button
@@ -4511,12 +4781,14 @@
                             }
                             remoteControllerState.rightButton = newState;
                             remoteControllerState.rightValue = buttonValue;
+                            if (typeof logButtonValue === 'function') logButtonValue('X', buttonValue === 0 ? 0 : 1);
                             updateRemoteControllerVisual();
                         } else if (portId === 59 || portId === 60) {
                             // Green button (center)
                             const pressed = buttonValue === 1;
                             console.log(`🎮 Remote Green Button: ${pressed ? 'PRESSED' : 'RELEASED'}`);
                             remoteControllerState.greenButton = pressed;
+                            if (typeof logButtonValue === 'function') logButtonValue('Y', pressed ? 1 : 0);
                             updateRemoteControllerVisual();
                         }
                     }
@@ -6079,8 +6351,11 @@
                 'boost-move-hub': 'img/move-hub.png',
                 'mario': 'img/mario.png'
             };
-            const iconSrc = hubIcons[hubType] || 'img/spike_essential_icon.png';
-            const containerStyle = isEssential ? `style="box-shadow: none !important; border: 1px solid ${color};"` : '';
+            // Handle underscore vs hyphen mismatch
+            const typeKey = hubType.replace(/_/g, '-');
+            const iconSrc = hubIcons[typeKey] || hubIcons[hubType] || 'img/spike_essential_icon.png';
+            // Apply clean style to all hubs (User request: no shadow, 1px colored border)
+            const containerStyle = `style="box-shadow: none !important; border: 1px solid ${color};"`;
 
             return `
                 <div class="spike-essential-display active" id="hubDisplay_${deviceId}" data-device-id="${deviceId}" ${containerStyle}>
@@ -7158,6 +7433,10 @@
                                 const dv = new DataView(data.buffer, data.byteOffset);
                                 angle = dv.getInt16(4, true);
                             }
+
+                            // Normalize angle to 0-359 range (user request)
+                            angle = (angle % 360 + 360) % 360;
+
                             portState.value = angle;
 
                             const devId = deviceId || spikeHubState.deviceId;
@@ -8971,6 +9250,18 @@
             }
         };
 
+        Blockly.Blocks['play_sound'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField("🔊 Çal")
+                    .appendField(new Blockly.FieldTextInput("A"), "SOUND_NAME");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour("#E91E63");
+                this.setTooltip("Kaydedilen sesi çalar");
+            }
+        };
+
         Blockly.Blocks['light'] = {
             init: function () {
                 this.appendDummyInput().appendField("💡");
@@ -10702,6 +10993,7 @@
         };
         Blockly.Python['alarm'] = () => 'alarm()\n';
         Blockly.Python['sound'] = (b) => `play_tone(${b.getFieldValue('FREQ')})\n`;
+        Blockly.Python['play_sound'] = (b) => `play_sound("${b.getFieldValue('SOUND_NAME')}")\n`;
         Blockly.Python['light'] = () => 'light_on()\n';
         Blockly.Python['led_on'] = (b) => `led_on(${b.getFieldValue('VAL')})\n`;
         Blockly.Python['led_off'] = (b) => `led_off(${b.getFieldValue('VAL')})\n`;
@@ -10910,10 +11202,10 @@
 
             workspace = Blockly.inject('blocklyDiv', {
                 grid: {
-                    spacing: 25,       // Daha geniş aralık
-                    length: 1,         // Nokta boyutu (1 = küçük nokta)
-                    colour: '#d0d0d0', // Hafif görünür gri
-                    snap: true         // Blokları ızgaraya hizala
+                    spacing: 25,
+                    length: 1,
+                    colour: '#d0d0d0',
+                    snap: true
                 },
                 toolbox: `
                     <xml xmlns="https://developers.google.com/blockly/xml">
@@ -10967,32 +11259,25 @@
                 horizontalLayout: false,
                 toolboxPosition: 'start',
                 renderer: 'zelos',
-                // Flyout ayarları - sabit genişlik için
                 flyoutAutoClose: false,
                 zoom: {
                     controls: false,
                     wheel: true,
-                    startScale: 1.0,
-                    maxScale: 2.0,
-                    minScale: 0.5,
-                    scaleSpeed: 1.15
+                    startScale: 0.9,
+                    maxScale: 3,
+                    minScale: 0.3,
+                    scaleSpeed: 1.2
                 },
-                grid: {
-                    spacing: 25,       // Daha geniş aralık
-                    length: 1,         // Nokta boyutu (1 = küçük nokta)
-                    colour: '#d0d0d0', // Hafif görünür gri
-                    snap: true         // Blokları ızgaraya hizala
-                },
+                trashcan: false,
                 move: {
-                    scrollbars: {
-                        horizontal: true,
-                        vertical: true
-                    },
+                    scrollbars: true,
                     drag: true,
                     wheel: true
-                },
-                trashcan: false
+                }
             });
+
+            // Register Sound Recording Button Callback
+            workspace.registerButtonCallback('createNewSound', showSoundRecorder);
 
             // Blok eklendiğinde cihaz ikonu ekle
             workspace.addChangeListener(function (event) {
@@ -11332,6 +11617,60 @@
                     await sleep(100);
                 }
 
+                return;
+            }
+
+            // Sound - Play Sound
+            if (blockType === 'play_sound') {
+                const soundName = block.getFieldValue('SOUND_NAME');
+                logExecution(currentLanguage === 'tr' ? `🔊 Ses çal: <b>${soundName}</b>` : `🔊 Play Sound: <b>${soundName}</b>`, myFlowId, depth);
+
+                // Find and play the sound
+                if (window.soundRecordings) {
+                    const rec = window.soundRecordings.find(r => r.name === soundName);
+                    if (rec) {
+                        const audio = new Audio(rec.url);
+
+                        // Apply Trimming
+                        const start = rec.trimStart || 0;
+                        const end = rec.trimEnd || 1;
+
+                        // Helper to play with trim
+                        const playWithTrim = () => {
+                            const duration = audio.duration;
+                            if (duration && duration !== Infinity) {
+                                audio.currentTime = duration * start;
+
+                                // Stop when reaching end
+                                const checkEnd = () => {
+                                    if (audio.currentTime >= duration * end) {
+                                        audio.pause();
+                                        audio.removeEventListener('timeupdate', checkEnd);
+                                    }
+                                };
+                                audio.addEventListener('timeupdate', checkEnd);
+                            }
+                            audio.play().catch(e => console.warn(e));
+                        };
+
+                        if (audio.readyState >= 1) {
+                            playWithTrim();
+                        } else {
+                            audio.onloadedmetadata = playWithTrim;
+                        }
+                        // Fallback if metadata already loaded or fails (sometimes happens with blobs)
+                        setTimeout(() => {
+                            if (audio.readyState >= 1) { // HAVE_METADATA
+                                // Logic repeated just in case
+                            } else {
+                                audio.play(); // Just play
+                            }
+                        }, 50);
+
+                    } else {
+                        console.warn("Sound not found:", soundName);
+                    }
+                }
                 return;
             }
 
@@ -12883,6 +13222,7 @@
         let btnStates = { red: false, green: false, blue: false };
         let btnLock = { red: false, green: false, blue: false };
         let pressTimer = { red: null, green: null, blue: null };
+        const btnGraphMap = { red: 'A', green: 'Y', blue: 'X' };
 
         function handleBtnDown(color) {
             const btn = document.getElementById(`rgb${color.charAt(0).toUpperCase() + color.slice(1)}Btn`);
@@ -12896,19 +13236,21 @@
                 pressTimer[color] = setTimeout(() => {
                     // UNLOCK
                     btnLock[color] = false;
-                    btnStates[color] = false; // Bırakınca sönecek, ama timer bitince direkt sönsün mü? 
+                    btnStates[color] = false;
+                    if (window.logButtonValue) window.logButtonValue(btnGraphMap[color], 0); // Graph Release 
                     // Kullanıcı parmağını kaldırınca handleBtnUp çalışacak ve btnLock false olduğu için sönecek.
                     // Burada görsel feedback verelim:
                     btn.classList.remove('active');
                     btn.classList.add('flash');
                     setTimeout(() => btn.classList.remove('flash'), 500);
-                    console.log(`${color} button UNLOCKED (3s hold)`);
+                    // console.log(`${color} button UNLOCKED (3s hold)`);
                 }, 3000);
                 return;
             }
 
             // Kilitli değilse: Normal basma işlemi
             btnStates[color] = true;
+            if (window.logButtonValue) window.logButtonValue(btnGraphMap[color], 1); // Graph Press
             btn.classList.add('active');
 
             // 3 saniye basılı tutulursa KİLİTLE
@@ -12918,7 +13260,7 @@
                 btnLock[color] = true;
                 btn.classList.add('flash'); // Parlama efekti
                 setTimeout(() => btn.classList.remove('flash'), 500);
-                console.log(`${color} button LOCKED (3s hold)`);
+                // console.log(`${color} button LOCKED (3s hold)`);
             }, 3000);
         }
 
@@ -12937,6 +13279,7 @@
             if (!btnLock[color]) {
                 if (btnStates[color]) {
                     btnStates[color] = false;
+                    if (window.logButtonValue) window.logButtonValue(btnGraphMap[color], 0); // Graph Release
                     if (btn) btn.classList.remove('active');
                 }
             }
@@ -15987,22 +16330,17 @@ Basılıysa Doğru, değilse Yanlış.
                 options.inputType = 'spike_essential';
             } else if (type === 'spike_prime') {
                 // Spike Prime Hub: Device Type Byte = 0x01
-                // Hem LWP3 (1623) hem de yeni FD02 servislerini kabul et
-                options.filters.push({ services: ['00001623-1212-efde-1623-785feabcd123'] });
-                options.filters.push({ services: [0xFD02] });
+                // Use strict filtering to exclude Essential Hub (0x83)
                 options.filters.push({
                     manufacturerData: [{
                         companyIdentifier: 0x0397,
                         dataPrefix: new Uint8Array([0x01])
                     }]
                 });
-                // İsme göre de filtrele (bilgehan01 gibi)
-                options.filters.push({ namePrefix: 'bilgehan' });
                 options.inputType = 'spike_prime';
             } else if (type === 'technic_medium_hub') {
                 // Technic Medium Hub: Device Type Byte = 0x80
-                // Service UUID: 00001623-1212-efde-1623-785feabcd123 (LWP3)
-                options.filters.push({ services: ['00001623-1212-efde-1623-785feabcd123'] });
+                // Use strict filtering to exclude Spike Essential (0x83)
                 options.filters.push({
                     manufacturerData: [{
                         companyIdentifier: 0x0397,
@@ -17110,6 +17448,568 @@ Basılıysa Doğru, değilse Yanlış.
             }
         }
 
+        // Sound Recording Variables
+        let audioContext = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordingStartTime = 0;
+        let recordingInterval = null;
+        let analysisInterval = null;
+        let playbackInterval = null; // Animation frame for playback cursor
+        let isRecording = false;
+        let recordingData = []; // Array to store amplitude data for visualization
+        const MAX_RECORDING_SECONDS = 30; // Max duration in seconds
+
+        // Trimming state
+        let trimStartPct = 0; // 0.0 to 1.0
+        let trimEndPct = 1;   // 0.0 to 1.0
+        let isDraggingTrim = null; // 'start', 'end', or null
+        let dragStartXSound = 0; // Renamed
+        let initialDragPct = 0;
+
+        // Window global to store recordings
+        window.soundRecordings = [];
+
+        function toggleSoundBlocks() {
+            if (!workspace) return;
+            if (currentToolboxMode === 'sound') {
+                hideAllToolboxes();
+            } else {
+                showSoundToolbox();
+            }
+        }
+
+        function showSoundToolbox() {
+            let soundBlocksXml = '<button text="🎤 Yeni Ses Kaydı" callbackKey="createNewSound"></button>';
+            soundBlocksXml += '<sep gap="20"></sep>';
+
+            // Generate blocks for existing recordings
+            if (window.soundRecordings) {
+                window.soundRecordings.forEach(rec => {
+                    soundBlocksXml += `<block type="play_sound"><field name="SOUND_NAME">${rec.name}</field></block>`;
+                    soundBlocksXml += '<sep gap="10"></sep>';
+                });
+            }
+
+            const toolboxXml = `<xml xmlns="https://developers.google.com/blockly/xml">${soundBlocksXml}</xml>`;
+
+            updateToolboxPreservingScroll(toolboxXml);
+            isToolboxVisible = true;
+            currentToolboxMode = 'sound';
+            currentToolboxDevice = null;
+            selectedDeviceId = null;
+
+            updateToolboxButtons('soundToggle');
+            resetDeviceIcons();
+        }
+
+        function hideSoundRecorder() {
+            document.getElementById('soundModal').classList.remove('show');
+            stopRecording();
+            stopPlayback();
+        }
+
+        function showSoundRecorder() {
+            document.getElementById('soundModal').classList.add('show');
+
+            // Check if user has permission
+            // navigator.mediaDevices.getUserMedia is async, but we want UI to be ready.
+
+            // Reset state
+            audioChunks = [];
+            recordingData = []; // Reset visualization data
+            isRecording = false;
+
+            // Reset Trim
+            trimStartPct = 0;
+            trimEndPct = 1;
+            updateTrimUI();
+            toggleTrimControls(false);
+
+            document.getElementById('soundTimer').innerText = "00:00:00";
+            document.getElementById('recordBtn').classList.remove('recording');
+            document.getElementById('playPreviewBtn').disabled = true;
+            document.getElementById('playPreviewBtn').style.opacity = '0.5';
+            document.getElementById('stopPlaybackBtn').disabled = true;
+            document.getElementById('stopPlaybackBtn').style.opacity = '0.5';
+
+            // Clear any playback interval
+            if (playbackInterval) cancelAnimationFrame(playbackInterval);
+
+            // Determine name (A, B, C...)
+            const existingNames = window.soundRecordings.map(r => r.name);
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            let nextName = "A";
+            for (let i = 0; i < alphabet.length; i++) {
+                if (!existingNames.includes(alphabet[i])) {
+                    nextName = alphabet[i];
+                    break;
+                }
+            }
+            document.getElementById('soundNameTitle').innerText = "Ses Kaydı: " + nextName;
+            document.getElementById('soundModal').dataset.targetName = nextName;
+
+            initAudioContext();
+
+            // Clear canvas
+            const canvas = document.getElementById('soundWaveCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#E3F2FD';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Draw center line
+            ctx.beginPath();
+            ctx.strokeStyle = '#90CAF9';
+            ctx.lineWidth = 1;
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+        }
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        async function toggleRecording() {
+            if (isRecording) {
+                stopRecording(true); // Save
+            } else {
+                startRecording();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    // Save temporarily for preview
+                    document.getElementById('audioPreview').src = audioUrl;
+                    document.getElementById('playPreviewBtn').disabled = false;
+                    document.getElementById('playPreviewBtn').style.opacity = '1';
+
+                    // Automatically save to list
+                    saveCurrentRecording(audioBlob);
+
+                    // Stop all tracks
+                    stream.getTracks().forEach(track => track.stop());
+
+                    // Zoom in on the recorded wave
+                    drawStaticWaveform();
+
+                    // Enable and reset trim controls
+                    toggleTrimControls(true);
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                recordingStartTime = Date.now();
+                document.getElementById('recordBtn').classList.add('recording');
+
+                // Visualization and Timer
+                visualizeAudio(stream);
+                startTimer();
+
+                // Auto stop after 30s
+                setTimeout(() => {
+                    if (isRecording) stopRecording(true);
+                }, 30000);
+
+            } catch (err) {
+                console.error("Recording error:", err);
+                alert("Mikrofon erişimi sağlanamadı: " + err.message);
+            }
+        }
+
+        function stopRecording(save) {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                isRecording = false;
+                document.getElementById('recordBtn').classList.remove('recording');
+                clearInterval(recordingInterval);
+                cancelAnimationFrame(analysisInterval);
+            }
+        }
+
+        function saveCurrentRecording(blob) {
+            const name = document.getElementById('soundModal').dataset.targetName;
+            // Check if exists
+            const idx = window.soundRecordings.findIndex(r => r.name === name);
+            if (idx >= 0) {
+                window.soundRecordings[idx].blob = blob;
+                window.soundRecordings[idx].url = URL.createObjectURL(blob);
+            } else {
+                window.soundRecordings.push({
+                    name: name,
+                    blob: blob,
+                    url: URL.createObjectURL(blob)
+                });
+            }
+            // Update toolbox if open
+            if (currentToolboxMode === 'sound') {
+                showSoundToolbox();
+            }
+        }
+
+        function playCurrentRecording() {
+            const audio = document.getElementById('audioPreview');
+
+            // Set Start Time based on Trim
+            // We use the global trim variables for the preview
+            const duration = audio.duration;
+            if (duration && duration !== Infinity) {
+                audio.currentTime = duration * trimStartPct;
+            } else {
+                // Fallback if not ready, though usually it is by the time user clicks play
+                audio.currentTime = 0;
+            }
+
+            audio.play().catch(e => console.warn("Play error:", e));
+
+            document.getElementById('stopPlaybackBtn').disabled = false;
+            document.getElementById('stopPlaybackBtn').style.opacity = '1';
+
+            // Visualization loop for cursor and End Time check
+            const drawPlay = () => {
+                if (audio.paused || audio.ended) {
+                    cancelAnimationFrame(playbackInterval);
+                    return;
+                }
+
+                // Check end trim
+                const duration = audio.duration;
+                if (duration && (audio.currentTime >= duration * trimEndPct)) {
+                    stopPlayback();
+                    return;
+                }
+
+                playbackInterval = requestAnimationFrame(drawPlay);
+
+                // Calculate progress relative to the FULL duration for visualization
+                let progress = 0;
+                if (duration > 0) {
+                    progress = audio.currentTime / duration;
+                }
+                drawStaticWaveform(progress);
+            };
+            drawPlay();
+
+            audio.onended = () => {
+                document.getElementById('stopPlaybackBtn').disabled = true;
+                document.getElementById('stopPlaybackBtn').style.opacity = '0.5';
+                cancelAnimationFrame(playbackInterval);
+                drawStaticWaveform(-1); // Reset cursor
+            };
+        }
+
+        function stopPlayback() {
+            const audio = document.getElementById('audioPreview');
+            audio.pause();
+            audio.currentTime = 0;
+            document.getElementById('stopPlaybackBtn').disabled = true;
+            document.getElementById('stopPlaybackBtn').style.opacity = '0.5';
+            cancelAnimationFrame(playbackInterval);
+            drawStaticWaveform(-1);
+        }
+
+        // Draws the static (completed) waveform, scaled to fit the canvas
+        // Optional progress (0.0 to 1.0) to draw a cursor
+        function drawStaticWaveform(progress = -1) {
+            const canvas = document.getElementById('soundWaveCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Clear
+            ctx.fillStyle = '#E3F2FD';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Center line
+            ctx.beginPath();
+            ctx.strokeStyle = '#BBDEFB';
+            ctx.lineWidth = 1;
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+
+            if (!recordingData || recordingData.length === 0) return;
+
+            const centerY = canvas.height / 2;
+            const maxAmpHeight = canvas.height / 2 * 0.9;
+            // Stretch data to fill width
+            const step = canvas.width / recordingData.length;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#2196F3';
+            ctx.lineWidth = 2;
+
+            for (let i = 0; i < recordingData.length; i++) {
+                const x = i * step;
+                const amp = recordingData[i] * 5;
+                const h = Math.min(amp * maxAmpHeight, maxAmpHeight);
+                ctx.moveTo(x, centerY - h);
+                ctx.lineTo(x, centerY + h);
+            }
+            ctx.stroke();
+
+            // Draw Playback Cursor
+            if (progress >= 0 && progress <= 1) {
+                const cx = progress * canvas.width;
+                ctx.beginPath();
+                ctx.strokeStyle = '#FF4444';
+                ctx.lineWidth = 2;
+                ctx.moveTo(cx, 0);
+                ctx.lineTo(cx, canvas.height);
+                ctx.stroke();
+            }
+        }
+
+        function startTimer() {
+            clearInterval(recordingInterval);
+            recordingInterval = setInterval(() => {
+                const elapsed = Date.now() - recordingStartTime;
+                const secs = Math.floor(elapsed / 1000);
+                const ms = Math.floor((elapsed % 1000) / 10);
+                document.getElementById('soundTimer').innerText =
+                    `00:00:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+            }, 50);
+        }
+
+        // Trim UI Logic
+        function toggleTrimControls(show) {
+            const display = show ? 'block' : 'none';
+            document.getElementById('trimHandleStart').style.display = display;
+            document.getElementById('trimHandleEnd').style.display = display;
+            document.getElementById('trimOverlayLeft').style.display = display;
+            document.getElementById('trimOverlayRight').style.display = display;
+            if (!show) {
+                trimStartPct = 0;
+                trimEndPct = 1;
+                updateTrimUI();
+            }
+        }
+
+        function updateTrimUI() {
+            const container = document.getElementById('soundVizContainer');
+            if (!container) return;
+            const w = container.clientWidth || 400;
+
+            // Update handle positions
+            const startX = trimStartPct * w;
+            const endX = trimEndPct * w;
+
+            const startHandle = document.getElementById('trimHandleStart');
+            const endHandle = document.getElementById('trimHandleEnd');
+            const overlayLeft = document.getElementById('trimOverlayLeft');
+            const overlayRight = document.getElementById('trimOverlayRight');
+
+            startHandle.style.left = px(startX);
+            endHandle.style.left = px(endX - 14); // Subtract width
+
+            overlayLeft.style.width = px(startX);
+            overlayRight.style.width = px(w - endX);
+            overlayRight.style.left = px(endX);
+
+            // Update Current Recording Data
+            const name = document.getElementById('soundModal').dataset.targetName;
+            const idx = window.soundRecordings.findIndex(r => r.name === name);
+            if (idx >= 0) {
+                window.soundRecordings[idx].trimStart = trimStartPct;
+                window.soundRecordings[idx].trimEnd = trimEndPct;
+            }
+        }
+
+        function px(v) { return v + 'px'; }
+
+        // let dragStartXSound = 0; // Removed duplicate
+
+        function startDragTrim(type, e) {
+            isDraggingTrim = type;
+            dragStartXSound = e.clientX;
+            // Store initial percentage
+            if (type === 'start') initialDragPct = trimStartPct;
+            else initialDragPct = trimEndPct;
+
+            document.addEventListener('mousemove', onDragTrim);
+            document.addEventListener('mouseup', stopDragTrim);
+        }
+
+        function onDragTrim(e) {
+            if (!isDraggingTrim) return;
+            const container = document.getElementById('soundVizContainer');
+            const w = container.clientWidth;
+            const deltaX = e.clientX - dragStartXSound;
+            const deltaPct = deltaX / w;
+
+            let newPct = initialDragPct + deltaPct;
+
+            // Clamp and constrain
+            if (isDraggingTrim === 'start') {
+                newPct = Math.max(0, Math.min(newPct, trimEndPct - 0.05));
+                trimStartPct = newPct;
+            } else {
+                newPct = Math.max(trimStartPct + 0.05, Math.min(newPct, 1));
+                trimEndPct = newPct;
+            }
+
+            updateTrimUI();
+        }
+
+        function stopDragTrim() {
+            isDraggingTrim = null;
+            document.removeEventListener('mousemove', onDragTrim);
+            document.removeEventListener('mouseup', stopDragTrim);
+        }
+
+        function visualizeAudio(stream) {
+            const canvas = document.getElementById('soundWaveCanvas');
+            const ctx = canvas.getContext('2d');
+            const source = audioContext.createMediaStreamSource(stream);
+            const analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256;
+            source.connect(analyser);
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            // Clear canvas initially
+            ctx.fillStyle = '#E3F2FD';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const draw = () => {
+                if (!isRecording) return;
+                analysisInterval = requestAnimationFrame(draw);
+
+                // Get time domain data (waveform)
+                analyser.getByteTimeDomainData(dataArray);
+
+                // Calculate RMS amplitude for this frame
+                let sum = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    const amplitude = (dataArray[i] - 128) / 128; // Normalize -1 to 1
+                    sum += amplitude * amplitude;
+                }
+                const rms = Math.sqrt(sum / bufferLength);
+
+                // Store amplitude
+                recordingData.push(rms);
+
+                // Clear and redraw
+                ctx.fillStyle = '#E3F2FD';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw center line
+                ctx.beginPath();
+                ctx.strokeStyle = '#BBDEFB';
+                ctx.lineWidth = 1;
+                ctx.moveTo(0, canvas.height / 2);
+                ctx.lineTo(canvas.width, canvas.height / 2);
+                ctx.stroke();
+
+                // Draw waveform
+                ctx.beginPath();
+                ctx.strokeStyle = '#2196F3'; // Blue color
+                ctx.lineWidth = 2;
+
+                const centerY = canvas.height / 2;
+                const maxAmpHeight = canvas.height / 2 * 0.9; // 90% of half height
+
+                // Calculate X step based on max duration
+                // We want 30 seconds to fill the width
+                // X = (index / total_samples_in_30s) * width
+                // But we don't know total samples yet (it depends on frame rate).
+                // Better: Map time to X.
+
+                // Determine how many pixels per second. 
+                // Canvas width 360px / 30s = 12 px/s.
+                // We just draw the data points we have, assuming they occur at regular intervals (60fps approximately)
+                // BUT if we just stack them, it might not match 30s exactly if frame rate jitters.
+                // A better approach for "filling" is to map the current elapsed time to X.
+
+                const pixelsPerSec = canvas.width / MAX_RECORDING_SECONDS;
+
+                // To avoid drawing thousands of lines, we can subsample or just draw all.
+                // 30s * 60fps = 1800 points. Canvas is 360px. So ~5 points per pixel.
+
+                // We simply loop through recorded data.
+                // We assume the data points are evenly spaced over the elapsed time?
+                // Or better: we know each frame is ~16ms. 
+
+                // Let's rely on time mapping.
+                const totalDurationSoFar = (Date.now() - recordingStartTime) / 1000;
+                if (totalDurationSoFar > MAX_RECORDING_SECONDS) return;
+
+                // We compress 'recordingData' into the space of [0, currentX]
+                // Wait, user wants it to FILL UP as time passes.
+                // So index 0 is at x=0. Index N (now) is at x = currentX.
+                // NOT stretching. 
+
+                // So we assume a fixed scale.
+                // How many data points per pixel?
+                // If we want to reach end at 30s.
+                // We capture at 60fps approx.
+                // We can't guarantee fixed sampling rate with rAF.
+                // But for visualization it's usually okay to just plot them one after another.
+                // Let's try to map index to X using a fixed divisor?
+                // If we assume 60fps, 1800 frames. 360px. 0.2px per frame.
+                // Let's use the actual time logic.
+
+                // We simply draw the full buffer captured so far.
+                // But we need to know the X coordinate for each point.
+                // Since we didn't store time with data, this is tricky.
+                // But we know total duration 'totalDurationSoFar'.
+                // And total points 'recordingData.length'.
+                // So average time per point = totalDurationSoFar / recordingData.length.
+
+                const stepX = (totalDurationSoFar / recordingData.length / MAX_RECORDING_SECONDS) * canvas.width;
+
+                // Wait, simpler:
+                // X_current = (totalDurationSoFar / 30) * 360.
+                // We distribute ALL points evenly from 0 to X_current? 
+                // No, that would stretch/shrink.
+                // We want 0 to stay at 0.
+
+                // Let's just draw taking 1800 points as 360px.
+                // So step = 360 / 1800 = 0.2px.
+                // If frame rate is 60fps, this perfectly fills 30s.
+
+                const fixedStep = canvas.width / (MAX_RECORDING_SECONDS * 60);
+
+                for (let i = 0; i < recordingData.length; i++) {
+                    const x = i * fixedStep;
+                    if (x > canvas.width) break;
+
+                    const amp = recordingData[i] * 5; // Scale up visual
+                    const h = Math.min(amp * maxAmpHeight, maxAmpHeight);
+
+                    // Symmetric wave
+                    ctx.moveTo(x, centerY - h);
+                    ctx.lineTo(x, centerY + h);
+                }
+                ctx.stroke();
+
+                // Draw cursor/head
+                const currentX = (totalDurationSoFar / MAX_RECORDING_SECONDS) * canvas.width;
+                ctx.beginPath();
+                ctx.strokeStyle = '#FF4444';
+                ctx.lineWidth = 2;
+                ctx.moveTo(currentX, 0);
+                ctx.lineTo(currentX, canvas.height);
+                ctx.stroke();
+            };
+            draw();
+        }
+
         function toggleMotorControl() {
             console.log('toggleMotorControl çağrıldı, currentMode:', currentToolboxMode);
 
@@ -17999,7 +18899,12 @@ Basılıysa Doğru, değilse Yanlış.
         function updateInfoModalTexts() {
             const isTr = currentLanguage === 'tr';
             const title = document.getElementById('infoModalTitle');
-            if (title) title.textContent = isTr ? 'ℹ️ Sistem Bilgisi' : 'ℹ️ System Info';
+            if (title) {
+                const infoSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4C97FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+                title.innerHTML = isTr ? `${infoSvg} Sistem Bilgisi` : `${infoSvg} System Info`;
+                title.style.display = 'flex';
+                title.style.alignItems = 'center';
+            }
 
             const tab1 = document.getElementById('tab-btn-starters');
             if (tab1) tab1.textContent = isTr ? 'Başlangıç' : 'Starters';
@@ -18014,7 +18919,12 @@ Basılıysa Doğru, değilse Yanlış.
             if (tab4) tab4.textContent = isTr ? 'Grafikler' : 'Graphs';
 
             const refreshBtn = document.getElementById('refreshGraphBtn');
-            if (refreshBtn) refreshBtn.innerHTML = isTr ? '🔄 Yenile' : '🔄 Refresh';
+            if (refreshBtn) {
+                const refreshSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>`;
+                refreshBtn.innerHTML = isTr ? `${refreshSvg} Yenile` : `${refreshSvg} Refresh`;
+                refreshBtn.style.display = 'flex';
+                refreshBtn.style.alignItems = 'center';
+            }
 
             const cancelBtn = document.getElementById('cancelZoomBtn');
             if (cancelBtn) cancelBtn.innerHTML = isTr ? '↩️ Zoom İptal' : '↩️ Cancel Zoom';
@@ -18521,6 +19431,7 @@ Basılıysa Doğru, değilse Yanlış.
             Y: [],
             X: []
         };
+        window.buttonsGraphData = buttonsGraphData; // Ensure global access
 
         // Zoom state (shared between both graphs)
         let graphViewStart = null; // null = auto (app start or 1 hour ago, whichever is later)
@@ -18562,12 +19473,16 @@ Basılıysa Doğru, değilse Yanlış.
 
         function logButtonValue(btn, value) {
             const now = Date.now();
-            if (buttonsGraphData[btn]) {
+            // console.log(`[Graph] Logging Button ${btn}: ${value}`);
+            if (typeof buttonsGraphData !== 'undefined' && buttonsGraphData[btn]) {
                 buttonsGraphData[btn].push({ timestamp: now, value: value });
                 const cutoff = now - MAX_GRAPH_DATA_AGE;
                 buttonsGraphData[btn] = buttonsGraphData[btn].filter(d => d.timestamp > cutoff);
+            } else {
+                console.warn(`[Graph] buttonsGraphData not found for ${btn}`);
             }
         }
+        window.logButtonValue = logButtonValue;
 
         function refreshLedGraph() {
             // Reset to default 1 hour view
@@ -18659,36 +19574,58 @@ Basılıysa Doğru, değilse Yanlış.
                 green: '#44bb44',
                 blue: '#4488ff'
             };
+            const ledOffsets = { red: 0, green: 2, blue: 4 };
 
             let hasData = false;
             const transitionPoints = []; // Collect transition points for labels
 
             ['red', 'green', 'blue'].forEach(color => {
                 const data = ledGraphData[color].filter(d => d.timestamp >= viewStart && d.timestamp <= viewEnd);
-                if (data.length === 0) return;
+
+                // Determine initial value from history (match Buttons graph logic)
+                let lastValue = 0;
+                if (data.length > 0) {
+                    const allData = ledGraphData[color];
+                    const firstIdx = allData.indexOf(data[0]);
+                    if (firstIdx > 0) {
+                        lastValue = allData[firstIdx - 1].value > 0 ? 1 : 0;
+                    } else {
+                        // Fallback: If no previous data, assume 0 unless the point itself is 1?
+                        // Actually, if it starts at 0 timestamp, it's covered.
+                        // If we zoomed in and data[0] is in middle, we check history.
+                        lastValue = ledGraphData[color][0].value > 0 ? 1 : 0;
+                    }
+                } else {
+                    // No visible data, check history
+                    const allData = ledGraphData[color];
+                    if (allData.length > 0 && allData[allData.length - 1].timestamp < viewStart) {
+                        lastValue = allData[allData.length - 1].value > 0 ? 1 : 0;
+                    }
+                }
 
                 hasData = true;
                 ctx.strokeStyle = colors[color];
                 ctx.lineWidth = 2;
                 ctx.beginPath();
 
-                // Binary: value > 0 = On (top), value = 0 = Off (bottom)
-                let lastValue = data[0].value > 0 ? 1 : 0;
-                data.forEach((point, index) => {
-                    const x = padding.left + ((point.timestamp - viewStart) / rangeMs) * graphWidth;
-                    const isOn = point.value > 0 ? 1 : 0;
-                    const y = padding.top + graphHeight - isOn * graphHeight;
+                const offset = ledOffsets[color];
+                const yOnLine = yOn + offset;
+                const yOffLine = yOff - offset;
 
-                    if (index === 0) {
-                        const startX = padding.left;
-                        ctx.moveTo(startX, y);
-                        ctx.lineTo(x, y);
-                    } else {
-                        const prevY = padding.top + graphHeight - lastValue * graphHeight;
+                // Move to start
+                const startY = lastValue ? yOnLine : yOffLine;
+                ctx.moveTo(padding.left, startY);
+
+                if (data.length > 0) {
+                    data.forEach((point, index) => {
+                        const x = padding.left + ((point.timestamp - viewStart) / rangeMs) * graphWidth;
+                        const isOn = point.value > 0 ? 1 : 0;
+                        const currentY = isOn ? yOnLine : yOffLine;
+                        const prevY = lastValue ? yOnLine : yOffLine;
+
                         ctx.lineTo(x, prevY);
-                        ctx.lineTo(x, y);
+                        ctx.lineTo(x, currentY);
 
-                        // Record transition point (when value changes)
                         if (isOn !== lastValue) {
                             transitionPoints.push({
                                 x: x,
@@ -18696,13 +19633,14 @@ Basılıysa Doğru, değilse Yanlış.
                                 color: colors[color]
                             });
                         }
-                    }
-                    lastValue = isOn;
-                });
+
+                        lastValue = isOn;
+                    });
+                }
 
                 // Extend to current time
                 const endX = padding.left + graphWidth;
-                const endY = padding.top + graphHeight - lastValue * graphHeight;
+                const endY = lastValue ? yOnLine : yOffLine;
                 ctx.lineTo(endX, endY);
 
                 ctx.stroke();
