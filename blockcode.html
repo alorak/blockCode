@@ -7,6 +7,8 @@
     <title>BlockCode</title>
     <link rel="icon" type="image/png" href="img/favicon.png">
     <script src="https://unpkg.com/blockly@10.4.3/blockly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
     <style>
         * {
             margin: 0;
@@ -783,6 +785,443 @@
 
         #addDeviceBtn:hover {
             background: rgba(76, 151, 255, 0.35) !important;
+        }
+
+        /* AI Toggle Button */
+        #aiToggle {
+            background: rgba(124, 58, 237, 0.15) !important;
+            border: 2px solid rgba(124, 58, 237, 0.5) !important;
+        }
+
+        #aiToggle:hover,
+        #aiToggle.active {
+            background: rgba(124, 58, 237, 0.35) !important;
+        }
+
+        /* Pose Classification Panel */
+        .pose-panel {
+            display: none;
+            position: relative;
+            width: 300px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            pointer-events: auto;
+        }
+
+        .pose-panel.open {
+            display: block;
+        }
+
+        .pose-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pose-panel-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .pose-panel-header-left svg {
+            color: #7c3aed;
+        }
+
+        .pose-panel-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .pose-panel-action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+
+        .pose-panel-action-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .pose-video-area {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .pose-video-area video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            filter: grayscale(85%) brightness(0.75) blur(1.5px);
+        }
+
+        .pose-video-area canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1);
+        }
+
+        .pose-video-placeholder {
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+            padding: 20px;
+        }
+
+        .pose-video-controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 6px;
+            z-index: 5;
+        }
+
+        .pose-cam-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .pose-cam-btn.start-cam {
+            background: #22c55e;
+            color: white;
+        }
+
+        .pose-cam-btn.start-cam:hover {
+            background: #16a34a;
+        }
+
+        .pose-cam-btn.stop-cam {
+            background: #ef4444;
+            color: white;
+        }
+
+        .pose-cam-btn.stop-cam:hover {
+            background: #dc2626;
+        }
+
+        .pose-cam-btn.back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .pose-cam-btn.back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .pose-scenarios {
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .pose-scenario-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ede9fe;
+            border-radius: 12px;
+            padding: 10px 12px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .pose-scenario-row.active {
+            background: #ddd6fe;
+            border-color: #7c3aed;
+        }
+
+        .pose-scenario-icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .pose-scenario-icon svg {
+            width: 34px;
+            height: 34px;
+            stroke: #6d28d9;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .pose-scenario-bar-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pose-scenario-pct {
+            font-size: 14px;
+            font-weight: 700;
+            color: #4c1d95;
+            min-width: 46px;
+            background: white;
+            border: 1.5px solid #c4b5fd;
+            border-radius: 7px;
+            padding: 3px 6px;
+            text-align: center;
+        }
+
+        .pose-scenario-bar {
+            flex: 1;
+            height: 10px;
+            background: #c4b5fd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .pose-scenario-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.25s;
+        }
+
+        .pose-scenario-divider {
+            width: 2px;
+            height: 24px;
+            background: #a78bfa;
+            border-radius: 2px;
+        }
+
+        .pose-model-loading {
+            display: none;
+            padding: 16px;
+            text-align: center;
+            color: #7c3aed;
+            font-size: 13px;
+        }
+
+        .pose-model-loading.show {
+            display: block;
+        }
+
+        .pose-model-loading .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e0d5f5;
+            border-top-color: #7c3aed;
+            border-radius: 50%;
+            animation: pose-spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes pose-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* AI Panel Tabs */
+        .ai-panel-tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+        }
+
+        .ai-panel-tab {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #999;
+            text-align: center;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .ai-panel-tab:hover {
+            color: #7c3aed;
+        }
+
+        .ai-panel-tab.active {
+            color: #7c3aed;
+            border-bottom-color: #7c3aed;
+        }
+
+        .ai-tab-content {
+            display: none;
+        }
+
+        .ai-tab-content.active {
+            display: block;
+        }
+
+        /* Body Part Picker Dropdown */
+        .body-part-picker {
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bp-picker-label {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            padding: 4px 0 2px;
+            min-height: 18px;
+        }
+
+        /* Body Sensing Status Monitor */
+        .body-status-monitor {
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .body-status-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .body-status-row.true-state {
+            background: #fef3c7;
+        }
+
+        .body-status-row.false-state {
+            background: #fecaca;
+        }
+
+        .body-status-row.touch-row {
+            background: #ffedd5;
+        }
+
+        .body-status-row.touch-row.true-state {
+            background: #fed7aa;
+        }
+
+        .body-status-row.angle-row {
+            background: #fef9c3;
+        }
+
+        .body-status-row.distance-row {
+            background: #dcfce7;
+        }
+
+        .body-status-row.coord-row {
+            background: #e0f2fe;
+        }
+
+        .body-status-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .body-status-label {
+            flex: 1;
+            color: #333;
+        }
+
+        .body-status-value {
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            min-width: 46px;
+            text-align: center;
+        }
+
+        .body-status-row.true-state .body-status-value {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .body-status-row.false-state .body-status-value {
+            background: #ef4444;
+            color: white;
+        }
+
+        .body-status-row.angle-row .body-status-value {
+            background: #ca8a04;
+            color: white;
+        }
+
+        .body-status-row.distance-row .body-status-value {
+            background: #16a34a;
+            color: white;
+        }
+
+        .body-status-row.coord-row .body-status-value {
+            background: #0284c7;
+            color: white;
+        }
+
+        .body-status-row.touch-row .body-status-value {
+            background: #ea580c;
+            color: white;
+        }
+
+        .body-status-row.touch-row.true-state .body-status-value {
+            background: #f97316;
+            color: white;
+        }
+
+        .body-status-empty {
+            text-align: center;
+            padding: 16px;
+            color: #aaa;
+            font-size: 12px;
         }
 
         /* Zoom butonları - Hafif gri arka plan ve küçük boyut */
@@ -2458,6 +2897,18 @@
                 </button>
                 <div class="sidebar-divider"></div>
 
+                <!-- AI Button -->
+                <button class="tool-btn" id="aiToggle" onclick="toggleAIBlocks()" title="AI">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="4" r="2.5" />
+                        <path d="M12 6.5v5" />
+                        <path d="M8 18l4-6.5 4 6.5" />
+                        <path d="M7 9l-2-4" />
+                        <path d="M17 9l2-4" />
+                    </svg>
+                </button>
+
             </div>
             <div class="sidebar-panel" id="sidebarPanel">
                 <h3 id="panelTitle">Cihaz Blokları</h3>
@@ -3041,7 +3492,7 @@
                     style="background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);"
                     onclick="toggleSpikePrimeCollapse()">
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <img src="img/spike_prime_icon.png" style="width: 24px; height: 24px; object-fit: contain;">
+                        <img src="img/prime-hub.png" style="width: 24px; height: 24px; object-fit: contain;">
                         <span id="spikePrimeHeaderText">Spike Prime Hub</span>
                     </div>
                     <span class="hub-collapse-icon" id="spikePrimeCollapseIcon">▼</span>
@@ -3121,6 +3572,171 @@
                             <span id="spikePrimeGyroValue">X:0 Y:0 Z:0</span>
                             <span id="spikePrimeAccelValue">X:0 Y:0 Z:0</span>
                             <span id="spikePrimeTiltValue">Y:0° P:0° R:0°</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pose Classification Panel -->
+            <div class="pose-panel" id="posePanel">
+                <div class="pose-panel-header">
+                    <div class="pose-panel-header-left">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="5" r="2" />
+                            <path d="M12 7v5" />
+                            <path d="M8 10l4 2 4-2" />
+                            <path d="M10 17l2-5 2 5" />
+                        </svg>
+                        AI
+                    </div>
+                    <div class="pose-panel-actions">
+                        <button class="pose-panel-action-btn" onclick="togglePosePanelSize()" title="Büyüt/Küçült">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M15 3h6v6" />
+                                <path d="M9 21H3v-6" />
+                                <path d="M21 3l-7 7" />
+                                <path d="M3 21l7-7" />
+                            </svg>
+                        </button>
+                        <button class="pose-panel-action-btn" onclick="closePosePanel()" title="Kapat">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="ai-panel-tabs">
+                    <button class="ai-panel-tab active" id="tabPoseClassification" onclick="switchAITab('pose')">Poz
+                        Sınıflandırma</button>
+                    <button class="ai-panel-tab" id="tabBodySensing" onclick="switchAITab('body')">Vücut
+                        Algılama</button>
+                </div>
+
+                <!-- Shared Video Area -->
+                <div class="pose-video-area" id="poseVideoArea">
+                    <div class="pose-video-controls" id="poseVideoControls">
+                        <button class="pose-cam-btn start-cam" id="poseCamStartBtn" onclick="startPoseCamera()"
+                            title="Kamerayı Aç">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                                <circle cx="12" cy="13" r="4" />
+                            </svg>
+                        </button>
+                        <button class="pose-cam-btn stop-cam" id="poseCamStopBtn" onclick="stopPoseCamera()"
+                            title="Kamerayı Kapat" style="display:none;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="1" y1="1" x2="23" y2="23" />
+                                <path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34" />
+                            </svg>
+                        </button>
+                    </div>
+                    <video id="poseVideo" autoplay playsinline muted style="display:none;"></video>
+                    <canvas id="poseCanvas" style="display:none;"></canvas>
+                    <div class="pose-video-placeholder" id="posePlaceholder">
+                        Poz sınıflandırma bloklarını<br>kullanmak için kamerayı açın
+                    </div>
+                </div>
+
+                <div class="pose-model-loading" id="poseModelLoading">
+                    <span class="spinner"></span> Model yükleniyor...
+                </div>
+
+                <!-- Tab: Pose Classification -->
+                <div class="ai-tab-content active" id="tabContentPose">
+                    <div class="pose-scenarios" id="poseScenarios">
+                        <div class="pose-scenario-row" data-pose="both_hands_down">
+                            <div class="pose-scenario-icon">
+                                <svg viewBox="0 0 32 32">
+                                    <circle cx="16" cy="5" r="3" />
+                                    <line x1="16" y1="8" x2="16" y2="17" />
+                                    <line x1="16" y1="10" x2="9" y2="17" />
+                                    <line x1="16" y1="10" x2="23" y2="17" />
+                                    <line x1="16" y1="17" x2="13" y2="26" />
+                                    <line x1="16" y1="17" x2="19" y2="26" />
+                                </svg>
+                            </div>
+                            <div class="pose-scenario-bar-wrap">
+                                <span class="pose-scenario-pct" id="pctBothHandsDown">0%</span>
+                                <div class="pose-scenario-bar">
+                                    <div class="pose-scenario-bar-fill" id="barBothHandsDown"></div>
+                                </div>
+                            </div>
+                            <div class="pose-scenario-divider"></div>
+                        </div>
+                        <div class="pose-scenario-row" data-pose="right_hand_up">
+                            <div class="pose-scenario-icon">
+                                <svg viewBox="0 0 32 32">
+                                    <circle cx="16" cy="5" r="3" />
+                                    <line x1="16" y1="8" x2="16" y2="17" />
+                                    <line x1="16" y1="10" x2="23" y2="3" />
+                                    <line x1="16" y1="10" x2="9" y2="17" />
+                                    <line x1="16" y1="17" x2="13" y2="26" />
+                                    <line x1="16" y1="17" x2="19" y2="26" />
+                                </svg>
+                            </div>
+                            <div class="pose-scenario-bar-wrap">
+                                <span class="pose-scenario-pct" id="pctRightHandUp">0%</span>
+                                <div class="pose-scenario-bar">
+                                    <div class="pose-scenario-bar-fill" id="barRightHandUp"></div>
+                                </div>
+                            </div>
+                            <div class="pose-scenario-divider"></div>
+                        </div>
+                        <div class="pose-scenario-row" data-pose="left_hand_up">
+                            <div class="pose-scenario-icon">
+                                <svg viewBox="0 0 32 32">
+                                    <circle cx="16" cy="5" r="3" />
+                                    <line x1="16" y1="8" x2="16" y2="17" />
+                                    <line x1="16" y1="10" x2="9" y2="3" />
+                                    <line x1="16" y1="10" x2="23" y2="17" />
+                                    <line x1="16" y1="17" x2="13" y2="26" />
+                                    <line x1="16" y1="17" x2="19" y2="26" />
+                                </svg>
+                            </div>
+                            <div class="pose-scenario-bar-wrap">
+                                <span class="pose-scenario-pct" id="pctLeftHandUp">0%</span>
+                                <div class="pose-scenario-bar">
+                                    <div class="pose-scenario-bar-fill" id="barLeftHandUp"></div>
+                                </div>
+                            </div>
+                            <div class="pose-scenario-divider"></div>
+                        </div>
+                        <div class="pose-scenario-row" data-pose="both_hands_up">
+                            <div class="pose-scenario-icon">
+                                <svg viewBox="0 0 32 32">
+                                    <circle cx="16" cy="5" r="3" />
+                                    <line x1="16" y1="8" x2="16" y2="17" />
+                                    <line x1="16" y1="10" x2="9" y2="3" />
+                                    <line x1="16" y1="10" x2="23" y2="3" />
+                                    <line x1="16" y1="17" x2="13" y2="26" />
+                                    <line x1="16" y1="17" x2="19" y2="26" />
+                                </svg>
+                            </div>
+                            <div class="pose-scenario-bar-wrap">
+                                <span class="pose-scenario-pct" id="pctBothHandsUp">0%</span>
+                                <div class="pose-scenario-bar">
+                                    <div class="pose-scenario-bar-fill" id="barBothHandsUp"></div>
+                                </div>
+                            </div>
+                            <div class="pose-scenario-divider"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Body Sensing -->
+                <div class="ai-tab-content" id="tabContentBody">
+                    <div class="body-status-monitor" id="bodyStatusMonitor">
+                        <div class="body-status-empty" id="bodyStatusEmpty">
+                            Vücut Algılama bloklarını çalışma alanına<br>sürükleyerek durumlarını burada izleyin
                         </div>
                     </div>
                 </div>
@@ -3676,7 +4292,7 @@
                     style="cursor: pointer; padding: 20px; border: 2px solid #ddd; border-radius: 12px; text-align: center; transition: all 0.2s; background: white;"
                     onmouseover="this.style.background='#f5f5f5'; this.style.borderColor='#F5A623'"
                     onmouseout="this.style.background='white'; this.style.borderColor='#ddd'">
-                    <img src="img/spike_essential_icon.png" alt="Essential Hub"
+                    <img src="img/essential-hub.png" alt="Essential Hub"
                         style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
                     <div id="specificLabelEssentialHub" style="font-weight: bold; font-size: 16px;">Essential Hub
                     </div>
@@ -3685,7 +4301,7 @@
                     style="cursor: pointer; padding: 20px; border: 2px solid #ddd; border-radius: 12px; text-align: center; transition: all 0.2s; background: white;"
                     onmouseover="this.style.background='#f5f5f5'; this.style.borderColor='#F5A623'"
                     onmouseout="this.style.background='white'; this.style.borderColor='#ddd'">
-                    <img src="img/spike_prime_icon.png" alt="Prime Hub"
+                    <img src="img/prime-hub.png" alt="Prime Hub"
                         style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
                     <div id="specificLabelPrimeHub" style="font-weight: bold; font-size: 16px;">Prime Hub</div>
                 </div>
@@ -4103,7 +4719,70 @@
                 led_blue: "Mavi LED",
                 val_red: "Kırmızı",
                 val_green: "Yeşil",
-                val_blue: "Mavi"
+                val_blue: "Mavi",
+
+                // Pose Classification
+                pose_arms_down: "iki el aşağıda   ",
+                pose_right_arm_up: "sağ el yukarıda   ",
+                pose_left_arm_up: "sol el yukarıda   ",
+                pose_arms_up: "iki el yukarıda   ",
+                block_pose_when_post: "algılandı  ",
+                block_pose_detecting_pre: "algılanıyor mu  ",
+                block_pose_confidence_pre: "güven skoru  ",
+                toolbox_pose_classification: "Poz Sınıflandırma",
+                toolbox_body_sensing: "Vücut Algılama",
+                toolbox_coming_soon: "(yakında)",
+                pose_panel_title: "Görüntü İşleme",
+                pose_webcam_placeholder: "Poz sınıflandırma bloklarını<br>kullanmak için kamerayı açın",
+                pose_model_loading: "Model yükleniyor...",
+
+                // Body Sensing panel
+                tab_pose_classification: "Poz Sınıflandırma",
+                tab_body_sensing: "Vücut Algılama",
+                body_status_empty: "Vücut Algılama bloklarını çalışma alanına<br>sürükleyerek durumlarını burada izleyin",
+
+                // Body Sensing block texts
+                body_when_person_pre: "",
+                body_when_person_post: "algılandığında  ",
+                body_person: "kişi   ",
+                body_no_person: "kimse yok   ",
+                body_when_touches_pre: "",
+                body_when_touches_mid: " ile  ",
+                body_when_touches_post: "değdiğinde  ",
+                body_detecting_person: "kişi algılanıyor mu?  ",
+                body_angle_pre: "",
+                body_angle_mid: " ile  ",
+                body_angle_post: " arasındaki açı  ",
+                body_distance_pre: "",
+                body_distance_mid: " ile  ",
+                body_distance_post: " arasındaki mesafe  ",
+                body_coord_mid: " koordinatı:  ",
+                body_coord_post: "  ",
+
+                // Body Status Monitor
+                val_true: "doğru",
+                val_false: "yanlış",
+                monitor_person_detected: "kişi algılandı",
+                monitor_no_person_detected: "kimse yok",
+                monitor_detecting_person: "kişi algılanıyor mu?",
+                monitor_coord_of: "{part} {axis} koordinatı",
+
+                // Body part names
+                bodypart_nose: "burun   ",
+                bodypart_left_eye: "sol göz   ",
+                bodypart_right_eye: "sağ göz   ",
+                bodypart_left_shoulder: "sol omuz   ",
+                bodypart_right_shoulder: "sağ omuz   ",
+                bodypart_left_elbow: "sol dirsek   ",
+                bodypart_right_elbow: "sağ dirsek   ",
+                bodypart_left_wrist: "sol bilek   ",
+                bodypart_right_wrist: "sağ bilek   ",
+                bodypart_left_hip: "sol kalça   ",
+                bodypart_right_hip: "sağ kalça   ",
+                bodypart_left_knee: "sol diz   ",
+                bodypart_right_knee: "sağ diz   ",
+                bodypart_left_ankle: "sol ayak bileği   ",
+                bodypart_right_ankle: "sağ ayak bileği   "
             },
             en: {
                 lang: "EN",
@@ -4265,7 +4944,62 @@
                 led_blue: "Blue LED",
                 val_red: "Red",
                 val_green: "Green",
-                val_blue: "Blue"
+                val_blue: "Blue",
+
+                // Pose Classification
+                pose_arms_down: "arms down   ",
+                pose_right_arm_up: "right arm up   ",
+                pose_left_arm_up: "left arm up   ",
+                pose_arms_up: "arms up   ",
+                block_pose_when_post: "detected  ",
+                block_pose_detecting_pre: "detecting  ",
+                block_pose_confidence_pre: "confidence for  ",
+                toolbox_pose_classification: "Pose Classification",
+                toolbox_body_sensing: "Body Sensing",
+                toolbox_coming_soon: "(coming soon)",
+                pose_panel_title: "Image Processing",
+                pose_webcam_placeholder: "Turn on the webcam to use<br>pose classification blocks",
+                pose_model_loading: "Loading model...",
+
+                // Body Sensing panel
+                tab_pose_classification: "Pose Classification",
+                tab_body_sensing: "Body Sensing",
+                body_status_empty: "Drag Body Sensing blocks to the workspace<br>to monitor them here",
+
+                // Body Sensing block texts
+                body_when_person_pre: "when  ",
+                body_when_person_post: "detected  ",
+                body_person: "person   ",
+                body_no_person: "no person   ",
+                body_when_touches_pre: "when  ",
+                body_when_touches_mid: "touches  ",
+                body_when_touches_post: "  ",
+                body_detecting_person: "detecting person?  ",
+                body_angle_pre: "angle between  ",
+                body_angle_mid: " and  ",
+                body_angle_post: "  ",
+                body_distance_pre: "distance between  ",
+                body_distance_mid: " and  ",
+                body_distance_post: "  ",
+                body_coord_mid: " coordinate of  ",
+                body_coord_post: "  ",
+
+                // Body part names
+                bodypart_nose: "nose   ",
+                bodypart_left_eye: "left eye   ",
+                bodypart_right_eye: "right eye   ",
+                bodypart_left_shoulder: "left shoulder   ",
+                bodypart_right_shoulder: "right shoulder   ",
+                bodypart_left_elbow: "left elbow   ",
+                bodypart_right_elbow: "right elbow   ",
+                bodypart_left_wrist: "left wrist   ",
+                bodypart_right_wrist: "right wrist   ",
+                bodypart_left_hip: "left hip   ",
+                bodypart_right_hip: "right hip   ",
+                bodypart_left_knee: "left knee   ",
+                bodypart_right_knee: "right knee   ",
+                bodypart_left_ankle: "left ankle   ",
+                bodypart_right_ankle: "right ankle   "
             }
         };
 
@@ -4524,7 +5258,72 @@
                 Blockly.Msg.BLOCK_LEVER_ANGLE = t.block_lever_angle;
                 Blockly.Msg.BLOCK_COLOR_IS = t.block_color_is || 'is color';
                 Blockly.Msg.BLOCK_COLOR_VALUE = t.block_color_value || 'color';
+
+                // Pose Classification
+                Blockly.Msg.POSE_ARMS_DOWN = t.pose_arms_down;
+                Blockly.Msg.POSE_RIGHT_ARM_UP = t.pose_right_arm_up;
+                Blockly.Msg.POSE_LEFT_ARM_UP = t.pose_left_arm_up;
+                Blockly.Msg.POSE_ARMS_UP = t.pose_arms_up;
+                Blockly.Msg.BLOCK_POSE_WHEN_POST = t.block_pose_when_post;
+                Blockly.Msg.BLOCK_POSE_DETECTING_PRE = t.block_pose_detecting_pre;
+                Blockly.Msg.BLOCK_POSE_CONFIDENCE_PRE = t.block_pose_confidence_pre;
+
+                // Body Sensing blocks
+                Blockly.Msg.BODY_WHEN_PERSON_PRE = t.body_when_person_pre;
+                Blockly.Msg.BODY_WHEN_PERSON_POST = t.body_when_person_post;
+                Blockly.Msg.BODY_PERSON = t.body_person;
+                Blockly.Msg.BODY_NO_PERSON = t.body_no_person;
+                Blockly.Msg.BODY_WHEN_TOUCHES_PRE = t.body_when_touches_pre;
+                Blockly.Msg.BODY_WHEN_TOUCHES_MID = t.body_when_touches_mid;
+                Blockly.Msg.BODY_WHEN_TOUCHES_POST = t.body_when_touches_post;
+                Blockly.Msg.BODY_DETECTING_PERSON = t.body_detecting_person;
+                Blockly.Msg.BODY_ANGLE_PRE = t.body_angle_pre;
+                Blockly.Msg.BODY_ANGLE_MID = t.body_angle_mid;
+                Blockly.Msg.BODY_ANGLE_POST = t.body_angle_post;
+                Blockly.Msg.BODY_DISTANCE_PRE = t.body_distance_pre;
+                Blockly.Msg.BODY_DISTANCE_MID = t.body_distance_mid;
+                Blockly.Msg.BODY_DISTANCE_POST = t.body_distance_post;
+                Blockly.Msg.BODY_COORD_MID = t.body_coord_mid;
+                Blockly.Msg.BODY_COORD_POST = t.body_coord_post;
+
+                // Body part names
+                Blockly.Msg.BODYPART_NOSE = t.bodypart_nose;
+                Blockly.Msg.BODYPART_LEFT_EYE = t.bodypart_left_eye;
+                Blockly.Msg.BODYPART_RIGHT_EYE = t.bodypart_right_eye;
+                Blockly.Msg.BODYPART_LEFT_SHOULDER = t.bodypart_left_shoulder;
+                Blockly.Msg.BODYPART_RIGHT_SHOULDER = t.bodypart_right_shoulder;
+                Blockly.Msg.BODYPART_LEFT_ELBOW = t.bodypart_left_elbow;
+                Blockly.Msg.BODYPART_RIGHT_ELBOW = t.bodypart_right_elbow;
+                Blockly.Msg.BODYPART_LEFT_WRIST = t.bodypart_left_wrist;
+                Blockly.Msg.BODYPART_RIGHT_WRIST = t.bodypart_right_wrist;
+                Blockly.Msg.BODYPART_LEFT_HIP = t.bodypart_left_hip;
+                Blockly.Msg.BODYPART_RIGHT_HIP = t.bodypart_right_hip;
+                Blockly.Msg.BODYPART_LEFT_KNEE = t.bodypart_left_knee;
+                Blockly.Msg.BODYPART_RIGHT_KNEE = t.bodypart_right_knee;
+                Blockly.Msg.BODYPART_LEFT_ANKLE = t.bodypart_left_ankle;
+                Blockly.Msg.BODYPART_RIGHT_ANKLE = t.bodypart_right_ankle;
             }
+
+            // AI panel tab metinlerini güncelle
+            const tabPoseClassification = document.getElementById('tabPoseClassification');
+            if (tabPoseClassification) tabPoseClassification.textContent = t.tab_pose_classification || 'Pose Classification';
+            const tabBodySensing = document.getElementById('tabBodySensing');
+            if (tabBodySensing) tabBodySensing.textContent = t.tab_body_sensing || 'Body Sensing';
+            const bodyStatusEmpty = document.getElementById('bodyStatusEmpty');
+            if (bodyStatusEmpty) bodyStatusEmpty.innerHTML = t.body_status_empty || 'Drag Body Sensing blocks to the workspace<br>to monitor them here';
+
+            // Pose panel metinlerini güncelle
+            const posePanelTitle = document.querySelector('#posePanel .pose-panel-header-left');
+            if (posePanelTitle) {
+                posePanelTitle.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="M12 7v5"/><path d="M8 10l4 2 4-2"/><path d="M10 17l2-5 2 5"/></svg> ${t.pose_panel_title || 'Image Processing'}`;
+            }
+            const posePlaceholder = document.getElementById('posePlaceholder');
+            if (posePlaceholder) posePlaceholder.innerHTML = t.pose_webcam_placeholder || 'Turn on the webcam to use<br>pose classification blocks';
+            const poseModelLoading = document.querySelector('#poseModelLoading');
+            if (poseModelLoading) poseModelLoading.innerHTML = `<span class="spinner"></span> ${t.pose_model_loading || 'Loading model...'}`;
+
+            // AI toolbox açıksa yenile
+            if (currentToolboxMode === 'ai') showAIToolbox();
 
             // Refresh Toolboxes if active
             if (typeof showStartToolbox !== 'undefined') {
@@ -6344,8 +7143,8 @@
 
             // Hub tipine göre ikon belirle
             const hubIcons = {
-                'spike-essential': 'img/spike_essential_icon.png',
-                'spike-prime': 'img/spike_prime_icon.png',
+                'spike-essential': 'img/essential-hub.png',
+                'spike-prime': 'img/prime-hub.png',
                 'technic-medium-hub': 'img/technic-hub.png',
                 'city-hub': 'img/city-hub.png',
                 'boost-move-hub': 'img/move-hub.png',
@@ -6353,7 +7152,7 @@
             };
             // Handle underscore vs hyphen mismatch
             const typeKey = hubType.replace(/_/g, '-');
-            const iconSrc = hubIcons[typeKey] || hubIcons[hubType] || 'img/spike_essential_icon.png';
+            const iconSrc = hubIcons[typeKey] || hubIcons[hubType] || 'img/essential-hub.png';
             // Apply clean style to all hubs (User request: no shadow, 1px colored border)
             const containerStyle = `style="box-shadow: none !important; border: 1px solid ${color};"`;
 
@@ -6708,7 +7507,7 @@
                 modalTitle.textContent = headerText ? headerText.textContent : 'Spike Prime Hub';
             }
             if (modalIcon) {
-                modalIcon.innerHTML = '<img src="img/spike_prime_icon.png" style="width: 40px; height: 40px; object-fit: contain;">';
+                modalIcon.innerHTML = '<img src="img/prime-hub.png" style="width: 40px; height: 40px; object-fit: contain;">';
             }
 
             // Update values immediately
@@ -9262,6 +10061,273 @@
             }
         };
 
+        // =============================================
+        // Pose Classification Blockly Blocks
+        // =============================================
+        function getPoseOptions() {
+            return [
+                [Blockly.Msg.POSE_ARMS_DOWN || "arms down   ", "both_hands_down"],
+                [Blockly.Msg.POSE_RIGHT_ARM_UP || "right arm up   ", "right_hand_up"],
+                [Blockly.Msg.POSE_LEFT_ARM_UP || "left arm up   ", "left_hand_up"],
+                [Blockly.Msg.POSE_ARMS_UP || "arms up   ", "both_hands_up"]
+            ];
+        }
+
+        Blockly.Blocks['when_pose_detected'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BLOCK_WHEN_PRE || "when ")
+                    .appendField(new Blockly.FieldDropdown(getPoseOptions), "POSE")
+                    .appendField(Blockly.Msg.BLOCK_POSE_WHEN_POST || "detected  ");
+                this.setNextStatement(true, null);
+                this.setColour("#b89ef0");
+                this.setTooltip("Seçilen poz algılandığında çalışır");
+            }
+        };
+
+        Blockly.Blocks['pose_detecting'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BLOCK_POSE_DETECTING_PRE || "detecting  ")
+                    .appendField(new Blockly.FieldDropdown(getPoseOptions), "POSE")
+                    .appendField("?  ");
+                this.setOutput(true, "Boolean");
+                this.setColour("#b89ef0");
+                this.setTooltip("Seçilen poz şu anda algılanıyor mu?");
+            }
+        };
+
+        Blockly.Blocks['pose_confidence'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BLOCK_POSE_CONFIDENCE_PRE || "confidence for  ")
+                    .appendField(new Blockly.FieldDropdown(getPoseOptions), "POSE");
+                this.setOutput(true, "Number");
+                this.setColour("#b89ef0");
+                this.setTooltip("Seçilen poz için güven yüzdesi (0-100)");
+            }
+        };
+
+        // =============================================
+        // Body Sensing Blockly Blocks (darker purple)
+        // =============================================
+        const BODY_SENSING_COLOR = "#9370db";
+
+        function getBodyPartOptions() {
+            return [
+                [Blockly.Msg.BODYPART_NOSE || "nose   ", "nose"],
+                [Blockly.Msg.BODYPART_LEFT_EYE || "left eye   ", "left_eye"],
+                [Blockly.Msg.BODYPART_RIGHT_EYE || "right eye   ", "right_eye"],
+                [Blockly.Msg.BODYPART_LEFT_SHOULDER || "left shoulder   ", "left_shoulder"],
+                [Blockly.Msg.BODYPART_RIGHT_SHOULDER || "right shoulder   ", "right_shoulder"],
+                [Blockly.Msg.BODYPART_LEFT_ELBOW || "left elbow   ", "left_elbow"],
+                [Blockly.Msg.BODYPART_RIGHT_ELBOW || "right elbow   ", "right_elbow"],
+                [Blockly.Msg.BODYPART_LEFT_WRIST || "left wrist   ", "left_wrist"],
+                [Blockly.Msg.BODYPART_RIGHT_WRIST || "right wrist   ", "right_wrist"],
+                [Blockly.Msg.BODYPART_LEFT_HIP || "left hip   ", "left_hip"],
+                [Blockly.Msg.BODYPART_RIGHT_HIP || "right hip   ", "right_hip"],
+                [Blockly.Msg.BODYPART_LEFT_KNEE || "left knee   ", "left_knee"],
+                [Blockly.Msg.BODYPART_RIGHT_KNEE || "right knee   ", "right_knee"],
+                [Blockly.Msg.BODYPART_LEFT_ANKLE || "left ankle   ", "left_ankle"],
+                [Blockly.Msg.BODYPART_RIGHT_ANKLE || "right ankle   ", "right_ankle"]
+            ];
+        }
+
+        // Custom Body Part Picker: shows interactive human figure instead of text list
+        const BODY_PART_LABELS_FALLBACK = {
+            'nose': 'nose', 'left_eye': 'left eye', 'right_eye': 'right eye',
+            'left_shoulder': 'left shoulder', 'right_shoulder': 'right shoulder',
+            'left_elbow': 'left elbow', 'right_elbow': 'right elbow',
+            'left_wrist': 'left wrist', 'right_wrist': 'right wrist',
+            'left_hip': 'left hip', 'right_hip': 'right hip',
+            'left_knee': 'left knee', 'right_knee': 'right knee',
+            'left_ankle': 'left ankle', 'right_ankle': 'right ankle'
+        };
+        function getBodyPartLabel(key) {
+            const msgKey = 'BODYPART_' + key.toUpperCase();
+            const label = Blockly.Msg[msgKey];
+            return label ? label.trim() : (BODY_PART_LABELS_FALLBACK[key] || key);
+        }
+        const JOINT_POSITIONS = {
+            'nose': [100, 42, 6], 'left_eye': [88, 33, 5], 'right_eye': [112, 33, 5],
+            'left_shoulder': [65, 95, 7], 'right_shoulder': [135, 95, 7],
+            'left_elbow': [45, 135, 7], 'right_elbow': [155, 135, 7],
+            'left_wrist': [30, 175, 7], 'right_wrist': [170, 175, 7],
+            'left_hip': [75, 150, 7], 'right_hip': [125, 150, 7],
+            'left_knee': [65, 210, 7], 'right_knee': [135, 210, 7],
+            'left_ankle': [60, 260, 7], 'right_ankle': [140, 260, 7]
+        };
+
+        class BodyPartPickerField extends Blockly.FieldDropdown {
+            constructor(defaultValue) {
+                super(getBodyPartOptions);
+                if (defaultValue) this.setValue(defaultValue);
+            }
+
+            showEditor_(e) {
+                const contentDiv = Blockly.DropDownDiv.getContentDiv();
+                contentDiv.innerHTML = '';
+
+                const picker = document.createElement('div');
+                picker.className = 'body-part-picker';
+
+                const currentVal = this.getValue();
+                const self = this;
+
+                // Static SVG body (bones, head, face)
+                const svgContainer = document.createElement('div');
+                svgContainer.innerHTML = '<svg viewBox="0 0 200 290" width="170" height="245" xmlns="http://www.w3.org/2000/svg" style="display:block">' +
+                    '<line x1="100" y1="68" x2="100" y2="150" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="65" y1="95" x2="135" y2="95" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="65" y1="95" x2="45" y2="135" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="45" y1="135" x2="30" y2="175" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="135" y1="95" x2="155" y2="135" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="155" y1="135" x2="170" y2="175" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="75" y1="150" x2="125" y2="150" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="75" y1="150" x2="65" y2="210" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="65" y1="210" x2="60" y2="260" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="125" y1="150" x2="135" y2="210" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<line x1="135" y1="210" x2="140" y2="260" stroke="rgba(255,255,255,0.5)" stroke-width="4" stroke-linecap="round"/>' +
+                    '<circle cx="100" cy="38" r="28" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="4"/>' +
+                    '<circle cx="88" cy="33" r="3" fill="rgba(255,255,255,0.4)"/>' +
+                    '<circle cx="112" cy="33" r="3" fill="rgba(255,255,255,0.4)"/>' +
+                    '<path d="M90 50 Q100 58 110 50" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/>' +
+                    '</svg>';
+                const svg = svgContainer.querySelector('svg');
+
+                // Label showing hovered/selected body part name
+                const label = document.createElement('div');
+                label.className = 'bp-picker-label';
+                label.textContent = getBodyPartLabel(currentVal);
+
+                // Add clickable joints
+                const svgNS = 'http://www.w3.org/2000/svg';
+                Object.entries(JOINT_POSITIONS).forEach(function ([name, pos]) {
+                    const circle = document.createElementNS(svgNS, 'circle');
+                    circle.setAttribute('cx', pos[0]);
+                    circle.setAttribute('cy', pos[1]);
+                    circle.setAttribute('r', pos[2]);
+                    circle.style.cursor = 'pointer';
+                    circle.style.transition = 'all 0.12s';
+                    const isSelected = (name === currentVal);
+                    circle.setAttribute('fill', isSelected ? '#7c3aed' : 'rgba(255,255,255,0.55)');
+                    circle.setAttribute('stroke', 'white');
+                    circle.setAttribute('stroke-width', isSelected ? '3' : '1.5');
+
+                    circle.addEventListener('mouseenter', function () {
+                        circle.setAttribute('fill', '#7c3aed');
+                        circle.setAttribute('r', pos[2] + 2);
+                        label.textContent = getBodyPartLabel(name);
+                    });
+                    circle.addEventListener('mouseleave', function () {
+                        if (name !== currentVal) {
+                            circle.setAttribute('fill', 'rgba(255,255,255,0.55)');
+                        }
+                        circle.setAttribute('r', pos[2]);
+                        label.textContent = getBodyPartLabel(currentVal);
+                    });
+                    circle.addEventListener('click', function () {
+                        self.setValue(name);
+                        Blockly.DropDownDiv.hideIfOwner(self, true);
+                    });
+                    svg.appendChild(circle);
+                });
+
+                picker.appendChild(svg);
+                picker.appendChild(label);
+                contentDiv.appendChild(picker);
+
+                Blockly.DropDownDiv.setColour('#9370db', '#7c3aed');
+                Blockly.DropDownDiv.showPositionedByField(this, this.dropdownDispose_.bind(this));
+            }
+
+            dropdownDispose_() { }
+        }
+
+        function getPersonDetectionOptions() {
+            return [
+                [Blockly.Msg.BODY_PERSON || "person   ", "person"],
+                [Blockly.Msg.BODY_NO_PERSON || "no person   ", "no_person"]
+            ];
+        }
+
+        Blockly.Blocks['when_person_detected'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BODY_WHEN_PERSON_PRE ?? "when  ")
+                    .appendField(new Blockly.FieldDropdown(getPersonDetectionOptions), "DETECTION")
+                    .appendField(Blockly.Msg.BODY_WHEN_PERSON_POST ?? "detected  ");
+                this.setNextStatement(true, null);
+                this.setColour(BODY_SENSING_COLOR);
+                this.setTooltip("Kişi algılandığında / algılanmadığında çalışır");
+            }
+        };
+
+        Blockly.Blocks['when_bodypart_touches'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BODY_WHEN_TOUCHES_PRE ?? "when  ")
+                    .appendField(new BodyPartPickerField(), "PART_A")
+                    .appendField(Blockly.Msg.BODY_WHEN_TOUCHES_MID ?? "touches  ")
+                    .appendField(new BodyPartPickerField(), "PART_B")
+                    .appendField(Blockly.Msg.BODY_WHEN_TOUCHES_POST ?? "  ");
+                this.setNextStatement(true, null);
+                this.setColour(BODY_SENSING_COLOR);
+                this.setTooltip("İki vücut noktası birbirine değdiğinde çalışır");
+            }
+        };
+
+        Blockly.Blocks['body_detecting_person'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BODY_DETECTING_PERSON ?? "detecting person?  ");
+                this.setOutput(true, "Boolean");
+                this.setColour(BODY_SENSING_COLOR);
+                this.setTooltip("Kişi algılanıyor mu?");
+            }
+        };
+
+        Blockly.Blocks['body_angle_between'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BODY_ANGLE_PRE ?? "angle between  ")
+                    .appendField(new BodyPartPickerField(), "PART_A")
+                    .appendField(Blockly.Msg.BODY_ANGLE_MID ?? " and  ")
+                    .appendField(new BodyPartPickerField(), "PART_B")
+                    .appendField(Blockly.Msg.BODY_ANGLE_POST ?? "  ");
+                this.setOutput(true, "Number");
+                this.setColour(BODY_SENSING_COLOR);
+                this.setTooltip("İki vücut noktası arasındaki açı (derece)");
+            }
+        };
+
+        Blockly.Blocks['body_distance_between'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.BODY_DISTANCE_PRE ?? "distance between  ")
+                    .appendField(new BodyPartPickerField(), "PART_A")
+                    .appendField(Blockly.Msg.BODY_DISTANCE_MID ?? " and  ")
+                    .appendField(new BodyPartPickerField(), "PART_B")
+                    .appendField(Blockly.Msg.BODY_DISTANCE_POST ?? "  ");
+                this.setOutput(true, "Number");
+                this.setColour(BODY_SENSING_COLOR);
+                this.setTooltip("İki vücut noktası arasındaki mesafe (piksel)");
+            }
+        };
+
+        Blockly.Blocks['body_coordinate_of'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldDropdown([["x", "x"], ["y", "y"]]), "AXIS")
+                    .appendField(Blockly.Msg.BODY_COORD_MID ?? " coordinate of  ")
+                    .appendField(new BodyPartPickerField(), "PART")
+                    .appendField(Blockly.Msg.BODY_COORD_POST ?? "  ");
+                this.setOutput(true, "Number");
+                this.setColour(BODY_SENSING_COLOR);
+                this.setTooltip("Vücut noktasının x veya y koordinatı");
+            }
+        };
+
         Blockly.Blocks['light'] = {
             init: function () {
                 this.appendDummyInput().appendField("💡");
@@ -10027,6 +11093,65 @@
             return [code, Blockly.JavaScript.ORDER_ATOMIC];
         };
 
+        // Pose Classification JavaScript Generators
+        Blockly.JavaScript['when_pose_detected'] = function (block) {
+            var pose = block.getFieldValue('POSE');
+            var code = `await waitForPose('${pose}');\n`;
+            return code;
+        };
+
+        Blockly.JavaScript['pose_detecting'] = function (block) {
+            var pose = block.getFieldValue('POSE');
+            var code = `window.isPoseActive('${pose}', 50)`;
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
+        Blockly.JavaScript['pose_confidence'] = function (block) {
+            var pose = block.getFieldValue('POSE');
+            var code = `window.getPoseScore('${pose}')`;
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
+        // Body Sensing JavaScript Generators
+        Blockly.JavaScript['when_person_detected'] = function (block) {
+            var detection = block.getFieldValue('DETECTION');
+            var code = `await waitForPersonDetection('${detection}');\n`;
+            return code;
+        };
+
+        Blockly.JavaScript['when_bodypart_touches'] = function (block) {
+            var partA = block.getFieldValue('PART_A');
+            var partB = block.getFieldValue('PART_B');
+            var code = `await waitForBodyPartTouch('${partA}', '${partB}');\n`;
+            return code;
+        };
+
+        Blockly.JavaScript['body_detecting_person'] = function (block) {
+            var code = `window.isPersonDetected()`;
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
+        Blockly.JavaScript['body_angle_between'] = function (block) {
+            var partA = block.getFieldValue('PART_A');
+            var partB = block.getFieldValue('PART_B');
+            var code = `window.getBodyAngleBetween('${partA}', '${partB}')`;
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
+        Blockly.JavaScript['body_distance_between'] = function (block) {
+            var partA = block.getFieldValue('PART_A');
+            var partB = block.getFieldValue('PART_B');
+            var code = `window.getBodyDistanceBetween('${partA}', '${partB}')`;
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
+        Blockly.JavaScript['body_coordinate_of'] = function (block) {
+            var axis = block.getFieldValue('AXIS');
+            var part = block.getFieldValue('PART');
+            var code = `window.getBodyCoordinate('${part}', '${axis}')`;
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
         // Controller Blokları
         Blockly.Blocks['when_lever_position'] = {
             init: function () {
@@ -10343,7 +11468,7 @@
         };
 
         // Hub LED Color Block for Spike Essential
-        const HUB_LED_ICON = "img/spike_essential_icon.png";
+        const HUB_LED_ICON = "img/essential-hub.png";
 
         const HUB_LED_COLORS = [
             ["🔴", "RED"],
@@ -10401,7 +11526,7 @@
         };
 
         // Hub Orientation Block (is face up?)
-        const HUB_ORIENTATION_ICON = "img/spike_essential_icon.png";
+        const HUB_ORIENTATION_ICON = "img/essential-hub.png";
 
         const HUB_ORIENTATIONS = [
             ["front\u00A0\u00A0\u00A0", "FRONT"],
@@ -11405,7 +12530,8 @@
             const startBlocks = allBlocks.filter(block => block.type === 'start');
             // "when_condition" bloklarını bul (Event blokları)
             const eventBlocks = allBlocks.filter(block =>
-                ['when_condition', 'when_message_received', 'when_color_detected'].includes(block.type)
+                ['when_condition', 'when_message_received', 'when_color_detected',
+                 'when_pose_detected', 'when_person_detected', 'when_bodypart_touches'].includes(block.type)
             );
 
             if (startBlocks.length === 0 && eventBlocks.length === 0) {
@@ -11419,6 +12545,27 @@
             // DEBUG: Show all blocks and their data
             console.log('🔍 DEBUG: Tüm bloklar ve data değerleri:');
             allBlocks.forEach(b => console.log(`   ${b.type} (${b.id}): data=${b.data}, deviceId=${b.deviceId}`));
+
+            // Pose/Body blokları varsa kamerayı otomatik başlat
+            const poseBodyBlockTypes = ['when_pose_detected', 'pose_detecting', 'pose_confidence',
+                'when_person_detected', 'when_bodypart_touches', 'body_detecting_person',
+                'body_angle_between', 'body_distance_between', 'body_coordinate_of'];
+            const hasPoseBlocks = allBlocks.some(b => poseBodyBlockTypes.includes(b.type));
+            if (hasPoseBlocks && !poseStream) {
+                console.log('📷 Pose/Body blokları tespit edildi, kamera otomatik başlatılıyor...');
+                // AI panelini aç ve kamerayı başlat
+                const posePanel = document.getElementById('posePanel');
+                if (posePanel && !posePanel.classList.contains('open')) {
+                    posePanel.classList.add('open');
+                }
+                try {
+                    await startPoseCamera();
+                    // Kameranın ve modelin hazır olması için kısa bekleme
+                    await new Promise(r => setTimeout(r, 500));
+                } catch (e) {
+                    console.warn('Otomatik kamera başlatılamadı:', e);
+                }
+            }
 
             // Create a separate session for each start block
             const activeFlowSessions = new Map(); // flowId -> sessionIndex
@@ -11579,6 +12726,118 @@
 
                 // when_message_received blokları
                 // (Bu bloklar message gönderildiğinde tetiklenir, ayrıca yönetilir)
+
+                // when_pose_detected blokları (Poz algılandığında)
+                const poseBlocks = allBlocks.filter(b => b.type === 'when_pose_detected');
+                for (const block of poseBlocks) {
+                    if (isExecutionCancelled) break;
+                    if (activeEventBlocks.has(block.id)) continue;
+
+                    const poseName = block.getFieldValue('POSE');
+                    const isActive = window.isPoseActive && window.isPoseActive(poseName, 50);
+                    if (isActive) {
+                        activeEventBlocks.add(block.id);
+                        (async () => {
+                            let sessionIndex = -1;
+                            try {
+                                const eventFlowId = `pose_${block.id}_${Date.now()}`;
+                                const poseLabel = poseName.replace(/_/g, ' ');
+                                const sessionTitle = currentLanguage === 'tr' ? `Poz: ${poseLabel}` : `Pose: ${poseLabel}`;
+                                sessionIndex = startExecutionSession(eventFlowId, block.id, sessionTitle);
+
+                                logExecutionToSession(sessionIndex, `<span style="background:#f3e8ff;padding:2px 8px;border-radius:4px;display:inline-block;">🤸 ${currentLanguage === 'tr' ? `Poz algılandı: <b>${poseLabel}</b>` : `Pose detected: <b>${poseLabel}</b>`}</span>`);
+
+                                let nextBlock = block.getNextBlock();
+                                while (nextBlock && !isExecutionCancelled) {
+                                    await executeBlockPlay(nextBlock, eventFlowId);
+                                    nextBlock = nextBlock.getNextBlock();
+                                }
+
+                                logExecutionToSession(sessionIndex, `<span style="background:#e3f2fd;padding:2px 8px;border-radius:4px;display:inline-block;">👆 ${currentLanguage === 'tr' ? '⏹️ Durduruldu' : '⏹️ Stopped'}</span>`);
+                                endExecutionSessionByIndex(sessionIndex);
+                            } catch (e) {
+                                console.error('Error in pose event execution', e);
+                            } finally {
+                                activeEventBlocks.delete(block.id);
+                            }
+                        })();
+                    }
+                }
+
+                // when_person_detected blokları (Kişi algılandığında)
+                const personBlocks = allBlocks.filter(b => b.type === 'when_person_detected');
+                for (const block of personBlocks) {
+                    if (isExecutionCancelled) break;
+                    if (activeEventBlocks.has(block.id)) continue;
+
+                    const detection = block.getFieldValue('DETECTION');
+                    const triggered = detection === 'person' ? personDetected : !personDetected;
+                    if (triggered) {
+                        activeEventBlocks.add(block.id);
+                        (async () => {
+                            let sessionIndex = -1;
+                            try {
+                                const eventFlowId = `person_${block.id}_${Date.now()}`;
+                                const sessionTitle = currentLanguage === 'tr' ? 'Kişi Algılama' : 'Person Detection';
+                                sessionIndex = startExecutionSession(eventFlowId, block.id, sessionTitle);
+
+                                logExecutionToSession(sessionIndex, `<span style="background:#f3e8ff;padding:2px 8px;border-radius:4px;display:inline-block;">👤 ${currentLanguage === 'tr' ? (detection === 'person' ? 'Kişi algılandı' : 'Kimse yok') : (detection === 'person' ? 'Person detected' : 'No person')}</span>`);
+
+                                let nextBlock = block.getNextBlock();
+                                while (nextBlock && !isExecutionCancelled) {
+                                    await executeBlockPlay(nextBlock, eventFlowId);
+                                    nextBlock = nextBlock.getNextBlock();
+                                }
+
+                                logExecutionToSession(sessionIndex, `<span style="background:#e3f2fd;padding:2px 8px;border-radius:4px;display:inline-block;">👆 ${currentLanguage === 'tr' ? '⏹️ Durduruldu' : '⏹️ Stopped'}</span>`);
+                                endExecutionSessionByIndex(sessionIndex);
+                            } catch (e) {
+                                console.error('Error in person event execution', e);
+                            } finally {
+                                activeEventBlocks.delete(block.id);
+                            }
+                        })();
+                    }
+                }
+
+                // when_bodypart_touches blokları (Vücut noktaları değdiğinde)
+                const touchBlocks = allBlocks.filter(b => b.type === 'when_bodypart_touches');
+                for (const block of touchBlocks) {
+                    if (isExecutionCancelled) break;
+                    if (activeEventBlocks.has(block.id)) continue;
+
+                    const partA = block.getFieldValue('PART_A');
+                    const partB = block.getFieldValue('PART_B');
+                    const touching = window.isBodyPartTouching && window.isBodyPartTouching(partA, partB);
+                    if (touching) {
+                        activeEventBlocks.add(block.id);
+                        (async () => {
+                            let sessionIndex = -1;
+                            try {
+                                const eventFlowId = `touch_${block.id}_${Date.now()}`;
+                                const labelA = getBodyPartLabel(partA);
+                                const labelB = getBodyPartLabel(partB);
+                                const sessionTitle = currentLanguage === 'tr' ? `Değme: ${labelA} ↔ ${labelB}` : `Touch: ${labelA} ↔ ${labelB}`;
+                                sessionIndex = startExecutionSession(eventFlowId, block.id, sessionTitle);
+
+                                logExecutionToSession(sessionIndex, `<span style="background:#f3e8ff;padding:2px 8px;border-radius:4px;display:inline-block;">→|← ${labelA} ↔ ${labelB}</span>`);
+
+                                let nextBlock = block.getNextBlock();
+                                while (nextBlock && !isExecutionCancelled) {
+                                    await executeBlockPlay(nextBlock, eventFlowId);
+                                    nextBlock = nextBlock.getNextBlock();
+                                }
+
+                                logExecutionToSession(sessionIndex, `<span style="background:#e3f2fd;padding:2px 8px;border-radius:4px;display:inline-block;">👆 ${currentLanguage === 'tr' ? '⏹️ Durduruldu' : '⏹️ Stopped'}</span>`);
+                                endExecutionSessionByIndex(sessionIndex);
+                            } catch (e) {
+                                console.error('Error in touch event execution', e);
+                            } finally {
+                                activeEventBlocks.delete(block.id);
+                            }
+                        })();
+                    }
+                }
 
             }, 100);
         }
@@ -11755,6 +13014,34 @@
                     }
                 }
                 return;
+            }
+
+            // Body Sensing / Pose Classification - value blocks
+            else if (blockType === 'body_detecting_person') {
+                return window.isPersonDetected ? window.isPersonDetected() : false;
+            }
+            else if (blockType === 'pose_detecting') {
+                const pose = block.getFieldValue('POSE');
+                return window.isPoseActive ? window.isPoseActive(pose, 50) : false;
+            }
+            else if (blockType === 'pose_confidence') {
+                const pose = block.getFieldValue('POSE');
+                return window.getPoseScore ? window.getPoseScore(pose) : 0;
+            }
+            else if (blockType === 'body_angle_between') {
+                const partA = block.getFieldValue('PART_A');
+                const partB = block.getFieldValue('PART_B');
+                return window.getBodyAngleBetween ? window.getBodyAngleBetween(partA, partB) : 0;
+            }
+            else if (blockType === 'body_distance_between') {
+                const partA = block.getFieldValue('PART_A');
+                const partB = block.getFieldValue('PART_B');
+                return window.getBodyDistanceBetween ? window.getBodyDistanceBetween(partA, partB) : 0;
+            }
+            else if (blockType === 'body_coordinate_of') {
+                const part = block.getFieldValue('PART');
+                const axis = block.getFieldValue('AXIS');
+                return window.getBodyCoordinate ? window.getBodyCoordinate(part, axis) : 0;
             }
 
             // Force Sensor - is pressed?
@@ -14468,7 +15755,7 @@
                 deviceIcon.style.background = '#FFFFFF';
                 deviceIcon.style.borderColor = deviceData.color;
                 deviceIcon.style.color = deviceData.color;
-                deviceIcon.innerHTML = '<img src="img/spike_essential_icon.png" style="width: 28px; height: 28px; object-fit: contain;">';
+                deviceIcon.innerHTML = '<img src="img/essential-hub.png" style="width: 28px; height: 28px; object-fit: contain;">';
             } else if (deviceType === 'spike_prime') {
                 // Spike Prime Hub için özel stil
                 deviceIcon.classList.add('spike-prime');
@@ -14476,7 +15763,7 @@
                 deviceIcon.style.background = '#FFFFFF';
                 deviceIcon.style.borderColor = deviceData.color;
                 deviceIcon.style.color = deviceData.color;
-                deviceIcon.innerHTML = '<img src="img/spike_prime_icon.png" style="width: 28px; height: 28px; object-fit: contain;">';
+                deviceIcon.innerHTML = '<img src="img/prime-hub.png" style="width: 28px; height: 28px; object-fit: contain;">';
             } else if (deviceType === 'technic_medium_hub') {
                 // Technic Medium Hub için özel stil
                 deviceIcon.classList.add('technic-medium-hub');
@@ -16198,10 +17485,10 @@ Basılıysa Doğru, değilse Yanlış.
                     imgSrc = 'img/color-sensor.png';
                     break;
                 case 'spike_essential':
-                    imgSrc = 'img/spike_essential_icon.png';
+                    imgSrc = 'img/essential-hub.png';
                     break;
                 case 'spike_prime':
-                    imgSrc = 'img/spike_prime_icon.png';
+                    imgSrc = 'img/prime-hub.png';
                     break;
                 case 'technic_medium_hub':
                     imgSrc = 'img/technic-hub.png';
@@ -18809,7 +20096,7 @@ Basılıysa Doğru, değilse Yanlış.
         }
 
         function updateToolboxButtons(activeButtonId) {
-            const buttons = ['startToggle', 'controlToggle', 'actionLedToggle', 'actionNumToggle', 'actionButtonToggle', 'operatorToggle'];
+            const buttons = ['startToggle', 'controlToggle', 'actionLedToggle', 'actionNumToggle', 'actionButtonToggle', 'operatorToggle', 'aiToggle'];
 
             buttons.forEach(buttonId => {
                 const btn = document.getElementById(buttonId);
@@ -18832,6 +20119,11 @@ Basılıysa Doğru, değilse Yanlış.
 
             updateToolboxButtons(null);
             resetDeviceIcons();
+
+            // Close pose panel if open
+            if (typeof closePosePanel === 'function') {
+                closePosePanel();
+            }
 
             // Flyout genişliğini sıfırla - gri alan sorununu çözmek için
             setTimeout(() => {
@@ -19349,8 +20641,8 @@ Basılıysa Doğru, değilse Yanlış.
             else if (type === 'double_motor') imgSrc = 'img/double-motor.png';
             else if (type === 'color_sensor') imgSrc = 'img/color-sensor.png';
             else if (type === 'controller') imgSrc = 'img/controller.png';
-            else if (type === 'spike_essential') imgSrc = 'img/spike_essential_icon.png';
-            else if (type === 'spike_prime') imgSrc = 'img/spike_prime_icon.png';
+            else if (type === 'spike_essential') imgSrc = 'img/essential-hub.png';
+            else if (type === 'spike_prime') imgSrc = 'img/prime-hub.png';
             else if (type === 'technic_medium_hub') imgSrc = 'img/technic-hub.png';
             else if (type === 'city_hub') imgSrc = 'img/city-hub.png';
             else if (type === 'boost_move_hub') imgSrc = 'img/boost-hub.png';
@@ -20248,6 +21540,919 @@ Basılıysa Doğru, değilse Yanlış.
 
         window.addEventListener('load', initBlockly);
         window.addEventListener('resize', () => Blockly.svgResize(workspace));
+
+        // =============================================
+        // AI / Pose Classification System
+        // =============================================
+        let poseDetector = null;
+        let poseStream = null;
+        let poseAnimFrame = null;
+        let poseModelReady = false;
+        let poseModelLoadingPromise = null;
+
+        // Preload model early (camera permission not needed)
+        async function initPoseModel() {
+            if (poseDetector || poseModelLoadingPromise) return poseModelLoadingPromise;
+            poseModelLoadingPromise = (async () => {
+                try {
+                    await tf.setBackend('webgl');
+                    await tf.ready();
+                    poseDetector = await poseDetection.createDetector(
+                        poseDetection.SupportedModels.MoveNet,
+                        {
+                            modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+                            enableSmoothing: true,
+                        }
+                    );
+                    poseModelReady = true;
+                } catch (e) {
+                    console.warn('Pose model preload failed:', e);
+                    poseModelLoadingPromise = null;
+                }
+            })();
+            return poseModelLoadingPromise;
+        }
+        let poseScores = {
+            right_hand_up: 0,
+            left_hand_up: 0,
+            both_hands_up: 0,
+            both_hands_down: 0
+        };
+
+        // AI toolbox toggle (same pattern as other sidebar buttons)
+        function toggleAIBlocks() {
+            if (!workspace) return;
+            if (currentToolboxMode === 'ai') {
+                hideAllToolboxes();
+                closePosePanel();
+            } else {
+                showAIToolbox();
+            }
+        }
+
+        function showAIToolbox() {
+            const t = TRANSLATIONS[currentLanguage] || TRANSLATIONS['en'];
+            const aiToolboxXml = `
+                <xml xmlns="https://developers.google.com/blockly/xml">
+                    <label text="${t.toolbox_pose_classification || 'Pose Classification'}" web-class="toolbox-label-pose"></label>
+                    <sep gap="12"></sep>
+                    <block type="when_pose_detected">
+                        <field name="POSE">both_hands_down</field>
+                    </block>
+                    <sep gap="12"></sep>
+                    <block type="pose_detecting">
+                        <field name="POSE">both_hands_down</field>
+                    </block>
+                    <sep gap="12"></sep>
+                    <block type="pose_confidence">
+                        <field name="POSE">both_hands_down</field>
+                    </block>
+                    <sep gap="32"></sep>
+                    <label text="${t.toolbox_body_sensing || 'Body Sensing'}" web-class="toolbox-label-body"></label>
+                    <sep gap="12"></sep>
+                    <block type="when_person_detected">
+                        <field name="DETECTION">person</field>
+                    </block>
+                    <sep gap="12"></sep>
+                    <block type="when_bodypart_touches">
+                        <field name="PART_A">right_wrist</field>
+                        <field name="PART_B">left_wrist</field>
+                    </block>
+                    <sep gap="12"></sep>
+                    <block type="body_angle_between">
+                        <field name="PART_A">right_shoulder</field>
+                        <field name="PART_B">left_shoulder</field>
+                    </block>
+                    <sep gap="12"></sep>
+                    <block type="body_distance_between">
+                        <field name="PART_A">right_wrist</field>
+                        <field name="PART_B">left_wrist</field>
+                    </block>
+                    <sep gap="12"></sep>
+                    <block type="body_coordinate_of">
+                        <field name="AXIS">x</field>
+                        <field name="PART">nose</field>
+                    </block>
+                    <sep gap="12"></sep>
+                    <block type="body_detecting_person"></block>
+                </xml>
+            `;
+
+            updateToolboxPreservingScroll(aiToolboxXml);
+            isToolboxVisible = true;
+            currentToolboxMode = 'ai';
+            initPoseModel(); // Preload in background (no camera needed)
+            currentToolboxDevice = null;
+            selectedDeviceId = null;
+
+            updateToolboxButtons('aiToggle');
+            resetDeviceIcons();
+
+            // Also open the pose panel
+            openPosePanel();
+        }
+
+        // Open Pose Classification Panel
+        function openPosePanel() {
+            const panel = document.getElementById('posePanel');
+            panel.classList.add('open');
+        }
+
+        function closePosePanel() {
+            const panel = document.getElementById('posePanel');
+            panel.classList.remove('open');
+            stopPoseCamera();
+        }
+
+        function togglePosePanelSize() {
+            const panel = document.getElementById('posePanel');
+            if (panel.style.width === '500px') {
+                panel.style.width = '300px';
+            } else {
+                panel.style.width = '500px';
+            }
+        }
+
+        function openBodySensing() {
+            // Future implementation
+        }
+
+        // Start webcam for pose detection
+        async function startPoseCamera() {
+            const video = document.getElementById('poseVideo');
+            const canvas = document.getElementById('poseCanvas');
+            const placeholder = document.getElementById('posePlaceholder');
+            const startBtn = document.getElementById('poseCamStartBtn');
+            const stopBtn = document.getElementById('poseCamStopBtn');
+            const loadingEl = document.getElementById('poseModelLoading');
+
+            try {
+                poseStream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480, facingMode: 'user' }
+                });
+                video.srcObject = poseStream;
+                video.style.display = 'block';
+                canvas.style.display = 'block';
+                placeholder.style.display = 'none';
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'flex';
+
+                await new Promise(resolve => video.onloadedmetadata = resolve);
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                // Wait for model if still loading, show indicator only if not yet ready
+                if (!poseDetector) {
+                    loadingEl.classList.add('show');
+                    await initPoseModel();
+                    loadingEl.classList.remove('show');
+                }
+
+                // Start detection loop
+                poseDetectLoop();
+
+            } catch (err) {
+                console.error('Kamera erişim hatası:', err);
+                alert('Kamera erişimi reddedildi veya kullanılamıyor.');
+            }
+        }
+
+        function stopPoseCamera() {
+            if (poseAnimFrame) {
+                cancelAnimationFrame(poseAnimFrame);
+                poseAnimFrame = null;
+            }
+            if (poseStream) {
+                poseStream.getTracks().forEach(t => t.stop());
+                poseStream = null;
+            }
+            const video = document.getElementById('poseVideo');
+            const canvas = document.getElementById('poseCanvas');
+            const placeholder = document.getElementById('posePlaceholder');
+            const startBtn = document.getElementById('poseCamStartBtn');
+            const stopBtn = document.getElementById('poseCamStopBtn');
+
+            if (video) { video.style.display = 'none'; video.srcObject = null; }
+            if (canvas) {
+                canvas.style.display = 'none';
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            if (placeholder) placeholder.style.display = 'block';
+            if (startBtn) startBtn.style.display = 'flex';
+            if (stopBtn) stopBtn.style.display = 'none';
+
+            // Reset scores
+            updatePoseScores({ right_hand_up: 0, left_hand_up: 0, both_hands_up: 0, both_hands_down: 0 });
+        }
+
+        async function poseDetectLoop() {
+            const video = document.getElementById('poseVideo');
+            const canvas = document.getElementById('poseCanvas');
+            if (!video || !canvas || !poseDetector || !poseStream) return;
+
+            const ctx = canvas.getContext('2d');
+
+            async function loop() {
+                if (!poseStream) return;
+
+                try {
+                    const poses = await poseDetector.estimatePoses(video, {
+                        maxPoses: 1,
+                        flipHorizontal: false  // video+canvas ikisi de scaleX(-1) → çift aynalama olmasın
+                    });
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    if (poses.length > 0) {
+                        const keypoints = poses[0].keypoints;
+                        // Draw based on active tab
+                        const isBodyTab = document.getElementById('tabBodySensing') &&
+                            document.getElementById('tabBodySensing').classList.contains('active');
+                        if (isBodyTab) {
+                            drawBodySensingOverlay(ctx, keypoints, canvas.width, canvas.height);
+                        } else {
+                            drawPoseKeypoints(ctx, keypoints, canvas.width, canvas.height);
+                        }
+                        const scores = classifyPose(keypoints);
+                        updatePoseScores(scores);
+                        updateBodySensingData(keypoints);
+                    } else {
+                        updateBodySensingData([]);
+                    }
+                } catch (err) {
+                    console.error('Pose detection error:', err);
+                }
+
+                poseAnimFrame = requestAnimationFrame(loop);
+            }
+
+            loop();
+        }
+
+        function drawPoseKeypoints(ctx, keypoints, w, h) {
+            const kp = {};
+            keypoints.forEach(k => { kp[k.name] = k; });
+
+            const ok = (k) => k && k.score > 0.15;
+
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Sağ kol: pembe (omuz → dirsek → bilek)
+            if (ok(kp.right_shoulder)) {
+                ctx.strokeStyle = '#ff4d9e';
+                ctx.lineWidth = 9;
+                ctx.beginPath();
+                ctx.moveTo(kp.right_shoulder.x, kp.right_shoulder.y);
+                if (ok(kp.right_elbow)) {
+                    ctx.lineTo(kp.right_elbow.x, kp.right_elbow.y);
+                    if (ok(kp.right_wrist)) ctx.lineTo(kp.right_wrist.x, kp.right_wrist.y);
+                } else if (ok(kp.right_wrist)) {
+                    ctx.lineTo(kp.right_wrist.x, kp.right_wrist.y);
+                }
+                ctx.stroke();
+            }
+
+            // Sol kol: cyan (omuz → dirsek → bilek)
+            if (ok(kp.left_shoulder)) {
+                ctx.strokeStyle = '#00e5ff';
+                ctx.lineWidth = 9;
+                ctx.beginPath();
+                ctx.moveTo(kp.left_shoulder.x, kp.left_shoulder.y);
+                if (ok(kp.left_elbow)) {
+                    ctx.lineTo(kp.left_elbow.x, kp.left_elbow.y);
+                    if (ok(kp.left_wrist)) ctx.lineTo(kp.left_wrist.x, kp.left_wrist.y);
+                } else if (ok(kp.left_wrist)) {
+                    ctx.lineTo(kp.left_wrist.x, kp.left_wrist.y);
+                }
+                ctx.stroke();
+            }
+
+            // Omuz çizgisi: mor
+            if (ok(kp.left_shoulder) && ok(kp.right_shoulder)) {
+                ctx.strokeStyle = '#7c3aed';
+                ctx.lineWidth = 9;
+                ctx.beginPath();
+                ctx.moveTo(kp.left_shoulder.x, kp.left_shoulder.y);
+                ctx.lineTo(kp.right_shoulder.x, kp.right_shoulder.y);
+                ctx.stroke();
+            }
+
+            // Kafa oval dairesi: cyan
+            if (ok(kp.nose)) {
+                const shoulderW = (ok(kp.left_shoulder) && ok(kp.right_shoulder))
+                    ? Math.abs(kp.left_shoulder.x - kp.right_shoulder.x)
+                    : 90;
+                const headR = Math.max(28, Math.min(60, shoulderW * 0.42));
+                ctx.strokeStyle = '#00e5ff';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.ellipse(kp.nose.x, kp.nose.y - headR * 0.15, headR * 0.78, headR, 0, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+        }
+
+        // Body Sensing colors per block type
+        const BS_COLORS = {
+            touch: '#f97316',    // orange
+            angle: '#eab308',    // yellow/gold
+            distance: '#22c55e', // green
+            coord: '#06b6d4',    // cyan/teal
+            person: '#a855f7'    // purple
+        };
+
+        function drawBodySensingOverlay(ctx, keypoints, w, h) {
+            const kp = {};
+            keypoints.forEach(k => { kp[k.name] = k; });
+            const ok = (k) => k && k.score > 0.15;
+
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Faint body skeleton as context (very subtle)
+            const BONES = [
+                ['left_shoulder', 'right_shoulder'],
+                ['left_shoulder', 'left_elbow'], ['left_elbow', 'left_wrist'],
+                ['right_shoulder', 'right_elbow'], ['right_elbow', 'right_wrist'],
+                ['left_shoulder', 'left_hip'], ['right_shoulder', 'right_hip'],
+                ['left_hip', 'right_hip'],
+                ['left_hip', 'left_knee'], ['left_knee', 'left_ankle'],
+                ['right_hip', 'right_knee'], ['right_knee', 'right_ankle']
+            ];
+            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+            ctx.lineWidth = 3;
+            BONES.forEach(([a, b]) => {
+                if (ok(kp[a]) && ok(kp[b])) {
+                    ctx.beginPath();
+                    ctx.moveTo(kp[a].x, kp[a].y);
+                    ctx.lineTo(kp[b].x, kp[b].y);
+                    ctx.stroke();
+                }
+            });
+            // Faint keypoint dots
+            keypoints.forEach(k => {
+                if (k.score > 0.15) {
+                    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+                    ctx.beginPath();
+                    ctx.arc(k.x, k.y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // Collect blocks from workspace
+            if (!workspace) return;
+            const blocks = workspace.getAllBlocks(false);
+
+            blocks.forEach(block => {
+                if (block.type === 'when_bodypart_touches') {
+                    const a = block.getFieldValue('PART_A');
+                    const b = block.getFieldValue('PART_B');
+                    drawBodyLine(ctx, kp, a, b, BS_COLORS.touch, ok);
+                } else if (block.type === 'body_angle_between') {
+                    const a = block.getFieldValue('PART_A');
+                    const b = block.getFieldValue('PART_B');
+                    drawBodyAngle(ctx, kp, a, b, BS_COLORS.angle, ok);
+                } else if (block.type === 'body_distance_between') {
+                    const a = block.getFieldValue('PART_A');
+                    const b = block.getFieldValue('PART_B');
+                    drawBodyDistance(ctx, kp, a, b, BS_COLORS.distance, ok);
+                } else if (block.type === 'body_coordinate_of') {
+                    const part = block.getFieldValue('PART');
+                    const axis = block.getFieldValue('AXIS');
+                    drawBodyCoordinate(ctx, kp, part, axis, BS_COLORS.coord, ok, w, h);
+                }
+            });
+        }
+
+        // Touch: thick line between two parts, glow when close
+        function drawBodyLine(ctx, kp, a, b, color, ok) {
+            if (!ok(kp[a]) || !ok(kp[b])) return;
+            const ax = kp[a].x, ay = kp[a].y;
+            const bx = kp[b].x, by = kp[b].y;
+            const dist = Math.hypot(ax - bx, ay - by);
+            const touching = dist < 40;
+
+            // Glow when touching
+            if (touching) {
+                ctx.shadowColor = color;
+                ctx.shadowBlur = 20;
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = touching ? 7 : 5;
+            ctx.setLineDash(touching ? [] : [10, 6]);
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(bx, by);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.shadowBlur = 0;
+
+            // Endpoints
+            [kp[a], kp[b]].forEach(p => {
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        // Angle: line + arc showing angle between two body parts
+        function drawBodyAngle(ctx, kp, a, b, color, ok) {
+            if (!ok(kp[a]) || !ok(kp[b])) return;
+            const ax = kp[a].x, ay = kp[a].y;
+            const bx = kp[b].x, by = kp[b].y;
+            const angle = Math.atan2(by - ay, bx - ax);
+            const angleDeg = Math.round(angle * (180 / Math.PI));
+
+            // Line
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 4;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(bx, by);
+            ctx.stroke();
+
+            // Arc from horizontal
+            const arcR = Math.min(35, Math.hypot(bx - ax, by - ay) * 0.35);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(ax, ay, arcR, 0, angle, angle > 0 ? false : true);
+            ctx.stroke();
+
+            // Horizontal reference line (dashed)
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(ax - arcR - 5, ay);
+            ctx.lineTo(ax + arcR + 5, ay);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label
+            const midX = (ax + bx) / 2, midY = (ay + by) / 2;
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = color;
+            ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+            ctx.lineWidth = 3;
+            ctx.strokeText(angleDeg + '°', midX + 8, midY - 8);
+            ctx.fillText(angleDeg + '°', midX + 8, midY - 8);
+
+            // Endpoints
+            [kp[a], kp[b]].forEach(p => {
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        // Distance: line with measurement label
+        function drawBodyDistance(ctx, kp, a, b, color, ok) {
+            if (!ok(kp[a]) || !ok(kp[b])) return;
+            const ax = kp[a].x, ay = kp[a].y;
+            const bx = kp[b].x, by = kp[b].y;
+            const dist = Math.round(Math.hypot(ax - bx, ay - by));
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 4;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(bx, by);
+            ctx.stroke();
+
+            // Ticks at endpoints
+            const angle = Math.atan2(by - ay, bx - ax);
+            const perpX = Math.sin(angle) * 8;
+            const perpY = -Math.cos(angle) * 8;
+            ctx.lineWidth = 3;
+            [[ax, ay], [bx, by]].forEach(([x, y]) => {
+                ctx.beginPath();
+                ctx.moveTo(x - perpX, y - perpY);
+                ctx.lineTo(x + perpX, y + perpY);
+                ctx.stroke();
+            });
+
+            // Label
+            const midX = (ax + bx) / 2, midY = (ay + by) / 2;
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = color;
+            ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+            ctx.lineWidth = 3;
+            ctx.strokeText(dist + 'px', midX + 8, midY - 8);
+            ctx.fillText(dist + 'px', midX + 8, midY - 8);
+
+            // Endpoints
+            [kp[a], kp[b]].forEach(p => {
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        // Coordinate: crosshair on body part with x or y line
+        function drawBodyCoordinate(ctx, kp, part, axis, color, ok, w, h) {
+            if (!ok(kp[part])) return;
+            const px = kp[part].x, py = kp[part].y;
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            if (axis === 'x') {
+                ctx.beginPath();
+                ctx.moveTo(px, 0);
+                ctx.lineTo(px, h);
+                ctx.stroke();
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(0, py);
+                ctx.lineTo(w, py);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+
+            // Crosshair dot
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(px, py, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Label
+            const val = Math.round(axis === 'x' ? px : py);
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillStyle = color;
+            ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+            ctx.lineWidth = 3;
+            ctx.strokeText(axis + ':' + val, px + 12, py - 12);
+            ctx.fillText(axis + ':' + val, px + 12, py - 12);
+        }
+
+        function classifyPose(keypoints) {
+            const kp = {};
+            keypoints.forEach(k => { kp[k.name] = k; });
+
+            const scores = {
+                right_hand_up: 0,
+                left_hand_up: 0,
+                both_hands_up: 0,
+                both_hands_down: 0
+            };
+
+            // Omuzlar görünmüyorsa hiçbir şey yapma
+            const minConfShoulder = 0.25;
+            if (!kp.left_shoulder || !kp.right_shoulder) return scores;
+            if (kp.left_shoulder.score < minConfShoulder || kp.right_shoulder.score < minConfShoulder) return scores;
+
+            // "Yukarıda" sayılmak için yüksek güven gerekli (frame dışı tahminleri filtrele)
+            // "Aşağıda" için düşük eşik yeterli (görünmese de aşağıda varsay)
+            const minConfForUp = 0.4;  // yüksek: bilek kesin görünür ve güvenilir olmalı
+            const minConfForDown = 0.15; // düşük: bilek görünüyor ama tam teyit yok → aşağıda say
+
+            const leftWristUp = !!(kp.left_wrist && kp.left_wrist.score >= minConfForUp && kp.left_wrist.y < kp.left_shoulder.y);
+            const rightWristUp = !!(kp.right_wrist && kp.right_wrist.score >= minConfForUp && kp.right_wrist.y < kp.right_shoulder.y);
+            const leftWristVisible = !!(kp.left_wrist && kp.left_wrist.score >= minConfForDown);
+            const rightWristVisible = !!(kp.right_wrist && kp.right_wrist.score >= minConfForDown);
+
+            const normFactor = Math.abs(kp.left_shoulder.y -
+                ((kp.left_hip && kp.left_hip.score > 0.2) ? kp.left_hip.y : kp.left_shoulder.y + 200)) || 150;
+
+            if (leftWristUp && rightWristUp) {
+                const lDist = Math.abs(kp.left_wrist.y - kp.left_shoulder.y);
+                const rDist = Math.abs(kp.right_wrist.y - kp.right_shoulder.y);
+                scores.both_hands_up = Math.min(100, Math.round(((lDist + rDist) / 2) / normFactor * 100));
+            } else if (rightWristUp) {
+                const rDist = Math.abs(kp.right_wrist.y - kp.right_shoulder.y);
+                scores.right_hand_up = Math.min(100, Math.round(rDist / normFactor * 100));
+            } else if (leftWristUp) {
+                const lDist = Math.abs(kp.left_wrist.y - kp.left_shoulder.y);
+                scores.left_hand_up = Math.min(100, Math.round(lDist / normFactor * 100));
+            } else {
+                // Hiçbir el omuz üstünde değil (görünmüyor veya aşağıda) → varsayılan
+                scores.both_hands_down = 100;
+            }
+
+            return scores;
+        }
+
+        function updatePoseScores(scores) {
+            poseScores = scores;
+
+            // Update UI bars
+            const ids = {
+                right_hand_up: { pct: 'pctRightHandUp', bar: 'barRightHandUp' },
+                left_hand_up: { pct: 'pctLeftHandUp', bar: 'barLeftHandUp' },
+                both_hands_up: { pct: 'pctBothHandsUp', bar: 'barBothHandsUp' },
+                both_hands_down: { pct: 'pctBothHandsDown', bar: 'barBothHandsDown' }
+            };
+
+            let maxPose = null;
+            let maxVal = 0;
+
+            for (const [pose, val] of Object.entries(scores)) {
+                const pctEl = document.getElementById(ids[pose].pct);
+                const barEl = document.getElementById(ids[pose].bar);
+                if (pctEl) pctEl.textContent = val + '%';
+                if (barEl) barEl.style.width = val + '%';
+                if (val > maxVal) { maxVal = val; maxPose = pose; }
+            }
+
+            // Highlight active row
+            document.querySelectorAll('.pose-scenario-row').forEach(row => {
+                if (row.dataset.pose === maxPose && maxVal > 10) {
+                    row.classList.add('active');
+                } else {
+                    row.classList.remove('active');
+                }
+            });
+        }
+
+        // Expose pose scores for Blockly blocks
+        window.getPoseScore = function (poseName) {
+            return poseScores[poseName] || 0;
+        };
+        window.isPoseActive = function (poseName, threshold) {
+            return (poseScores[poseName] || 0) >= (threshold || 50);
+        };
+        window.waitForPose = function (poseName, threshold) {
+            threshold = threshold || 50;
+            return new Promise(resolve => {
+                function check() {
+                    if ((poseScores[poseName] || 0) >= threshold) {
+                        resolve();
+                    } else {
+                        requestAnimationFrame(check);
+                    }
+                }
+                check();
+            });
+        };
+
+        // =============================================
+        // Body Sensing Runtime
+        // =============================================
+        let lastKeypoints = null;
+        let personDetected = false;
+        const TOUCH_THRESHOLD = 40; // pixels for "touches"
+
+        // Store keypoints from pose detection loop
+        function updateBodySensingData(keypoints) {
+            lastKeypoints = {};
+            keypoints.forEach(k => { lastKeypoints[k.name] = k; });
+            personDetected = keypoints.some(k => k.score > 0.3);
+            updateBodyStatusMonitor();
+        }
+
+        function getKeypointByName(name) {
+            if (!lastKeypoints) return null;
+            // Map our names to MoveNet keypoint names
+            const nameMap = {
+                'nose': 'nose',
+                'left_eye': 'left_eye',
+                'right_eye': 'right_eye',
+                'left_shoulder': 'left_shoulder',
+                'right_shoulder': 'right_shoulder',
+                'left_elbow': 'left_elbow',
+                'right_elbow': 'right_elbow',
+                'left_wrist': 'left_wrist',
+                'right_wrist': 'right_wrist',
+                'left_hip': 'left_hip',
+                'right_hip': 'right_hip',
+                'left_knee': 'left_knee',
+                'right_knee': 'right_knee',
+                'left_ankle': 'left_ankle',
+                'right_ankle': 'right_ankle'
+            };
+            const mapped = nameMap[name] || name;
+            return lastKeypoints[mapped] || null;
+        }
+
+        window.isPersonDetected = function () {
+            return personDetected;
+        };
+
+        window.waitForPersonDetection = function (type) {
+            return new Promise(resolve => {
+                function check() {
+                    if (type === 'person' && personDetected) resolve();
+                    else if (type === 'no_person' && !personDetected) resolve();
+                    else requestAnimationFrame(check);
+                }
+                check();
+            });
+        };
+
+        window.waitForBodyPartTouch = function (partA, partB) {
+            return new Promise(resolve => {
+                function check() {
+                    const a = getKeypointByName(partA);
+                    const b = getKeypointByName(partB);
+                    if (a && b && a.score > 0.3 && b.score > 0.3) {
+                        const dist = Math.hypot(a.x - b.x, a.y - b.y);
+                        if (dist < TOUCH_THRESHOLD) {
+                            resolve();
+                            return;
+                        }
+                    }
+                    requestAnimationFrame(check);
+                }
+                check();
+            });
+        };
+
+        window.isBodyPartTouching = function (partA, partB) {
+            const a = getKeypointByName(partA);
+            const b = getKeypointByName(partB);
+            if (!a || !b || a.score < 0.3 || b.score < 0.3) return false;
+            return Math.hypot(a.x - b.x, a.y - b.y) < TOUCH_THRESHOLD;
+        };
+
+        window.getBodyAngleBetween = function (partA, partB) {
+            const a = getKeypointByName(partA);
+            const b = getKeypointByName(partB);
+            if (!a || !b || a.score < 0.3 || b.score < 0.3) return 0;
+            const angleRad = Math.atan2(b.y - a.y, b.x - a.x);
+            return Math.round(angleRad * (180 / Math.PI));
+        };
+
+        window.getBodyDistanceBetween = function (partA, partB) {
+            const a = getKeypointByName(partA);
+            const b = getKeypointByName(partB);
+            if (!a || !b || a.score < 0.3 || b.score < 0.3) return 0;
+            return Math.round(Math.hypot(a.x - b.x, a.y - b.y));
+        };
+
+        window.getBodyCoordinate = function (part, axis) {
+            const kp = getKeypointByName(part);
+            if (!kp || kp.score < 0.3) return 0;
+            return Math.round(axis === 'x' ? kp.x : kp.y);
+        };
+
+        // =============================================
+        // Tab Switching
+        // =============================================
+        function switchAITab(tab) {
+            const poseTab = document.getElementById('tabPoseClassification');
+            const bodyTab = document.getElementById('tabBodySensing');
+            const poseContent = document.getElementById('tabContentPose');
+            const bodyContent = document.getElementById('tabContentBody');
+
+            if (tab === 'pose') {
+                poseTab.classList.add('active');
+                bodyTab.classList.remove('active');
+                poseContent.classList.add('active');
+                bodyContent.classList.remove('active');
+            } else {
+                poseTab.classList.remove('active');
+                bodyTab.classList.add('active');
+                poseContent.classList.remove('active');
+                bodyContent.classList.add('active');
+            }
+        }
+
+        // =============================================
+        // Body Status Monitor
+        // =============================================
+        function updateBodyStatusMonitor() {
+            const monitor = document.getElementById('bodyStatusMonitor');
+            const emptyMsg = document.getElementById('bodyStatusEmpty');
+            if (!monitor) return;
+
+            // Scan main workspace for body sensing blocks
+            if (!workspace) return;
+            const blocks = workspace.getAllBlocks(false);
+
+            const t = TRANSLATIONS[currentLanguage] || TRANSLATIONS['en'];
+            const boolStr = (val) => val ? (t.val_true || 'true') : (t.val_false || 'false');
+
+            const entries = [];
+
+            blocks.forEach(block => {
+                if (block.type === 'when_person_detected') {
+                    const det = block.getFieldValue('DETECTION');
+                    const isTrue = det === 'person' ? personDetected : !personDetected;
+                    entries.push({
+                        label: det === 'person' ? (t.monitor_person_detected || 'person detected') : (t.monitor_no_person_detected || 'no person detected'),
+                        value: boolStr(isTrue),
+                        bool: true,
+                        isTrue: isTrue,
+                        icon: '👤',
+                        rowClass: ''
+                    });
+                } else if (block.type === 'when_bodypart_touches') {
+                    const a = block.getFieldValue('PART_A');
+                    const b = block.getFieldValue('PART_B');
+                    const touching = window.isBodyPartTouching(a, b);
+                    const labelA = getBodyPartLabel(a);
+                    const labelB = getBodyPartLabel(b);
+                    entries.push({
+                        label: `${labelA} ↔ ${labelB}`,
+                        value: boolStr(touching),
+                        bool: true,
+                        isTrue: touching,
+                        icon: '→|←',
+                        rowClass: 'touch-row'
+                    });
+                } else if (block.type === 'body_detecting_person') {
+                    entries.push({
+                        label: t.monitor_detecting_person || 'detecting person?',
+                        value: boolStr(personDetected),
+                        bool: true,
+                        isTrue: personDetected,
+                        icon: '👤',
+                        rowClass: ''
+                    });
+                } else if (block.type === 'body_angle_between') {
+                    const a = block.getFieldValue('PART_A');
+                    const b = block.getFieldValue('PART_B');
+                    const angle = window.getBodyAngleBetween(a, b);
+                    const labelA = getBodyPartLabel(a);
+                    const labelB = getBodyPartLabel(b);
+                    entries.push({
+                        label: `${labelA}, ${labelB}`,
+                        value: angle + '°',
+                        bool: false,
+                        icon: '∠',
+                        rowClass: 'angle-row'
+                    });
+                } else if (block.type === 'body_distance_between') {
+                    const a = block.getFieldValue('PART_A');
+                    const b = block.getFieldValue('PART_B');
+                    const dist = window.getBodyDistanceBetween(a, b);
+                    const labelA = getBodyPartLabel(a);
+                    const labelB = getBodyPartLabel(b);
+                    entries.push({
+                        label: `${labelA}, ${labelB}`,
+                        value: dist,
+                        bool: false,
+                        icon: '↔',
+                        rowClass: 'distance-row'
+                    });
+                } else if (block.type === 'body_coordinate_of') {
+                    const part = block.getFieldValue('PART');
+                    const axis = block.getFieldValue('AXIS');
+                    const val = window.getBodyCoordinate(part, axis);
+                    const labelPart = getBodyPartLabel(part);
+                    let tmpl = t.monitor_coord_of || `{axis} coordinate of {part}`;
+                    tmpl = tmpl.replace('{axis}', axis).replace('{part}', labelPart);
+
+                    entries.push({
+                        label: tmpl,
+                        value: val,
+                        bool: false,
+                        icon: axis === 'x' ? '⤓' : '⤒',
+                        rowClass: 'coord-row'
+                    });
+                }
+            });
+
+            // Remove duplicates by label
+            const seen = new Set();
+            const unique = entries.filter(e => {
+                if (seen.has(e.label)) return false;
+                seen.add(e.label);
+                return true;
+            });
+
+            if (unique.length === 0) {
+                if (emptyMsg) emptyMsg.style.display = 'block';
+                monitor.querySelectorAll('.body-status-row').forEach(r => r.remove());
+                return;
+            }
+
+            if (emptyMsg) emptyMsg.style.display = 'none';
+
+            const existingRows = monitor.querySelectorAll('.body-status-row');
+            existingRows.forEach(r => r.remove());
+
+            unique.forEach(entry => {
+                const boolClass = entry.bool ? (entry.isTrue ? 'true-state' : 'false-state') : '';
+                const row = document.createElement('div');
+                row.className = `body-status-row ${entry.rowClass} ${boolClass}`.trim();
+                row.innerHTML = `
+                    <div class="body-status-icon">${entry.icon}</div>
+                    <div class="body-status-label">${entry.label}</div>
+                    <div class="body-status-value">${entry.value}</div>
+                `;
+                monitor.appendChild(row);
+            });
+        }
     </script>
 </body>
 
