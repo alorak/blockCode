@@ -630,6 +630,115 @@
             fill: #4dabf7;
         }
 
+        /* RGB Panel Compact Mode */
+        .rgb-control-panel {
+            transition: padding 0.25s ease, gap 0.25s ease;
+        }
+
+        .rgb-control-panel.compact {
+            padding: 8px 18px 10px;
+            gap: 10px;
+        }
+
+        .rgb-control-panel.compact .rgb-group {
+            gap: 2px;
+        }
+
+        .rgb-control-panel.compact .rgb-group-items {
+            gap: 6px;
+        }
+
+        .rgb-control-panel.compact .rgb-group-label {
+            display: none;
+        }
+
+        .rgb-control-panel.compact .rgb-led {
+            width: 24px;
+            height: 24px;
+            border-width: 2px;
+        }
+
+        .rgb-control-panel.compact .rgb-led.active {
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .rgb-control-panel.compact .rgb-number-box {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            border-width: 2px;
+        }
+
+        .rgb-control-panel.compact .rgb-triangle-btn {
+            width: 22px;
+            height: 22px;
+            margin: 0 2px;
+            filter: drop-shadow(0 2px 0px rgba(0,0,0,0.12));
+        }
+
+        .rgb-control-panel.compact .rgb-triangle-btn polygon {
+            stroke-width: 5px;
+        }
+
+        .rgb-control-panel.compact .rgb-panel-separator {
+            height: 22px;
+        }
+
+        /* Toggle Button */
+        .rgb-panel-toggle {
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: height 0.2s, box-shadow 0.2s, background 0.2s;
+            padding: 0;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .rgb-panel-toggle:hover {
+            height: 15px;
+            bottom: -15px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+            background: #f4f4f4;
+        }
+
+        .rgb-panel-toggle svg {
+            width: 16px;
+            height: 6px;
+            display: block;
+        }
+
+        .rgb-panel-toggle .toggle-dots {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+
+        .rgb-panel-toggle .toggle-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: #bbb;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .rgb-panel-toggle:hover .toggle-dot {
+            background: #999;
+        }
+
         /* Flash Animation */
         @keyframes flash-glow {
             0% {
@@ -3117,7 +3226,7 @@
             <div id="blocklyDiv"></div>
 
             <!-- RGB Control Panel -->
-            <div class="rgb-control-panel">
+            <div class="rgb-control-panel compact" id="rgbControlPanel">
                 <div class="rgb-group">
                     <div class="rgb-group-items">
                         <div class="rgb-led red" id="rgbRedLed" title="Kırmızı LED"></div>
@@ -3163,6 +3272,17 @@
                     </div>
                     <span class="rgb-group-label" id="panelButtonsLabel">Buttons</span>
                 </div>
+
+                <!-- Compact Toggle Button -->
+                <button class="rgb-panel-toggle" id="rgbPanelToggle" onclick="toggleRgbPanel()" title="">
+                    <span class="toggle-dots">
+                        <span class="toggle-dot"></span>
+                        <span class="toggle-dot"></span>
+                        <span class="toggle-dot"></span>
+                        <span class="toggle-dot"></span>
+                        <span class="toggle-dot"></span>
+                    </span>
+                </button>
             </div>
         </div>
 
@@ -4804,16 +4924,16 @@
                 zoom_in: "Yakınlaştır",
                 zoom_out: "Uzaklaştır",
                 reset_view: "Görünümü Ortala",
-                sound_record: "🎤 Yeni Ses Kaydı",
+                sound_record: "   🎤 Yeni Ses Kaydı   ",
                 sound_recordings_label: "🔊 Ses Kayıtları",
                 sound_recording: "Ses Kaydı: ",
                 block_play_sound: "🔊 Çal",
 
                 // Speech Commands
                 speech_commands_label: "🎤 Konuşma Komutları",
-                speech_when: "konuşma algılandığında",
-                speech_detect: "konuşma algıla",
-                speech_detect_at: "son",
+                speech_when: "konuşma algılandığında  ",
+                speech_detect: "konuşma algıla  ",
+                speech_detect_at: " son",
                 speech_detect_sec: "saniyede",
                 speech_word_yes: "evet   ",
                 speech_word_no: "hayır   ",
@@ -5055,7 +5175,7 @@
                 zoom_in: "Zoom In",
                 zoom_out: "Zoom Out",
                 reset_view: "Reset View",
-                sound_record: "🎤 New Sound Record",
+                sound_record: "   🎤 New Sound Record   ",
                 sound_recordings_label: "🔊 Sound Recordings",
                 sound_recording: "Sound Recording: ",
                 block_play_sound: "🔊 Play",
@@ -12731,7 +12851,7 @@
                 zoom: {
                     controls: false,
                     wheel: true,
-                    startScale: 0.9,
+                    startScale: 0.75,
                     maxScale: 3,
                     minScale: 0.3,
                     scaleSpeed: 1.2
@@ -14906,6 +15026,13 @@
         let connectedDevices = [];
         let selectedDeviceId = null;
         let deviceMenuOpen = null; // Açık cihaz menüsü
+
+        // RGB Panel Compact Toggle
+        function toggleRgbPanel() {
+            const panel = document.getElementById('rgbControlPanel');
+            if (!panel) return;
+            panel.classList.toggle('compact');
+        }
 
         // Button States
         let btnStates = { red: false, green: false, blue: false };
