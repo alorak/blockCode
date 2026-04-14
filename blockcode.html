@@ -17668,6 +17668,374 @@ Oyun kumandasındaki belirli bir düğmenin basılı olup olmadığını kontrol
 ### Döndürür
 Basılıysa Doğru, değilse Yanlış.
 `
+            },
+
+            // --- Pose Classification ---
+            'when_pose_detected': {
+                en: `
+# When Pose Detected
+Waits until the selected body pose is detected by the webcam, then runs the connected blocks.
+
+### Parameters
+- **Pose**: Select one of the four poses — arms down, right arm up, left arm up, or both arms up.
+
+### How it works
+Uses the TensorFlow.js MoveNet model to detect 17 body keypoints through the webcam in real time.
+
+### Example
+When both arms are up → turn on the green LED.
+
+### Notes
+- The webcam must be active for this block to work.
+- The model loads in the background when the AI toolbox is opened.
+`,
+                tr: `
+# Poz Algılandığında
+Webcam ile seçilen vücut pozu algılanana kadar bekler, ardından bağlı blokları çalıştırır.
+
+### Parametreler
+- **Poz**: Dört pozdan birini seçin — iki el aşağıda, sağ el yukarıda, sol el yukarıda veya iki el yukarıda.
+
+### Nasıl Çalışır
+TensorFlow.js MoveNet modeli, webcam üzerinden gerçek zamanlı olarak 17 vücut noktasını algılar.
+
+### Örnek
+İki el yukarıda → yeşil LED'i yak.
+
+### Notlar
+- Bu bloğun çalışması için webcam açık olmalıdır.
+- Model, AI araç kutusu açıldığında arka planda yüklenir.
+`
+            },
+            'pose_detecting': {
+                en: `
+# Pose Detecting?
+Checks whether the selected body pose is currently being detected. Returns **True** or **False**.
+
+### Parameters
+- **Pose**: The pose to check.
+
+### Returns
+- **True** — if the selected pose confidence is above the threshold right now.
+- **False** — otherwise.
+
+### Example
+If right arm up → set motor speed to 100.
+`,
+                tr: `
+# Poz Algılanıyor mu?
+Seçilen vücut pozunun şu anda algılanıp algılanmadığını kontrol eder. **Doğru** veya **Yanlış** döndürür.
+
+### Parametreler
+- **Poz**: Kontrol edilecek poz.
+
+### Döndürür
+- **Doğru** — seçilen poz şu anda güven eşiğinin üzerindeyse.
+- **Yanlış** — aksi hâlde.
+
+### Örnek
+Sağ el yukarıda ise → motor hızını 100 yap.
+`
+            },
+            'pose_confidence': {
+                en: `
+# Pose Confidence
+Returns the confidence percentage (0–100) for the selected pose.
+
+### Parameters
+- **Pose**: The pose to measure.
+
+### Returns
+A number between 0 and 100. Higher means more certain.
+
+### Example
+If pose confidence for "both arms up" > 80 → play a sound.
+`,
+                tr: `
+# Güven Skoru
+Seçilen poz için güven yüzdesini (0–100) döndürür.
+
+### Parametreler
+- **Poz**: Ölçülecek poz.
+
+### Döndürür
+0 ile 100 arasında bir sayı. Yüksek değer, modelin daha emin olduğu anlamına gelir.
+
+### Örnek
+"İki el yukarıda" için güven skoru > 80 ise → ses çal.
+`
+            },
+
+            // --- Body Sensing ---
+            'when_person_detected': {
+                en: `
+# When Person Detected
+Waits until a person is detected (or not detected) in the webcam view, then runs the connected blocks.
+
+### Parameters
+- **person** — triggers when someone appears in the frame.
+- **no person** — triggers when the frame is empty.
+
+### Example
+When a person is detected → start the motor.
+`,
+                tr: `
+# Kişi Algılandığında
+Webcam görüntüsünde kişi algılanana (veya algılanmayana) kadar bekler, ardından bağlı blokları çalıştırır.
+
+### Parametreler
+- **kişi** — biri kameraya girdiğinde tetiklenir.
+- **kimse yok** — kamera boş olduğunda tetiklenir.
+
+### Örnek
+Kişi algılandığında → motoru başlat.
+`
+            },
+            'when_bodypart_touches': {
+                en: `
+# When Body Part Touches
+Waits until two selected body joints come close enough to be considered touching, then runs the connected blocks.
+
+### Parameters
+- **Part A / Part B**: Choose any two of the 15 body joints (nose, shoulders, elbows, wrists, hips, knees, ankles).
+
+### How it works
+Calculates the pixel distance between the two joints. Triggers when the distance falls below a threshold relative to body size.
+
+### Example
+When right wrist touches left wrist → send a message.
+`,
+                tr: `
+# Eklem Değdiğinde
+Seçilen iki vücut eklemi birbirine yeterince yaklaştığında (dokunuyor sayıldığında) bağlı blokları çalıştırır.
+
+### Parametreler
+- **Eklem A / Eklem B**: 15 vücut noktasından herhangi ikisini seçin (burun, omuzlar, dirsekler, bilekler, kalçalar, dizler, ayak bilekleri).
+
+### Nasıl Çalışır
+İki eklem arasındaki piksel mesafesini hesaplar. Mesafe, vücut boyutuna göre belirlenen eşiğin altına düştüğünde tetiklenir.
+
+### Örnek
+Sağ bilek sol bileğe değdiğinde → mesaj gönder.
+`
+            },
+            'body_detecting_person': {
+                en: `
+# Detecting Person?
+Returns **True** if a person is currently visible in the webcam, **False** otherwise.
+
+### Returns
+True / False
+
+### Example
+If detecting person → keep motor running.
+`,
+                tr: `
+# Kişi Algılanıyor mu?
+Webcam'de şu anda bir kişi görünüyorsa **Doğru**, görünmüyorsa **Yanlış** döndürür.
+
+### Döndürür
+Doğru / Yanlış
+
+### Örnek
+Kişi algılanıyorsa → motoru çalışmaya devam ettir.
+`
+            },
+            'body_angle_between': {
+                en: `
+# Angle Between
+Returns the angle (in degrees) formed between two body joints and the horizontal axis.
+
+### Parameters
+- **Part A / Part B**: Any two of the 15 body joints.
+
+### Returns
+Angle in degrees (0–360).
+
+### Example
+Angle between left shoulder and right shoulder → use as motor speed.
+`,
+                tr: `
+# Arasındaki Açı
+İki vücut eklemi arasındaki açıyı (derece cinsinden) döndürür.
+
+### Parametreler
+- **Eklem A / Eklem B**: 15 vücut noktasından herhangi ikisi.
+
+### Döndürür
+Derece cinsinden açı (0–360).
+
+### Örnek
+Sol omuz ile sağ omuz arasındaki açı → motor hızı olarak kullan.
+`
+            },
+            'body_distance_between': {
+                en: `
+# Distance Between
+Returns the pixel distance between two body joints on screen.
+
+### Parameters
+- **Part A / Part B**: Any two of the 15 body joints.
+
+### Returns
+Distance in pixels. Larger screen or closer camera = larger values.
+
+### Example
+Distance between right wrist and left wrist → control LED brightness.
+`,
+                tr: `
+# Arasındaki Mesafe
+Ekranda iki vücut eklemi arasındaki piksel mesafesini döndürür.
+
+### Parametreler
+- **Eklem A / Eklem B**: 15 vücut noktasından herhangi ikisi.
+
+### Döndürür
+Piksel cinsinden mesafe. Büyük ekran veya yakın kamera → daha büyük değerler.
+
+### Örnek
+Sağ bilek ile sol bilek arasındaki mesafe → LED parlaklığını kontrol et.
+`
+            },
+            'body_coordinate_of': {
+                en: `
+# Coordinate Of
+Returns the X or Y screen coordinate of a specific body joint.
+
+### Parameters
+- **Axis**: X (horizontal) or Y (vertical).
+- **Part**: Any of the 15 body joints.
+
+### Returns
+Pixel position on screen. X increases to the right, Y increases downward.
+
+### Example
+Y coordinate of nose → use as a value to control a motor.
+`,
+                tr: `
+# Koordinatı
+Belirli bir vücut ekleminin ekran üzerindeki X veya Y koordinatını döndürür.
+
+### Parametreler
+- **Eksen**: X (yatay) veya Y (dikey).
+- **Eklem**: 15 vücut noktasından herhangi biri.
+
+### Döndürür
+Ekrandaki piksel konumu. X sağa gidince, Y aşağıya gidince artar.
+
+### Örnek
+Burnun Y koordinatı → motor kontrolü için değer olarak kullan.
+`
+            },
+
+            // --- Speech Commands ---
+            'when_speech': {
+                en: `
+# When Speech Detected
+Waits until the microphone hears the selected word, then runs the connected blocks.
+
+### Parameters
+- **Word**: yes, no, up, down, left, right.
+
+### How it works
+Uses the TensorFlow.js Speech Commands model (18w) running entirely in the browser. No audio is sent to any server.
+
+### Example
+When "up" is heard → start motor forward.
+When "down" is heard → start motor backward.
+
+### Notes
+- Microphone permission is required.
+- Works best in a quiet environment.
+- The model recognises English words only.
+`,
+                tr: `
+# Konuşma Algılandığında
+Mikrofon seçilen kelimeyi duyduğunda bağlı blokları çalıştırır.
+
+### Parametreler
+- **Kelime**: yes, no, up, down, left, right.
+
+### Nasıl Çalışır
+TensorFlow.js Speech Commands modeli (18w) tamamen tarayıcıda çalışır. Ses verisi hiçbir sunucuya gönderilmez.
+
+### Örnek
+"up" duyulduğunda → motoru ileri başlat.
+"down" duyulduğunda → motoru geri başlat.
+
+### Notlar
+- Mikrofon izni gereklidir.
+- Sessiz ortamda daha iyi çalışır.
+- Model yalnızca İngilizce kelimeleri tanır.
+`
+            },
+            'detect_speech': {
+                en: `
+# Detect Speech
+Checks whether the selected word was heard within the last N seconds. Returns **True** or **False**.
+
+### Parameters
+- **Word**: yes, no, up, down, left, right.
+- **Seconds**: How far back to check (e.g., 3 means "in the last 3 seconds").
+
+### Returns
+- **True** — if the word was detected within the time window.
+- **False** — otherwise.
+
+### Example
+If detect "yes" at 5 sec → turn on green LED.
+`,
+                tr: `
+# Konuşma Algıla
+Seçilen kelimenin son N saniye içinde duyulup duyulmadığını kontrol eder. **Doğru** veya **Yanlış** döndürür.
+
+### Parametreler
+- **Kelime**: yes, no, up, down, left, right.
+- **Saniye**: Geriye ne kadar bakılacağı (örn. 3 → "son 3 saniyede").
+
+### Döndürür
+- **Doğru** — kelime zaman penceresi içinde algılandıysa.
+- **Yanlış** — aksi hâlde.
+
+### Örnek
+Son 5 saniyede "yes" algılandıysa → yeşil LED'i yak.
+`
+            },
+
+            // --- Sound Recordings ---
+            'play_sound': {
+                en: `
+# Play Sound
+Plays a previously recorded sound by name.
+
+### Parameters
+- **Name**: The name of the recording (set when recording was created).
+
+### How it works
+1. Open the Sound toolbox and click **New Sound Record**.
+2. Record your sound and give it a name.
+3. Use this block to play it back during program execution.
+
+### Notes
+- Sounds are stored in the browser session only — they are lost on page reload.
+- Playback is instant; the program continues without waiting for the sound to finish.
+`,
+                tr: `
+# Ses Çal
+Daha önce kaydedilen bir sesi ismiyle çalar.
+
+### Parametreler
+- **İsim**: Kaydın adı (kayıt oluşturulurken belirlenir).
+
+### Nasıl Çalışır
+1. Ses araç kutusunu açın ve **Yeni Ses Kaydı** butonuna tıklayın.
+2. Sesinizi kaydedin ve bir isim verin.
+3. Program çalışırken bu blokla çalın.
+
+### Notlar
+- Ses kayıtları yalnızca tarayıcı oturumunda saklanır — sayfa yenilenince kaybolur.
+- Oynatma anlık başlar; program ses bitmeden devam eder.
+`
             }
         };
 
