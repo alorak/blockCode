@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/blockly@10.4.3/blockly.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands"></script>
     <style>
         * {
             margin: 0;
@@ -815,6 +816,166 @@
             display: block;
         }
 
+        /* Speech Panel */
+        .speech-panel {
+            display: none;
+            position: relative;
+            width: 300px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            pointer-events: auto;
+            max-height: calc(100vh - 90px);
+            overflow-y: auto;
+        }
+        .speech-panel.open {
+            display: block;
+        }
+        .speech-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .speech-panel-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+        .speech-panel-header-left svg {
+            color: #E91E63;
+        }
+        .speech-visualizer {
+            background: #1a1a2e;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .speech-mic-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .speech-mic-icon.idle {
+            background: rgba(233, 30, 99, 0.2);
+            border: 2px solid rgba(233, 30, 99, 0.4);
+        }
+        .speech-mic-icon.listening {
+            background: rgba(233, 30, 99, 0.4);
+            border: 2px solid #E91E63;
+            animation: speechPulse 1.5s infinite;
+        }
+        .speech-mic-icon.detected {
+            background: rgba(76, 175, 80, 0.4);
+            border: 2px solid #4CAF50;
+        }
+        @keyframes speechPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(233, 30, 99, 0); }
+        }
+        .speech-waveform-container {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #1a1a2e;
+        }
+        .speech-waveform-container canvas {
+            width: 100%;
+            height: 80px;
+            display: block;
+        }
+        .speech-status-text {
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            text-align: center;
+        }
+        .speech-status-text.detected {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+        .speech-last-word {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            min-height: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .speech-monitor {
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .speech-monitor-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .speech-monitor-row.when-row {
+            background: #fce4ec;
+        }
+        .speech-monitor-row.detect-row.true-state {
+            background: #e8f5e9;
+        }
+        .speech-monitor-row.detect-row.false-state {
+            background: #fce4ec;
+        }
+        .speech-monitor-icon {
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .speech-monitor-label {
+            flex: 1;
+            color: #333;
+        }
+        .speech-monitor-value {
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            min-width: 46px;
+            text-align: center;
+            color: white;
+        }
+        .speech-monitor-row.when-row .speech-monitor-value {
+            background: #E91E63;
+            color: white;
+        }
+        .speech-monitor-row.detect-row.true-state .speech-monitor-value {
+            background: #4CAF50;
+            color: white;
+        }
+        .speech-monitor-row.detect-row.false-state .speech-monitor-value {
+            background: #ef4444;
+            color: white;
+        }
+        .speech-monitor-empty {
+            text-align: center;
+            padding: 16px;
+            color: #aaa;
+            font-size: 12px;
+        }
+
         .pose-panel-header {
             display: flex;
             align-items: center;
@@ -1520,14 +1681,12 @@
             top: 70px;
             right: 20px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row-reverse;
+            flex-wrap: nowrap;
             gap: 15px;
             z-index: 1000;
-            align-items: flex-end;
+            align-items: flex-start;
             pointer-events: none;
-            /* Container clicks pass through */
-            max-height: calc(100vh - 90px);
-            overflow-y: auto;
         }
 
         /* Controller Display Panel ve Motor Display */
@@ -2732,6 +2891,44 @@
             dominant-baseline: middle !important;
         }
 
+        /* Flyout (Toolbox) Buton Stilleri */
+        .blocklyFlyoutButtonShadow {
+            display: none !important; /* Etrafındaki siyah çirkin gölgeyi tamamen gizle */
+        }
+
+        .blocklyFlyoutButton .blocklyFlyoutButtonBackground {
+            fill: #E91E63 !important; /* Ses bloklarıyla aynı pembe renga sahip olsun */
+            stroke: rgba(255, 255, 255, 0.4) !important;
+            stroke-width: 2px !important;
+            rx: 20px !important; /* Hap şeklinde (pill shape) tam yuvarlak köşeler */
+            ry: 20px !important;
+            filter: drop-shadow(0px 4px 8px rgba(233, 30, 99, 0.4)) !important;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            cursor: pointer !important;
+            /* Butonu dikeyde şişirerek daha yüksek ve dolgun gösterir */
+            transform-origin: center;
+            transform-box: fill-box;
+            transform: scaleY(1.2) scaleX(1.02);
+        }
+
+        .blocklyFlyoutButton:hover .blocklyFlyoutButtonBackground {
+            fill: #D81B60 !important;
+            stroke: rgba(255, 255, 255, 0.7) !important;
+            filter: drop-shadow(0px 6px 12px rgba(233, 30, 99, 0.5)) !important;
+            transform: scaleY(1.25) scaleX(1.04);
+        }
+
+        .blocklyFlyoutButton .blocklyText {
+            fill: white !important;
+            font-size: 19px !important; /* Yazıyı daha büyük yap */
+            font-family: 'Helvetica Neue', Arial, sans-serif !important;
+            font-weight: 800 !important;
+            dominant-baseline: central !important;
+            alignment-baseline: central !important;
+            transform: translateY(-5px); /* Metni ortalamak için yukarı taşır */
+            cursor: pointer !important;
+        }
+
         /* Pulsing animation for active running state */
         @keyframes pulse-green {
             0% {
@@ -2898,7 +3095,7 @@
                 <div class="sidebar-divider"></div>
 
                 <!-- AI Button -->
-                <button class="tool-btn" id="aiToggle" onclick="toggleAIBlocks()" title="AI">
+                <button class="tool-btn" id="aiToggle" onclick="toggleAIBlocks()" title="Image Processing">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="4" r="2.5" />
@@ -3741,10 +3938,50 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Speech Commands Panel -->
+            <div class="speech-panel" id="speechPanel">
+                <div class="speech-panel-header">
+                    <div class="speech-panel-header-left">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                        Speech Commands
+                    </div>
+                    <div class="pose-panel-actions">
+                        <button class="pose-panel-action-btn" onclick="closeSpeechPanel()" title="Kapat">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="speech-visualizer" id="speechVisualizer">
+                    <div class="speech-mic-icon idle" id="speechMicIcon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2" fill="none" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="speech-waveform-container">
+                        <canvas id="speechWaveCanvas" width="268" height="80"></canvas>
+                    </div>
+                    <div class="speech-last-word" id="speechLastWord">—</div>
+                    <div class="speech-status-text" id="speechStatusText">Dinleme bekliyor...</div>
+                </div>
+                <div class="speech-monitor" id="speechMonitor">
+                    <div class="speech-monitor-empty" id="speechMonitorEmpty">
+                        Speech bloklarını workspace'e sürükleyerek<br>durumlarını burada izleyin
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
-
-    <!-- Custom Reset Modal -->
     <div id="resetModal" class="reset-modal">
         <div class="reset-modal-content">
             <div class="reset-modal-header">
@@ -4567,6 +4804,23 @@
                 zoom_in: "Yakınlaştır",
                 zoom_out: "Uzaklaştır",
                 reset_view: "Görünümü Ortala",
+                sound_record: "🎤 Yeni Ses Kaydı",
+                sound_recordings_label: "🔊 Ses Kayıtları",
+                sound_recording: "Ses Kaydı: ",
+                block_play_sound: "🔊 Çal",
+
+                // Speech Commands
+                speech_commands_label: "🎤 Konuşma Komutları",
+                speech_when: "konuşma algılandığında",
+                speech_detect: "konuşma algıla",
+                speech_detect_at: "son",
+                speech_detect_sec: "saniyede",
+                speech_word_yes: "evet   ",
+                speech_word_no: "hayır   ",
+                speech_word_up: "yukarı   ",
+                speech_word_down: "aşağı   ",
+                speech_word_left: "sol   ",
+                speech_word_right: "sağ   ",
 
                 block_random_pre: " rastgele sayı  ",
                 block_random_mid: " ile ",
@@ -4801,6 +5055,23 @@
                 zoom_in: "Zoom In",
                 zoom_out: "Zoom Out",
                 reset_view: "Reset View",
+                sound_record: "🎤 New Sound Record",
+                sound_recordings_label: "🔊 Sound Recordings",
+                sound_recording: "Sound Recording: ",
+                block_play_sound: "🔊 Play",
+
+                // Speech Commands
+                speech_commands_label: "🎤 Speech Commands",
+                speech_when: "when speech",
+                speech_detect: "detect speech",
+                speech_detect_at: "at",
+                speech_detect_sec: "sec",
+                speech_word_yes: "yes   ",
+                speech_word_no: "no   ",
+                speech_word_up: "up   ",
+                speech_word_down: "down   ",
+                speech_word_left: "left   ",
+                speech_word_right: "right   ",
 
                 block_random_pre: " pick random  ",
                 block_random_mid: " to ",
@@ -5259,6 +5530,8 @@
                 Blockly.Msg.BLOCK_COLOR_IS = t.block_color_is || 'is color';
                 Blockly.Msg.BLOCK_COLOR_VALUE = t.block_color_value || 'color';
 
+                Blockly.Msg.BLOCK_PLAY_SOUND = t.block_play_sound;
+
                 // Pose Classification
                 Blockly.Msg.POSE_ARMS_DOWN = t.pose_arms_down;
                 Blockly.Msg.POSE_RIGHT_ARM_UP = t.pose_right_arm_up;
@@ -5285,6 +5558,18 @@
                 Blockly.Msg.BODY_DISTANCE_POST = t.body_distance_post;
                 Blockly.Msg.BODY_COORD_MID = t.body_coord_mid;
                 Blockly.Msg.BODY_COORD_POST = t.body_coord_post;
+
+                // Speech Commands
+                Blockly.Msg.SPEECH_WHEN = t.speech_when;
+                Blockly.Msg.SPEECH_DETECT = t.speech_detect;
+                Blockly.Msg.SPEECH_DETECT_AT = t.speech_detect_at;
+                Blockly.Msg.SPEECH_DETECT_SEC = t.speech_detect_sec;
+                Blockly.Msg.SPEECH_WORD_YES = t.speech_word_yes;
+                Blockly.Msg.SPEECH_WORD_NO = t.speech_word_no;
+                Blockly.Msg.SPEECH_WORD_UP = t.speech_word_up;
+                Blockly.Msg.SPEECH_WORD_DOWN = t.speech_word_down;
+                Blockly.Msg.SPEECH_WORD_LEFT = t.speech_word_left;
+                Blockly.Msg.SPEECH_WORD_RIGHT = t.speech_word_right;
 
                 // Body part names
                 Blockly.Msg.BODYPART_NOSE = t.bodypart_nose;
@@ -5333,6 +5618,7 @@
                 else if (currentToolboxMode === 'action_num') showActionNumToolbox();
                 else if (currentToolboxMode === 'action_button') showActionButtonToolbox();
                 else if (currentToolboxMode === 'operator') showOperatorToolbox();
+                else if (currentToolboxMode === 'sound') showSoundToolbox();
 
                 if (workspace) {
                     const xml = Blockly.Xml.workspaceToDom(workspace);
@@ -10052,12 +10338,53 @@
         Blockly.Blocks['play_sound'] = {
             init: function () {
                 this.appendDummyInput()
-                    .appendField("🔊 Çal")
+                    .appendField(Blockly.Msg.BLOCK_PLAY_SOUND || "🔊 Çal")
                     .appendField(new Blockly.FieldTextInput("A"), "SOUND_NAME");
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour("#E91E63");
                 this.setTooltip("Kaydedilen sesi çalar");
+            }
+        };
+
+        // =============================================
+        // Speech Command Blocks
+        // =============================================
+        const SPEECH_CMD_COLOR = "#E91E63";
+
+        function getSpeechCommandOptions() {
+            return [
+                [Blockly.Msg.SPEECH_WORD_YES || "yes", "yes"],
+                [Blockly.Msg.SPEECH_WORD_NO || "no", "no"],
+                [Blockly.Msg.SPEECH_WORD_UP || "up", "up"],
+                [Blockly.Msg.SPEECH_WORD_DOWN || "down", "down"],
+                [Blockly.Msg.SPEECH_WORD_LEFT || "left", "left"],
+                [Blockly.Msg.SPEECH_WORD_RIGHT || "right", "right"]
+            ];
+        }
+
+        Blockly.Blocks['when_speech'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.SPEECH_WHEN || "when speech")
+                    .appendField(new Blockly.FieldDropdown(getSpeechCommandOptions), "WORD");
+                this.setNextStatement(true, null);
+                this.setColour(SPEECH_CMD_COLOR);
+                this.setTooltip("Bu kelime algılandığında çalışır");
+            }
+        };
+
+        Blockly.Blocks['detect_speech'] = {
+            init: function () {
+                this.appendDummyInput()
+                    .appendField(Blockly.Msg.SPEECH_DETECT || "detect speech")
+                    .appendField(new Blockly.FieldDropdown(getSpeechCommandOptions), "WORD")
+                    .appendField(Blockly.Msg.SPEECH_DETECT_AT || "at")
+                    .appendField(new Blockly.FieldNumber(10, 1, 60), "SECONDS")
+                    .appendField(Blockly.Msg.SPEECH_DETECT_SEC || "sec");
+                this.setOutput(true, "Boolean");
+                this.setColour(SPEECH_CMD_COLOR);
+                this.setTooltip("Son N saniyede bu kelime algılandı mı?");
             }
         };
 
@@ -11152,6 +11479,20 @@
             return [code, Blockly.JavaScript.ORDER_ATOMIC];
         };
 
+        // Speech Command JavaScript Generators
+        Blockly.JavaScript['when_speech'] = function (block) {
+            var word = block.getFieldValue('WORD');
+            var code = `await window.waitForSpeechCommand('${word}');\n`;
+            return code;
+        };
+
+        Blockly.JavaScript['detect_speech'] = function (block) {
+            var word = block.getFieldValue('WORD');
+            var seconds = block.getFieldValue('SECONDS');
+            var code = `window.wasSpeechDetected('${word}', ${seconds})`;
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
         // Controller Blokları
         Blockly.Blocks['when_lever_position'] = {
             init: function () {
@@ -12119,6 +12460,8 @@
         Blockly.Python['alarm'] = () => 'alarm()\n';
         Blockly.Python['sound'] = (b) => `play_tone(${b.getFieldValue('FREQ')})\n`;
         Blockly.Python['play_sound'] = (b) => `play_sound("${b.getFieldValue('SOUND_NAME')}")\n`;
+        Blockly.Python['when_speech'] = (b) => `# wait for speech: ${b.getFieldValue('WORD')}\n`;
+        Blockly.Python['detect_speech'] = (b) => `speech_detected("${b.getFieldValue('WORD')}", ${b.getFieldValue('SECONDS')})`;
         Blockly.Python['light'] = () => 'light_on()\n';
         Blockly.Python['led_on'] = (b) => `led_on(${b.getFieldValue('VAL')})\n`;
         Blockly.Python['led_off'] = (b) => `led_off(${b.getFieldValue('VAL')})\n`;
@@ -12531,7 +12874,8 @@
             // "when_condition" bloklarını bul (Event blokları)
             const eventBlocks = allBlocks.filter(block =>
                 ['when_condition', 'when_message_received', 'when_color_detected',
-                 'when_pose_detected', 'when_person_detected', 'when_bodypart_touches'].includes(block.type)
+                 'when_pose_detected', 'when_person_detected', 'when_bodypart_touches',
+                 'when_speech'].includes(block.type)
             );
 
             if (startBlocks.length === 0 && eventBlocks.length === 0) {
@@ -12565,6 +12909,15 @@
                 } catch (e) {
                     console.warn('Otomatik kamera başlatılamadı:', e);
                 }
+            }
+
+            // Speech blokları varsa otomatik başlat
+            const speechBlockTypes = ['when_speech', 'detect_speech'];
+            const hasSpeechBlocks = allBlocks.some(b => speechBlockTypes.includes(b.type));
+            if (hasSpeechBlocks) {
+                console.log('🎤 Speech blokları tespit edildi, dinleme başlatılıyor...');
+                openSpeechPanel();
+                await startSpeechListening();
             }
 
             // Create a separate session for each start block
@@ -12637,6 +12990,9 @@
                 clearInterval(eventCheckInterval);
                 eventCheckInterval = null;
             }
+
+            // Speech dinlemeyi durdur
+            stopSpeechListening();
 
             // Play butonunu normal haline getir
             const playBtn = document.querySelector('.play-btn');
@@ -12832,6 +13188,45 @@
                                 endExecutionSessionByIndex(sessionIndex);
                             } catch (e) {
                                 console.error('Error in touch event execution', e);
+                            } finally {
+                                activeEventBlocks.delete(block.id);
+                            }
+                        })();
+                    }
+                }
+
+                // --- when_speech event polling ---
+                const speechBlocks = allBlocks.filter(b => b.type === 'when_speech');
+                for (const block of speechBlocks) {
+                    if (isExecutionCancelled) break;
+                    if (activeEventBlocks.has(block.id)) continue;
+
+                    const word = block.getFieldValue('WORD');
+                    const now = Date.now();
+                    const log = speechDetectionLog[word];
+                    // Check if word was detected in the last 500ms (polling window)
+                    const detected = log && log.length > 0 && log[log.length - 1] > (now - 500);
+                    if (detected) {
+                        activeEventBlocks.add(block.id);
+                        (async () => {
+                            let sessionIndex = -1;
+                            try {
+                                const eventFlowId = `speech_${block.id}_${Date.now()}`;
+                                const sessionTitle = currentLanguage === 'tr' ? `Konuşma: "${word}"` : `Speech: "${word}"`;
+                                sessionIndex = startExecutionSession(eventFlowId, block.id, sessionTitle);
+
+                                logExecutionToSession(sessionIndex, `<span style="background:#fce4ec;padding:2px 8px;border-radius:4px;display:inline-block;">🎤 "${word}" algılandı</span>`);
+
+                                let nextBlock = block.getNextBlock();
+                                while (nextBlock && !isExecutionCancelled) {
+                                    await executeBlockPlay(nextBlock, eventFlowId);
+                                    nextBlock = nextBlock.getNextBlock();
+                                }
+
+                                logExecutionToSession(sessionIndex, `<span style="background:#e3f2fd;padding:2px 8px;border-radius:4px;display:inline-block;">🎤 ${currentLanguage === 'tr' ? '⏹️ Durduruldu' : '⏹️ Stopped'}</span>`);
+                                endExecutionSessionByIndex(sessionIndex);
+                            } catch (e) {
+                                console.error('Error in speech event execution', e);
                             } finally {
                                 activeEventBlocks.delete(block.id);
                             }
@@ -13042,6 +13437,13 @@
                 const part = block.getFieldValue('PART');
                 const axis = block.getFieldValue('AXIS');
                 return window.getBodyCoordinate ? window.getBodyCoordinate(part, axis) : 0;
+            }
+
+            // Speech Commands - detect_speech (boolean)
+            else if (blockType === 'detect_speech') {
+                const word = block.getFieldValue('WORD');
+                const seconds = Number(block.getFieldValue('SECONDS') || 3);
+                return window.wasSpeechDetected ? window.wasSpeechDetected(word, seconds) : false;
             }
 
             // Force Sensor - is pressed?
@@ -18767,8 +19169,22 @@ Basılıysa Doğru, değilse Yanlış.
         }
 
         function showSoundToolbox() {
-            let soundBlocksXml = '<button text="🎤 Yeni Ses Kaydı" callbackKey="createNewSound"></button>';
+            const t = TRANSLATIONS[currentLanguage];
+            let soundBlocksXml = '';
+
+            // Speech command blocks
+            soundBlocksXml += `<label text="${t.speech_commands_label || '🎤 Speech Commands'}"></label>`;
+            soundBlocksXml += '<sep gap="8"></sep>';
+            soundBlocksXml += '<block type="when_speech"></block>';
+            soundBlocksXml += '<sep gap="8"></sep>';
+            soundBlocksXml += '<block type="detect_speech"></block>';
             soundBlocksXml += '<sep gap="20"></sep>';
+
+            // Sound recording section
+            soundBlocksXml += `<label text="${t.sound_recordings_label || '🔊 Sound Recordings'}"></label>`;
+            soundBlocksXml += '<sep gap="8"></sep>';
+            soundBlocksXml += `<button text="${t.sound_record}" callbackKey="createNewSound"></button>`;
+            soundBlocksXml += '<sep gap="12"></sep>';
 
             // Generate blocks for existing recordings
             if (window.soundRecordings) {
@@ -18833,7 +19249,8 @@ Basılıysa Doğru, değilse Yanlış.
                     break;
                 }
             }
-            document.getElementById('soundNameTitle').innerText = "Ses Kaydı: " + nextName;
+            const t = TRANSLATIONS[currentLanguage];
+            document.getElementById('soundNameTitle').innerText = (t.sound_recording || "Ses Kaydı: ") + nextName;
             document.getElementById('soundModal').dataset.targetName = nextName;
 
             initAudioContext();
@@ -20096,7 +20513,7 @@ Basılıysa Doğru, değilse Yanlış.
         }
 
         function updateToolboxButtons(activeButtonId) {
-            const buttons = ['startToggle', 'controlToggle', 'actionLedToggle', 'actionNumToggle', 'actionButtonToggle', 'operatorToggle', 'aiToggle'];
+            const buttons = ['startToggle', 'controlToggle', 'actionLedToggle', 'actionNumToggle', 'actionButtonToggle', 'operatorToggle', 'aiToggle', 'soundToggle'];
 
             buttons.forEach(buttonId => {
                 const btn = document.getElementById(buttonId);
@@ -21677,6 +22094,232 @@ Basılıysa Doğru, değilse Yanlış.
             // Future implementation
         }
 
+        // ─── Speech Panel Functions ────────────────────────────────────
+        function openSpeechPanel() {
+            const panel = document.getElementById('speechPanel');
+            if (!panel) return;
+            panel.classList.add('open');
+            clearSpeechWaveform();
+        }
+
+        function closeSpeechPanel() {
+            const panel = document.getElementById('speechPanel');
+            if (panel) panel.classList.remove('open');
+        }
+
+        let speechBarAnimFrame = null;
+        let speechAudioCtx = null;
+        let speechAnalyser = null;
+        let speechMicStream = null;
+
+        function drawSpeechWaveform() {
+            const canvas = document.getElementById('speechWaveCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            // Match actual pixel size
+            if (canvas.width !== canvas.offsetWidth * 2) {
+                canvas.width = canvas.offsetWidth * 2;
+                canvas.height = 160;
+            }
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            function draw() {
+                speechBarAnimFrame = requestAnimationFrame(draw);
+
+                ctx.fillStyle = 'rgba(26, 26, 46, 0.3)';
+                ctx.fillRect(0, 0, w, h);
+
+                if (!speechAnalyser) {
+                    // Draw flat center line when no analyser
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(233, 30, 99, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.moveTo(0, h / 2);
+                    ctx.lineTo(w, h / 2);
+                    ctx.stroke();
+                    return;
+                }
+
+                const bufferLength = speechAnalyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                speechAnalyser.getByteTimeDomainData(dataArray);
+
+                // Draw waveform
+                ctx.beginPath();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#E91E63';
+
+                const sliceWidth = w / bufferLength;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = (v * h) / 2;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                    x += sliceWidth;
+                }
+                ctx.lineTo(w, h / 2);
+                ctx.stroke();
+
+                // Draw filled area under the waveform
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(233, 30, 99, 0.15)';
+                x = 0;
+                ctx.moveTo(0, h / 2);
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = (v * h) / 2;
+                    ctx.lineTo(x, y);
+                    x += sliceWidth;
+                }
+                ctx.lineTo(w, h / 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+            draw();
+        }
+
+        function clearSpeechWaveform() {
+            const canvas = document.getElementById('speechWaveCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(233, 30, 99, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+        }
+
+        function stopSpeechWaveform() {
+            if (speechBarAnimFrame) {
+                cancelAnimationFrame(speechBarAnimFrame);
+                speechBarAnimFrame = null;
+            }
+            clearSpeechWaveform();
+        }
+
+        async function initSpeechMicStream() {
+            if (speechMicStream) return speechMicStream;
+            try {
+                speechMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                if (!speechAudioCtx) {
+                    speechAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (speechAudioCtx.state === 'suspended') {
+                    await speechAudioCtx.resume();
+                }
+                const source = speechAudioCtx.createMediaStreamSource(speechMicStream);
+                speechAnalyser = speechAudioCtx.createAnalyser();
+                speechAnalyser.fftSize = 512;
+                source.connect(speechAnalyser);
+                console.log('🎤 Mikrofon izni alındı, ses akışı başlatıldı');
+                return speechMicStream;
+            } catch (err) {
+                console.error('🎤 Mikrofon izni alınamadı:', err);
+                updateSpeechUI('idle');
+                const statusText = document.getElementById('speechStatusText');
+                if (statusText) statusText.textContent = 'Mikrofon izni reddedildi!';
+                return null;
+            }
+        }
+
+        function stopSpeechMicStream() {
+            if (speechMicStream) {
+                speechMicStream.getTracks().forEach(t => t.stop());
+                speechMicStream = null;
+            }
+            speechAnalyser = null;
+            if (speechAudioCtx) {
+                speechAudioCtx.close().catch(() => {});
+                speechAudioCtx = null;
+            }
+        }
+
+        function updateSpeechUI(state, word) {
+            const micIcon = document.getElementById('speechMicIcon');
+            const lastWord = document.getElementById('speechLastWord');
+            const statusText = document.getElementById('speechStatusText');
+            if (!micIcon) return;
+
+            micIcon.classList.remove('idle', 'listening', 'detected');
+            if (state === 'listening') {
+                micIcon.classList.add('listening');
+                if (lastWord) lastWord.textContent = '';
+                if (statusText) statusText.textContent = 'Dinliyor...';
+                drawSpeechWaveform();
+            } else if (state === 'detected') {
+                micIcon.classList.add('detected');
+                if (lastWord) lastWord.textContent = word ? word.toUpperCase() : '—';
+                if (statusText) statusText.textContent = `"${word}" algılandı!`;
+                // 3.5s sonra kelimeyi temizle ve dinleme moduna dön
+                setTimeout(() => {
+                    if (lastWord) lastWord.textContent = '';
+                    if (speechListening) updateSpeechUI('listening');
+                }, 3500);
+            } else {
+                micIcon.classList.add('idle');
+                if (lastWord) lastWord.textContent = '';
+                if (statusText) statusText.textContent = 'Dinleme bekliyor...';
+                stopSpeechWaveform();
+            }
+        }
+
+        function updateSpeechMonitor() {
+            const monitor = document.getElementById('speechMonitor');
+            const emptyMsg = document.getElementById('speechMonitorEmpty');
+            if (!monitor) return;
+
+            const blocks = workspace.getAllBlocks(false);
+            const speechBlocks = blocks.filter(b => b.type === 'when_speech' || b.type === 'detect_speech');
+
+            if (speechBlocks.length === 0) {
+                if (emptyMsg) emptyMsg.style.display = 'block';
+                // Remove existing rows
+                monitor.querySelectorAll('.speech-monitor-row').forEach(r => r.remove());
+                return;
+            }
+            if (emptyMsg) emptyMsg.style.display = 'none';
+
+            // Remove old rows
+            monitor.querySelectorAll('.speech-monitor-row').forEach(r => r.remove());
+
+            speechBlocks.forEach(block => {
+                const word = block.getFieldValue('WORD');
+                const row = document.createElement('div');
+                row.className = 'speech-monitor-row';
+
+                if (block.type === 'when_speech') {
+                    row.classList.add('when-row');
+                    const log = speechDetectionLog[word];
+                    const recent = log && log.length > 0 && log[log.length - 1] > (Date.now() - 1000);
+                    row.innerHTML = `<span class="speech-monitor-label">🎤 when "${word}"</span>
+                        <span class="speech-monitor-value">${recent ? 'true' : 'false'}</span>`;
+                } else {
+                    const seconds = block.getFieldValue('SECONDS') || 3;
+                    const detected = window.wasSpeechDetected ? window.wasSpeechDetected(word, Number(seconds)) : false;
+                    row.classList.add('detect-row');
+                    row.classList.add(detected ? 'true-state' : 'false-state');
+                    row.innerHTML = `<span class="speech-monitor-label">🔍 detect "${word}" (${seconds}s)</span>
+                        <span class="speech-monitor-value">${detected ? 'true' : 'false'}</span>`;
+                }
+                monitor.appendChild(row);
+            });
+        }
+
+        // Update speech monitor periodically
+        setInterval(updateSpeechMonitor, 300);
+
         // Start webcam for pose detection
         async function startPoseCamera() {
             const video = document.getElementById('poseVideo');
@@ -22451,6 +23094,137 @@ Basılıysa Doğru, değilse Yanlış.
                     <div class="body-status-value">${entry.value}</div>
                 `;
                 monitor.appendChild(row);
+            });
+        }
+
+        // =============================================
+        // Speech Commands Runtime (TensorFlow.js)
+        // =============================================
+        let speechRecognizer = null;
+        let speechListening = false;
+        let speechModelReady = false;
+        // Store detection timestamps per word: { 'yes': [timestamp1, ...], ... }
+        const speechDetectionLog = {};
+        // Callbacks waiting for a specific word
+        const speechWaiters = {};
+        const SPEECH_WORDS = ['yes', 'no', 'up', 'down', 'left', 'right'];
+
+        async function ensureSpeechModel() {
+            if (speechRecognizer && speechModelReady) return true;
+            try {
+                speechRecognizer = speechCommands.create('BROWSER_FFT', '18w');
+                await speechRecognizer.ensureModelLoaded();
+                speechModelReady = true;
+                console.log('Speech Commands model loaded. Labels:', speechRecognizer.wordLabels());
+                return true;
+            } catch (err) {
+                console.error('Speech Commands model load error:', err);
+                return false;
+            }
+        }
+
+        async function startSpeechListening() {
+            if (speechListening) return;
+
+            const ok = await ensureSpeechModel();
+            if (!ok) return;
+
+            // Önce mic iznini al — tek prompt
+            const stream = await initSpeechMicStream();
+            if (!stream) return;
+
+            // speechRecognizer.listen() TF.js kütüphanesi kendi içinde getUserMedia açar.
+            // Bunu engellemek için geçici olarak getUserMedia'yı intercept ediyoruz:
+            // kütüphane çağırdığında bizim stream'in klonunu dönüyoruz → ikinci prompt yok.
+            const origGUM = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+            navigator.mediaDevices.getUserMedia = async (constraints) => {
+                if (constraints && constraints.audio) return stream.clone();
+                return origGUM(constraints);
+            };
+
+            const labels = speechRecognizer.wordLabels();
+
+            speechRecognizer.listen(result => {
+                const scores = result.scores;
+                let maxIdx = 0;
+                let maxScore = 0;
+                for (let i = 0; i < scores.length; i++) {
+                    if (scores[i] > maxScore) {
+                        maxScore = scores[i];
+                        maxIdx = i;
+                    }
+                }
+                const word = labels[maxIdx];
+                if (maxScore > 0.75 && SPEECH_WORDS.includes(word)) {
+                    const now = Date.now();
+                    if (!speechDetectionLog[word]) speechDetectionLog[word] = [];
+                    speechDetectionLog[word].push(now);
+                    // Keep only last 60 seconds of detections
+                    const cutoff = now - 60000;
+                    speechDetectionLog[word] = speechDetectionLog[word].filter(t => t > cutoff);
+                    // Update UI with detected word
+                    updateSpeechUI('detected', word);
+                    // Notify waiters
+                    if (speechWaiters[word] && speechWaiters[word].length > 0) {
+                        const waiters = speechWaiters[word];
+                        speechWaiters[word] = [];
+                        waiters.forEach(resolve => resolve());
+                    }
+                }
+            }, {
+                probabilityThreshold: 0.70,
+                overlapFactor: 0.5,
+                invokeCallbackOnNoiseAndUnknown: false
+            });
+
+            // Kütüphane stream'i aldıktan sonra getUserMedia'yı geri yükle
+            setTimeout(() => {
+                navigator.mediaDevices.getUserMedia = origGUM;
+            }, 1500);
+
+            speechListening = true;
+            updateSpeechUI('listening');
+        }
+
+        async function stopSpeechListening() {
+            if (!speechListening || !speechRecognizer) return;
+            try {
+                await speechRecognizer.stopListening();
+            } catch (e) {}
+            speechListening = false;
+            stopSpeechWaveform();
+            stopSpeechMicStream();
+            updateSpeechUI('idle');
+        }
+
+        // Runtime: wait until a specific word is spoken
+        window.waitForSpeechCommand = async function(word) {
+            await startSpeechListening();
+            return new Promise(resolve => {
+                if (!speechWaiters[word]) speechWaiters[word] = [];
+                speechWaiters[word].push(resolve);
+            });
+        };
+
+        // Runtime: was word detected in last N seconds?
+        window.wasSpeechDetected = function(word, seconds) {
+            const cutoff = Date.now() - (seconds * 1000);
+            const log = speechDetectionLog[word];
+            if (!log || log.length === 0) return false;
+            return log.some(t => t > cutoff);
+        };
+
+        // Auto-start listening when a speech block is on the workspace
+        if (workspace) {
+            workspace.addChangeListener(function(event) {
+                if (event.type === Blockly.Events.BLOCK_CREATE || event.type === Blockly.Events.BLOCK_MOVE) {
+                    const blocks = workspace.getAllBlocks(false);
+                    const hasSpeechBlock = blocks.some(b => b.type === 'when_speech' || b.type === 'detect_speech');
+                    if (hasSpeechBlock && !speechListening) {
+                        openSpeechPanel();
+                        startSpeechListening();
+                    }
+                }
             });
         }
     </script>
